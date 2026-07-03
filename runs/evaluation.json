@@ -1,0 +1,487 @@
+{
+  "aggregated": {
+    "qwen": {
+      "baseline_scores": {
+        "adversarial": {
+          "ci95": 0.0,
+          "mean": 0.1,
+          "stdev": 0.0
+        },
+        "heldout": {
+          "ci95": 0.0,
+          "mean": 0.3,
+          "stdev": 0.0
+        },
+        "train": {
+          "ci95": 0.0,
+          "mean": 0.2,
+          "stdev": 0.0
+        }
+      },
+      "evaluations": [
+        {
+          "adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "adversarial_regressions": {
+            "ci95": 0.0,
+            "mean": 0,
+            "stdev": 0.0
+          },
+          "disagreement_rate": 0.0,
+          "gated_false_promotion_rate": 0.0,
+          "gated_promote_rate": 0.0,
+          "heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "naive_false_promotion_rate": 0.0,
+          "naive_promote_rate": 0.0,
+          "name": "reflection_overfit_skill.md",
+          "practice_score": {
+            "ci95": 0.0,
+            "mean": 0.8,
+            "stdev": 0.0
+          },
+          "train_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "wrongly_rejected_rate": 0.0
+        },
+        {
+          "adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "adversarial_regressions": {
+            "ci95": 0.0,
+            "mean": 0,
+            "stdev": 0.0
+          },
+          "disagreement_rate": 0.0,
+          "gated_false_promotion_rate": 0.0,
+          "gated_promote_rate": 0.0,
+          "heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "naive_false_promotion_rate": 0.0,
+          "naive_promote_rate": 0.0,
+          "name": "trace_first_debugging_skill.md",
+          "practice_score": {
+            "ci95": 0.0,
+            "mean": 0.8,
+            "stdev": 0.0
+          },
+          "train_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "wrongly_rejected_rate": 0.0
+        },
+        {
+          "adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "adversarial_regressions": {
+            "ci95": 0.0,
+            "mean": 0,
+            "stdev": 0.0
+          },
+          "disagreement_rate": 0.0,
+          "gated_false_promotion_rate": 0.0,
+          "gated_promote_rate": 0.0,
+          "heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "naive_false_promotion_rate": 0.0,
+          "naive_promote_rate": 0.0,
+          "name": "minimal_patch_skill.md",
+          "practice_score": {
+            "ci95": 0.0,
+            "mean": 0.8,
+            "stdev": 0.0
+          },
+          "train_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "wrongly_rejected_rate": 0.0
+        },
+        {
+          "adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "adversarial_regressions": {
+            "ci95": 0.0,
+            "mean": 0,
+            "stdev": 0.0
+          },
+          "disagreement_rate": 0.0,
+          "gated_false_promotion_rate": 0.0,
+          "gated_promote_rate": 0.0,
+          "heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "naive_false_promotion_rate": 0.0,
+          "naive_promote_rate": 0.0,
+          "name": "contract_drift_skill.md",
+          "practice_score": {
+            "ci95": 0.0,
+            "mean": 0.8,
+            "stdev": 0.0
+          },
+          "train_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "wrongly_rejected_rate": 0.0
+        },
+        {
+          "adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "adversarial_regressions": {
+            "ci95": 0.0,
+            "mean": 0,
+            "stdev": 0.0
+          },
+          "disagreement_rate": 0.0,
+          "gated_false_promotion_rate": 0.0,
+          "gated_promote_rate": 0.0,
+          "heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "naive_false_promotion_rate": 0.0,
+          "naive_promote_rate": 0.0,
+          "name": "error_handling_skill.md",
+          "practice_score": {
+            "ci95": 0.0,
+            "mean": 0.8,
+            "stdev": 0.0
+          },
+          "train_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "wrongly_rejected_rate": 0.0
+        }
+      ],
+      "interference": {
+        "gated": {
+          "interference_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "interferes_rate": 0.0,
+          "stacked_adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "stacked_heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          }
+        },
+        "naive": {
+          "interference_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "interferes_rate": 0.0,
+          "stacked_adversarial_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          },
+          "stacked_heldout_delta": {
+            "ci95": 0.0,
+            "mean": 0.0,
+            "stdev": 0.0
+          }
+        }
+      },
+      "self_gating_false_promotion_rate": 1.0
+    }
+  },
+  "mode": "qwen",
+  "models": [
+    "qwen"
+  ],
+  "raw_results": [
+    {
+      "baseline_scores": {
+        "adversarial": 0.1,
+        "heldout": 0.3,
+        "train": 0.2
+      },
+      "evaluations": [
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "reflection_overfit_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "trace_first_debugging_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "minimal_patch_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "contract_drift_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "error_handling_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        }
+      ],
+      "interference": {
+        "gated": {
+          "best_individual_adversarial": 0.1,
+          "best_individual_heldout": 0.3,
+          "interference_delta": 0.0,
+          "interferes": false,
+          "promoted": [],
+          "stacked_adversarial": 0.1,
+          "stacked_heldout": 0.3
+        },
+        "naive": {
+          "best_individual_adversarial": 0.1,
+          "best_individual_heldout": 0.3,
+          "interference_delta": 0.0,
+          "interferes": false,
+          "promoted": [],
+          "stacked_adversarial": 0.1,
+          "stacked_heldout": 0.3
+        }
+      },
+      "model": "qwen",
+      "seed": 42
+    },
+    {
+      "baseline_scores": {
+        "adversarial": 0.1,
+        "heldout": 0.3,
+        "train": 0.2
+      },
+      "evaluations": [
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "reflection_overfit_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "trace_first_debugging_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "minimal_patch_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "contract_drift_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        },
+        {
+          "adversarial_delta": 0.0,
+          "adversarial_regressions": 0,
+          "disagree": false,
+          "false_promotion": true,
+          "gated_promote": false,
+          "heldout_delta": 0.0,
+          "naive_promote": false,
+          "name": "error_handling_skill.md",
+          "practice_score": 0.8,
+          "scores": {
+            "adversarial": 0.1,
+            "heldout": 0.3,
+            "train": 0.2
+          },
+          "train_delta": 0.0,
+          "wrongly_rejected": false
+        }
+      ],
+      "interference": {
+        "gated": {
+          "best_individual_adversarial": 0.1,
+          "best_individual_heldout": 0.3,
+          "interference_delta": 0.0,
+          "interferes": false,
+          "promoted": [],
+          "stacked_adversarial": 0.1,
+          "stacked_heldout": 0.3
+        },
+        "naive": {
+          "best_individual_adversarial": 0.1,
+          "best_individual_heldout": 0.3,
+          "interference_delta": 0.0,
+          "interferes": false,
+          "promoted": [],
+          "stacked_adversarial": 0.1,
+          "stacked_heldout": 0.3
+        }
+      },
+      "model": "qwen",
+      "seed": 43
+    }
+  ],
+  "run_id": "terminal_dreamgym_eval",
+  "seeds": [
+    42,
+    43
+  ]
+}

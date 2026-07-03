@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: terminal-dreamgym
+Version: 0.1.0
+Summary: Agents that dream their own practice terminals
+Requires-Python: >=3.11
+Requires-Dist: pydantic
+Requires-Dist: typer
+Requires-Dist: rich
+Requires-Dist: jinja2
+Requires-Dist: python-dotenv
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"

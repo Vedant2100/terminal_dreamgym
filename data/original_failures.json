@@ -1,0 +1,22 @@
+[
+  {
+    "failure_id": "price_comma_train",
+    "failure_mode": "overbroad_patch",
+    "missing_capability": "distinguish numeric formatting commas from semantic commas"
+  },
+  {
+    "failure_id": "cli_empty_input_train",
+    "failure_mode": "swallowed_error",
+    "missing_capability": "distinguish recoverable empty input from invalid input"
+  },
+  {
+    "failure_id": "config_timeout_train",
+    "failure_mode": "contract_drift",
+    "missing_capability": "compare old and new config schemas before patching"
+  },
+  {
+    "failure_id": "dependency_user_train",
+    "failure_mode": "interface_contract_drift",
+    "missing_capability": "patch adapter layer instead of mutating dependency contract"
+  }
+]

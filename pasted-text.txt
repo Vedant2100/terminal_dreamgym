@@ -1,0 +1,1360 @@
+You are building a hackathon MVP called **Terminal DreamGym**.
+
+This project is for the **2026 AI Engineer World’s Fair Hackathon**.
+
+The hackathon themes are:
+
+1. Continual Learning
+2. The Self-Improvement Stack
+3. Recursive Intelligence
+
+The project should primarily target:
+
+* **Recursive Intelligence**
+* **The Self-Improvement Stack**
+* **Best Usage of Gemini 3.5**
+
+Gemini 3.5 prize angle:
+Use Gemini as the recursive improvement engine:
+
+* Gemini diagnoses terminal-agent failures from traces.
+* Gemini generates practice terminal environments.
+* Gemini writes `SKILL.md` files.
+* Gemini proposes improved terminal strategies.
+* Optional Gemini managed-agent / Interactions API adapter should be included, but the default demo must work without API keys.
+
+Important hackathon rules:
+
+* Do NOT build a basic RAG app.
+* Do NOT build a Streamlit app.
+* Do NOT make a dashboard the main feature.
+* Do NOT build an image analyzer.
+* Do NOT build a job screener, medical advisor, mental health advisor, nutrition coach, personality analyzer, or sports analyzer.
+* The demo must clearly show what was built during the hackathon.
+* The repo must be public.
+* The project must not look like a wrapper chatbot.
+* The core demo must be a working terminal self-improvement system.
+
+---
+
+# Product name
+
+**Terminal DreamGym**
+
+Subtitle:
+
+**Agents that dream their own practice terminals**
+
+---
+
+# Core idea
+
+Terminal agents fail in recurring ways:
+
+* they edit before reading the stack trace,
+* they rerun the full test suite instead of the failing test,
+* they ignore CLI error messages,
+* they do not inspect config files,
+* they break working behavior while fixing one case,
+* they blindly upgrade dependencies,
+* they fail to use `git diff`, `grep`, logs, or minimal repros.
+
+Most systems just retry or add a generic prompt.
+
+Terminal DreamGym does something more recursive:
+
+```text
+agent attempts terminal task
+→ agent fails
+→ Gemini diagnoses missing capability
+→ DreamGym generates targeted practice terminal worlds
+→ agent learns/evaluates recovery skills on those worlds
+→ robust skills are promoted only if they transfer
+→ agent retries original and held-out tasks
+```
+
+The “dream” is the generated practice environment.
+
+Core pitch:
+
+> When a terminal agent fails, Terminal DreamGym creates small practice repos/shell tasks that isolate the missing capability, teaches the agent recovery skills, and only promotes skills that generalize to held-out terminal tasks.
+
+This is not a generic coding assistant.
+
+This is a **self-improvement harness for terminal agents**.
+
+---
+
+# Research claim
+
+Research question:
+
+> Can agents improve more reliably if they generate targeted practice environments from their own terminal failures, instead of only reflecting or retrying?
+
+Hypothesis:
+
+> Failure-conditioned curriculum generation produces more transferable terminal skills than naive reflection alone.
+
+The project compares:
+
+1. **Baseline agent**
+
+   * Attempts original terminal tasks with no generated skills.
+
+2. **Reflection-only agent**
+
+   * Writes a skill from the failure and retries the original task.
+
+3. **Terminal DreamGym agent**
+
+   * Diagnoses the failure, generates practice terminal worlds, evaluates skills on those worlds, then tests on held-out/adversarial terminal tasks before promotion.
+
+The demo should show:
+
+```text
+Baseline:
+fails original / held-out terminal tasks
+
+Reflection-only:
+improves on original but overfits
+
+Terminal DreamGym:
+generates practice worlds
+learns transferable skill
+improves held-out/adversarial tasks
+```
+
+---
+
+# What to build
+
+Build a local deterministic terminal benchmark.
+
+The system should run in two modes:
+
+## 1. Mock mode
+
+Mandatory.
+
+No Gemini API key required. Fully deterministic. Always works for demo.
+
+Mock mode simulates:
+
+* a brittle terminal agent,
+* failure diagnosis,
+* generated practice terminal worlds,
+* generated skills,
+* transfer-gated promotion.
+
+## 2. Gemini-ready mode
+
+Optional but architected.
+
+Include clean adapters for:
+
+* Gemini skill generation
+* Gemini failure diagnosis
+* Gemini curriculum generation
+* Gemini managed-agent / Interactions API terminal execution
+
+If API keys are unavailable, everything should still work in mock mode.
+
+The README and report must clearly explain how Gemini 3.5 plugs in:
+
+* Gemini reads terminal traces.
+* Gemini diagnoses failures.
+* Gemini generates practice repos/tasks.
+* Gemini writes `SKILL.md` files.
+* Gemini proposes improved command strategies.
+* Terminal DreamGym evaluates whether those skills transfer.
+
+---
+
+# Tech stack
+
+Use:
+
+* Python 3.11+
+* Typer for CLI
+* Pydantic for typed models
+* Rich for pretty terminal output
+* Jinja2 for Markdown/HTML reports
+* pytest
+* Local subprocess execution
+* Temporary directories for task sandboxes
+* JSON/Markdown files for traces, skills, curricula, and results
+
+Do NOT use Streamlit.
+
+No database.
+
+No paid cloud dependency.
+
+No external websites.
+
+Everything should run locally.
+
+---
+
+# Required project structure
+
+Create this structure:
+
+```text
+terminal-dreamgym/
+  README.md
+  pyproject.toml
+  .env.example
+  Makefile
+  AGENTS.md
+
+  terminal_dreamgym/
+    __init__.py
+    cli.py
+    config.py
+
+    task_model.py
+    curriculum_model.py
+    skill_model.py
+    trace_model.py
+
+    sandbox.py
+    mock_agent.py
+    gemini_agent.py
+
+    runner.py
+    diagnosis.py
+    curriculum_generator.py
+    skill_generator.py
+    evaluator.py
+    promotion.py
+    report.py
+    utils.py
+
+  data/
+    tasks.json
+    splits.json
+    original_failures.json
+
+  task_templates/
+    python_test_failure/
+      README.md
+      app.py
+      test_app.py
+      expected_fix.patch
+
+    cli_edge_case/
+      README.md
+      cli.py
+      test_cli.py
+      expected_fix.patch
+
+    config_env_failure/
+      README.md
+      app.py
+      config.json
+      test_config.py
+      expected_fix.patch
+
+    dependency_mismatch/
+      README.md
+      pyproject.toml
+      package.py
+      test_package.py
+      expected_fix.patch
+
+  curricula/
+    generated/
+      .gitkeep
+
+  skills/
+    empty.md
+    generated/
+      .gitkeep
+
+  runs/
+    .gitkeep
+
+  reports/
+    .gitkeep
+
+  tests/
+    test_promotion.py
+    test_curriculum.py
+    test_evaluator.py
+    test_mock_agent.py
+```
+
+---
+
+# Terminal task domains
+
+Create local toy-but-realistic terminal tasks.
+
+At least 4 original task families:
+
+## 1. Python failing test repair
+
+Task:
+A Python function fails tests because of an edge case.
+
+Example:
+
+* `normalize_email(email)` crashes on whitespace or uppercase input.
+* `parse_price("$1,234.50")` fails on commas.
+* `slugify("Hello, World!")` leaves punctuation.
+
+Expected correct behavior is encoded in pytest tests.
+
+## 2. CLI edge-case repair
+
+Task:
+A CLI tool crashes or returns wrong output on edge cases.
+
+Example:
+
+* `python cli.py --input ""` crashes.
+* Missing file gives bad error.
+* `--json` flag returns invalid JSON.
+
+## 3. Config/env failure
+
+Task:
+Tests fail because app reads the wrong config key or does not handle missing env vars.
+
+Example:
+
+* config changed `api_key` to `auth.token`.
+* app expects `TIMEOUT` but config uses `request_timeout`.
+
+## 4. Dependency/API mismatch
+
+Task:
+A local module changed function signature.
+
+Example:
+
+* old helper: `format_user(name, email)`
+* new helper: `format_user(user: dict)`
+* app still calls old interface.
+
+All tasks must be local and deterministic.
+
+---
+
+# Task schema
+
+Create `data/tasks.json`.
+
+Each task:
+
+```json
+{
+  "id": "python_email_edge_case",
+  "family": "python_test_failure",
+  "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+  "template_dir": "task_templates/python_test_failure",
+  "scorer": "pytest",
+  "score_command": "pytest -q",
+  "success_condition": "all_tests_pass",
+  "max_steps": 8,
+  "expected_failure_mode": "edited_before_reading_trace"
+}
+```
+
+Create at least:
+
+* 4 original tasks
+* 6 held-out tasks
+* 6 adversarial tasks
+
+Held-out/adversarial tasks can be generated from templates.
+
+---
+
+# Terminal variants
+
+The variants should catch overfitting.
+
+Examples:
+
+## Train task
+
+Failure:
+`parse_price("$1,234.50")` fails.
+
+Naive reflection skill:
+“Remove commas from all strings before parsing.”
+
+Adversarial task:
+`parse_sku("ABC,123")` should preserve comma. Overbroad comma removal breaks it.
+
+## Train task
+
+Failure:
+Missing env var causes crash.
+
+Naive reflection skill:
+“Always set default values for missing env vars.”
+
+Adversarial task:
+Missing required API key should fail loudly, not silently default.
+
+## Train task
+
+Failure:
+CLI crashes on empty input.
+
+Naive reflection skill:
+“Return empty string for any invalid input.”
+
+Adversarial task:
+Invalid input should return a clear error message and nonzero exit.
+
+The project must show that naive reflection can overfit.
+
+---
+
+# Sandboxing
+
+Implement `sandbox.py`.
+
+It should:
+
+* copy a task template into a temporary run directory,
+* run commands inside that directory,
+* capture stdout/stderr/exit code,
+* capture file diffs before/after,
+* write trace JSON,
+* clean up or preserve run directories under `runs/`.
+
+No Docker required.
+
+Use Python `subprocess.run`.
+
+Timeout all commands.
+
+Default timeout: 10 seconds.
+
+Never run external network commands.
+
+---
+
+# Mock terminal agent
+
+Implement `mock_agent.py`.
+
+The mock agent should simulate terminal-agent behavior deterministically.
+
+Strategies:
+
+## `baseline`
+
+Brittle:
+
+* runs full pytest once,
+* applies a simplistic patch based on task family,
+* may ignore stack trace,
+* may over-edit,
+* succeeds only on simple train tasks.
+
+## `reflection_only`
+
+Improves on the exact failure but overfits:
+
+* learns a narrow or overbroad heuristic from the observed failure,
+* improves train score,
+* causes held-out/adversarial regressions.
+
+Examples:
+
+* removes commas globally,
+* defaults all missing env vars,
+* catches all exceptions and returns empty string,
+* pins dependency by editing code in brittle way.
+
+## `dreamgym_skill`
+
+Robust:
+
+* runs the smallest failing test first,
+* reads traceback,
+* inspects relevant function/config,
+* makes minimal patch,
+* adds or preserves regression tests,
+* avoids overbroad fixes,
+* reruns targeted test then full suite.
+
+## `trace_first_skill`
+
+Skill:
+
+* inspect failure trace before editing.
+
+## `minimal_patch_skill`
+
+Skill:
+
+* fix only the failing boundary condition.
+
+## `contract_check_skill`
+
+Skill:
+
+* compare expected vs actual interface/config/schema.
+
+The mock agent must make actual file edits in task sandboxes.
+
+This means the demo produces real diffs and real passing/failing tests.
+
+---
+
+# Gemini agent adapter
+
+Implement `gemini_agent.py`.
+
+It should expose the same interface as the mock agent.
+
+It does not need to fully work if API setup is unavailable, but it must be credible.
+
+Include:
+
+* `GEMINI_API_KEY`
+* `GEMINI_MODEL=gemini-3.5-flash`
+* class `GeminiTerminalAgent`
+
+Docstrings should explain:
+
+* send task instruction, terminal trace, file tree, and active skills to Gemini,
+* receive next command or patch,
+* execute command in sandbox,
+* observe result,
+* continue until success or max steps.
+
+If no Gemini API key, default CLI should use mock mode.
+
+Do not break the demo without Gemini.
+
+---
+
+# Trace format
+
+Each run should produce trace JSON.
+
+Example:
+
+```json
+{
+  "run_id": "baseline_2026...",
+  "task_id": "python_price_comma",
+  "strategy": "baseline",
+  "success": false,
+  "failure_reason": "Overbroad comma stripping broke SKU behavior",
+  "commands": [
+    {
+      "cmd": "pytest -q",
+      "exit_code": 1,
+      "stdout": "...",
+      "stderr": "..."
+    }
+  ],
+  "edits": [
+    {
+      "file": "app.py",
+      "summary": "Removed commas from all string inputs before parsing"
+    }
+  ],
+  "diff": "...",
+  "tests_passed": false
+}
+```
+
+---
+
+# Failure diagnosis
+
+Implement `diagnosis.py`.
+
+Given failed traces, output diagnoses.
+
+Example:
+
+```json
+{
+  "failure_id": "price_comma_train",
+  "failure_mode": "overbroad_patch",
+  "missing_capability": "distinguish numeric formatting commas from semantic commas",
+  "evidence": [
+    "Patch removed commas globally",
+    "Adversarial SKU test failed",
+    "Agent did not inspect function-specific contract"
+  ],
+  "recommended_practice_worlds": [
+    "numeric_comma_easy",
+    "semantic_comma_counterexample",
+    "minimal_parser_patch"
+  ]
+}
+```
+
+In mock mode, use deterministic rules.
+
+In Gemini mode, call Gemini to diagnose traces.
+
+---
+
+# Curriculum generation
+
+Implement `curriculum_generator.py`.
+
+Given diagnoses, generate practice terminal worlds.
+
+A practice world is a small repo/task generated from a template or synthesized locally.
+
+Required curricula:
+
+## 1. Trace-first debugging curriculum
+
+Teaches:
+
+* run failing test
+* inspect traceback
+* identify failing function
+* avoid blind edits
+
+## 2. Minimal patch curriculum
+
+Teaches:
+
+* patch only specific boundary condition
+* avoid broad behavior changes
+
+## 3. Contract drift curriculum
+
+Teaches:
+
+* compare expected vs actual schema/interface/config
+* patch adapter layer, not random business logic
+
+## 4. Error handling curriculum
+
+Teaches:
+
+* distinguish recoverable input errors from required hard failures
+* do not swallow all exceptions
+
+Each curriculum should contain 3–5 practice worlds of increasing difficulty.
+
+Curriculum JSON:
+
+```json
+{
+  "id": "minimal_patch_curriculum",
+  "source_failure_modes": ["overbroad_patch"],
+  "target_skill": "minimal_patch_skill.md",
+  "worlds": [
+    {
+      "id": "numeric_comma_easy",
+      "difficulty": "easy",
+      "template": "practice_numeric_parser",
+      "instruction": "Fix parsing of formatted numbers without changing SKU parsing.",
+      "score_command": "pytest -q",
+      "teaches": ["minimal_patch", "counterexample_preservation"]
+    }
+  ]
+}
+```
+
+The system should materialize generated practice worlds under:
+
+```text
+runs/practice_worlds/
+```
+
+---
+
+# Skill generation
+
+Implement `skill_generator.py`.
+
+Generate `SKILL.md` files from diagnoses and curricula.
+
+Required generated skills:
+
+## `trace_first_debugging_skill.md`
+
+```md
+# Skill: Trace-first terminal debugging
+
+When a terminal task fails:
+1. Re-run the exact failing command.
+2. Read the traceback or error output before editing files.
+3. Identify the smallest failing test or command.
+4. Inspect the referenced function, config key, or interface.
+5. Make the smallest patch that addresses the observed failure.
+6. Rerun the targeted test first, then the full suite.
+```
+
+## `minimal_patch_skill.md`
+
+```md
+# Skill: Make minimal behavior-preserving patches
+
+When fixing a bug:
+1. Preserve existing behavior unless the task explicitly says otherwise.
+2. Add or check counterexamples before applying broad transformations.
+3. Avoid global string rewrites, blanket exception handlers, or default values that hide required errors.
+4. Patch the narrowest function or adapter responsible for the failure.
+5. Verify both the original failure and nearby edge cases.
+```
+
+## `contract_drift_skill.md`
+
+```md
+# Skill: Repair contract drift
+
+When code fails after an interface, config, or schema change:
+1. Compare the expected contract to the observed contract.
+2. Identify renamed, nested, removed, or type-changed fields.
+3. Patch the adapter/client/config normalization layer before changing business logic.
+4. Add a regression test for the new contract.
+5. Preserve backwards compatibility when possible.
+```
+
+## `error_handling_skill.md`
+
+```md
+# Skill: Handle errors without hiding failures
+
+When a task involves invalid input or missing configuration:
+1. Distinguish optional missing values from required missing values.
+2. Return clear validation errors for bad user input.
+3. Do not catch all exceptions unless the task explicitly requires it.
+4. Do not silently default required secrets, credentials, or critical config.
+5. Add tests for both valid and invalid paths.
+```
+
+Also generate one intentionally brittle skill:
+
+## `reflection_overfit_skill.md`
+
+```md
+# Skill: Patch the last visible symptom
+
+When a terminal task fails, apply the simplest transformation that makes the observed error disappear, even if it is broad.
+
+Examples:
+- Remove problematic characters globally.
+- Add default values for missing variables.
+- Catch exceptions and return empty output.
+- Upgrade or pin dependencies without checking the contract.
+
+This skill may improve the observed training case but can overfit and cause regressions.
+```
+
+The brittle skill must improve some train cases but cause held-out/adversarial regressions.
+
+---
+
+# Skill-to-strategy mapping
+
+Since mock mode cannot interpret arbitrary Markdown, implement mapping:
+
+```text
+reflection_overfit_skill.md -> reflection_only strategy
+trace_first_debugging_skill.md -> dreamgym_skill strategy
+minimal_patch_skill.md -> dreamgym_skill strategy
+contract_drift_skill.md -> dreamgym_skill strategy
+error_handling_skill.md -> dreamgym_skill strategy
+```
+
+README should explain that in Gemini mode, skills would be passed as actual text to the model.
+
+---
+
+# Evaluation
+
+Implement `evaluator.py`.
+
+Evaluate:
+
+1. baseline
+2. reflection_only
+3. dreamgym
+
+Across:
+
+* train tasks
+* generated practice worlds
+* held-out tasks
+* adversarial tasks
+
+Compute:
+
+* success count
+* total count
+* success rate
+* per-family score
+* regressions relative to baseline
+* average commands used
+* average time
+* whether skill passed transfer gate
+
+Example output:
+
+```json
+{
+  "run_id": "terminal_dreamgym_eval_...",
+  "baseline": {
+    "train": {"successes": 2, "total": 8, "rate": 0.25},
+    "heldout": {"successes": 1, "total": 6, "rate": 0.166},
+    "adversarial": {"successes": 1, "total": 6, "rate": 0.166}
+  },
+  "reflection_only": {
+    "train": {"successes": 5, "total": 8, "rate": 0.625},
+    "heldout": {"successes": 2, "total": 6, "rate": 0.333},
+    "adversarial": {"successes": 0, "total": 6, "rate": 0.0}
+  },
+  "dreamgym": {
+    "train": {"successes": 6, "total": 8, "rate": 0.75},
+    "heldout": {"successes": 5, "total": 6, "rate": 0.833},
+    "adversarial": {"successes": 4, "total": 6, "rate": 0.667}
+  }
+}
+```
+
+The exact numbers can differ, but the pattern must be visible.
+
+---
+
+# Promotion logic
+
+Implement `promotion.py`.
+
+```python
+def naive_promote(train_delta: float) -> bool:
+    return train_delta > 0
+```
+
+```python
+def promote_skill(
+    train_delta: float,
+    heldout_delta: float,
+    adversarial_delta: float,
+    adversarial_regressions: int,
+    practice_score: float,
+    min_heldout_delta: float = 0.01,
+    min_practice_score: float = 0.70,
+    max_adversarial_regressions: int = 0,
+) -> bool:
+    return (
+        train_delta >= 0
+        and heldout_delta >= min_heldout_delta
+        and adversarial_delta >= 0
+        and adversarial_regressions <= max_adversarial_regressions
+        and practice_score >= min_practice_score
+    )
+```
+
+Report must show:
+
+* naive reflection would promote brittle skill,
+* Terminal DreamGym rejects it,
+* Terminal DreamGym promotes robust skill.
+
+---
+
+# CLI commands
+
+Use Typer.
+
+Implement:
+
+```bash
+python -m terminal_dreamgym.cli init-demo
+```
+
+Creates data, task templates, skills, curricula, directories.
+
+```bash
+python -m terminal_dreamgym.cli run-baseline --mode mock
+```
+
+Runs baseline on all train/heldout/adversarial tasks.
+
+Writes:
+
+```text
+runs/baseline.json
+```
+
+```bash
+python -m terminal_dreamgym.cli diagnose --from-run runs/baseline.json --mode mock
+```
+
+Writes:
+
+```text
+runs/diagnoses.json
+```
+
+```bash
+python -m terminal_dreamgym.cli generate-curricula --from-diagnoses runs/diagnoses.json --mode mock
+```
+
+Writes:
+
+```text
+curricula/generated/*.json
+```
+
+```bash
+python -m terminal_dreamgym.cli generate-skills --from-curricula curricula/generated --mode mock
+```
+
+Writes:
+
+```text
+skills/generated/*.md
+```
+
+```bash
+python -m terminal_dreamgym.cli evaluate --mode mock
+```
+
+Evaluates baseline, reflection-only, and DreamGym.
+
+Writes:
+
+```text
+runs/evaluation.json
+```
+
+```bash
+python -m terminal_dreamgym.cli report
+```
+
+Writes:
+
+```text
+reports/report.md
+reports/report.html
+```
+
+One-shot demo:
+
+```bash
+python -m terminal_dreamgym.cli demo
+```
+
+This should:
+
+1. init demo
+2. run baseline
+3. diagnose failures
+4. generate curricula
+5. generate practice worlds
+6. generate skills
+7. evaluate
+8. generate report
+9. print key results table
+
+The `demo` command must work end-to-end in mock mode.
+
+---
+
+# Report
+
+Generate `reports/report.md` and `reports/report.html`.
+
+Title:
+
+```text
+Terminal DreamGym: Agents That Dream Their Own Practice Terminals
+```
+
+Required sections:
+
+## 1. Problem
+
+Terminal agents are brittle. Reflection alone can overfit. Agents need a way to create targeted practice tasks and validate whether new skills transfer.
+
+## 2. Method
+
+Explain:
+
+```text
+terminal failure trace
+→ diagnosis
+→ generated practice terminal worlds
+→ generated SKILL.md
+→ practice evaluation
+→ held-out/adversarial transfer gate
+→ promotion/rejection
+```
+
+## 3. Generated curricula
+
+Show examples:
+
+* trace-first debugging curriculum
+* minimal patch curriculum
+* contract drift curriculum
+* error handling curriculum
+
+## 4. Generated skills
+
+Show snippets of:
+
+* reflection_overfit_skill.md
+* trace_first_debugging_skill.md
+* minimal_patch_skill.md
+* contract_drift_skill.md
+* error_handling_skill.md
+
+## 5. Results
+
+Include table:
+
+```text
+Method | Train success | Heldout success | Adversarial success | Regressions | Decision
+Baseline | ... | ... | ... | ... | -
+Reflection-only | ... | ... | ... | ... | rejected / overfit
+Terminal DreamGym | ... | ... | ... | ... | promoted
+```
+
+Include another table:
+
+```text
+Skill | Practice score | Train Δ | Heldout Δ | Adv Δ | Adv regressions | Naive decision | DreamGym decision
+```
+
+## 6. Key finding
+
+Must include:
+
+```text
+Reflection-only self-improvement improved visible training tasks but regressed on adversarial terminal tasks. Terminal DreamGym generated targeted practice worlds and promoted only skills that transferred.
+```
+
+## 7. Hackathon fit
+
+Must include:
+
+```text
+Recursive Intelligence:
+Terminal DreamGym lets the agent modify its future behavior by generating and testing new terminal skills.
+
+Continual Learning:
+Failures become curricula and reusable skills.
+
+Self-Improvement Stack:
+The project provides traces, generated eval environments, practice worlds, transfer gates, and promotion logic.
+
+Gemini 3.5 Prize:
+Terminal DreamGym is designed for Gemini 3.5 managed agents / terminal agents. Gemini can diagnose terminal failures, generate practice worlds, and create SKILL.md files that improve future behavior.
+```
+
+## 8. Why this is not a banned project
+
+Explicitly state:
+
+* Not a basic RAG app.
+* Not a Streamlit app.
+* Not a dashboard-first project.
+* Not an image analyzer.
+* Not a job screener, medical advisor, mental health advisor, nutrition coach, personality analyzer, or sports analyzer.
+* The core is recursive self-improvement for terminal agents.
+
+## 9. 3-minute demo script
+
+Include script:
+
+```text
+1. “Terminal agents are powerful but brittle. We show an agent failing common debugging and repair tasks.”
+2. Show baseline failures: overbroad patch, swallowed error, config mismatch, interface drift.
+3. “Instead of just retrying, Terminal DreamGym diagnoses the missing capability.”
+4. Show generated practice worlds: minimal patch drill, config-contract drill, error-handling drill.
+5. Show generated skills.
+6. Show reflection-only improves train but fails adversarial.
+7. Show Terminal DreamGym skill passes practice worlds and transfers to held-out/adversarial tasks.
+8. Close: “This is recursive self-improvement with an immune system. The agent dreams practice terminals, learns skills, and only keeps skills that generalize.”
+```
+
+---
+
+# README
+
+Write a strong README.
+
+Include:
+
+```md
+# Terminal DreamGym
+
+Agents that dream their own practice terminals.
+
+## What it is
+
+Terminal DreamGym is a local wind tunnel for self-improving terminal agents. When an agent fails a terminal task, Terminal DreamGym diagnoses the missing capability, generates targeted practice environments, writes recovery skills, and promotes only skills that transfer to held-out and adversarial terminal tasks.
+
+## Why it matters
+
+Terminal agents are brittle. Reflection alone can overfit to the last failure. Terminal DreamGym tests whether self-improvement is real by making agents practice the capability they were missing.
+
+## Hackathon fit
+
+...
+
+## Gemini 3.5 fit
+
+...
+
+## How to run
+
+...
+
+## Demo
+
+...
+
+## Research question
+
+Can failure-conditioned curriculum generation produce more transferable terminal skills than reflection alone?
+```
+
+---
+
+# AGENTS.md
+
+Create an `AGENTS.md` file explaining how coding agents should work in this repo.
+
+Include:
+
+* run tests before changes
+* keep mock mode deterministic
+* do not make external network calls in default demo
+* do not introduce Streamlit
+* keep report generation working
+* preserve demo command
+* all task sandboxes must be local and safe
+* no shell commands that delete outside the sandbox
+
+---
+
+# Tests
+
+Implement:
+
+## `tests/test_promotion.py`
+
+Test:
+
+* naive promotes if train improves
+* DreamGym rejects if heldout does not improve
+* DreamGym rejects if adversarial regressions exist
+* DreamGym promotes if practice score high and transfer improves
+
+## `tests/test_curriculum.py`
+
+Test:
+
+* overbroad patch diagnosis creates minimal patch curriculum
+* contract drift diagnosis creates contract curriculum
+* each curriculum has at least 3 worlds
+
+## `tests/test_evaluator.py`
+
+Test:
+
+* success rate calculations
+* regression detection
+
+## `tests/test_mock_agent.py`
+
+Test:
+
+* baseline fails overbroad edge case
+* reflection-only overfits or regresses on adversarial task
+* dreamgym_skill succeeds on heldout/adversarial tasks
+
+---
+
+# pyproject.toml
+
+Use:
+
+```toml
+[project]
+name = "terminal-dreamgym"
+version = "0.1.0"
+description = "Agents that dream their own practice terminals"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic",
+  "typer",
+  "rich",
+  "jinja2",
+  "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff"
+]
+```
+
+---
+
+# .env.example
+
+Create:
+
+```text
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.5-flash
+TERMINAL_DREAMGYM_MODE=mock
+```
+
+---
+
+# Makefile
+
+Create:
+
+```makefile
+install:
+	pip install -e ".[dev]"
+
+demo:
+	python -m terminal_dreamgym.cli demo
+
+test:
+	pytest -q
+
+report:
+	python -m terminal_dreamgym.cli report
+```
+
+---
+
+# Critical demo behavior
+
+The final report and CLI output must clearly show a pattern like:
+
+```text
+Method                Train   Heldout   Adversarial
+Baseline              2/8     1/6       1/6
+Reflection-only       5/8     2/6       0/6
+Terminal DreamGym     6/8     5/6       4/6
+```
+
+And:
+
+```text
+Skill                         Naive decision   DreamGym decision
+reflection_overfit_skill       PROMOTE          REJECT
+minimal_patch_skill            PROMOTE          PROMOTE
+contract_drift_skill           PROMOTE          PROMOTE
+```
+
+This pattern is mandatory.
+
+---
+
+# Visual/terminal demo requirements
+
+CLI output should be clean and impressive.
+
+Use Rich tables.
+
+Example output:
+
+```text
+Terminal DreamGym Evaluation
+
+Baseline:
+  Train: 2/8
+  Heldout: 1/6
+  Adversarial: 1/6
+
+Reflection-only:
+  Train: 5/8
+  Heldout: 2/6
+  Adversarial: 0/6
+  Decision: REJECTED — overfit detected
+
+DreamGym:
+  Train: 6/8
+  Heldout: 5/6
+  Adversarial: 4/6
+  Decision: PROMOTED — transfer verified
+```
+
+Also print:
+
+* generated practice worlds,
+* generated skills,
+* one sample diff from a repaired task,
+* path to report.
+
+---
+
+# Acceptance criteria
+
+These commands must work:
+
+```bash
+pip install -e ".[dev]"
+python -m terminal_dreamgym.cli demo
+pytest -q
+```
+
+The demo must generate:
+
+```text
+runs/baseline.json
+runs/diagnoses.json
+curricula/generated/*.json
+skills/generated/*.md
+runs/evaluation.json
+reports/report.md
+reports/report.html
+```
+
+The report must clearly show:
+
+1. Baseline terminal-agent brittleness.
+2. Failure diagnosis.
+3. Generated practice terminal worlds.
+4. Generated skills.
+5. Reflection-only overfitting.
+6. Terminal DreamGym transfer-gated improvement.
+7. Gemini 3.5 managed-agent / terminal-agent integration path.
+8. Hackathon theme fit.
+9. Statement that this is not a banned project.
+
+---
+
+# Final build instruction
+
+Build the MVP now.
+
+Do not ask clarifying questions.
+
+Keep it demo-first.
+
+The loop that must be undeniable:
+
+```text
+terminal-agent failure
+→ diagnosis of missing capability
+→ generated practice terminal worlds
+→ generated SKILL.md
+→ practice + held-out/adversarial evaluation
+→ promote/reject skill
+→ improved future terminal behavior
+```
+
+That loop is the product.

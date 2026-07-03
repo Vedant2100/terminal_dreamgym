@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Terminal DreamGym — Explainer</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; color: #17202a; background: #f7f8fa; line-height: 1.6; }
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px 72px; background: white; min-height: 100vh; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2; }
+    h2 { margin-top: 2rem; border-top: 1px solid #d9dee7; padding-top: 1.25rem; }
+    h3 { margin-top: 1.5rem; }
+    pre { background: #10151f; color: #e7edf7; padding: 16px; overflow-x: auto; border-radius: 8px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; font-size: 0.92em; }
+    pre code { background: transparent; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #d9dee7; padding: 8px 10px; text-align: left; }
+    th { background: #eef2f7; }
+    blockquote { border-left: 4px solid #4a90d9; margin: 1rem 0; padding: 0.5rem 1rem; background: #f0f6ff; color: #1a365d; }
+    a { color: #2563eb; }
+    hr { border: none; border-top: 1px solid #d9dee7; margin: 2rem 0; }
+    ul, ol { padding-left: 1.5rem; }
+  </style>
+</head>
+<body>
+<main>
+<h1>Terminal DreamGym — Project Explainer (from scratch)</h1>
+<blockquote>
+<p>Agents that dream their own practice terminals.</p>
+</blockquote>
+<p>This document explains the whole project end to end: the problem, the idea, the
+architecture, every module, the data, the agent loop, how skills are generated and
+gated, and the honest limitations. Read it top to bottom and you&#39;ll understand both
+<em>what</em> the system does and <em>why</em> each piece exists.</p>
+<hr>
+<h2>1. The one-paragraph version</h2>
+<p>A terminal agent (an LLM that edits files and runs commands) is given a small broken
+repository and told to make the failing tests pass. It often fails in recurring ways —
+it patches the visible symptom too broadly, swallows errors, ignores config drift.
+<strong>Terminal DreamGym</strong> takes those failures and does something recursive: it <em>diagnoses</em>
+the missing capability, <em>generates targeted practice repositories</em> that isolate that
+capability, writes <em>recovery skills</em> (<code>SKILL.md</code> files), and then only <em>keeps a skill if
+it transfers</em> — i.e. if it helps on held-out and adversarial tasks without causing
+regressions. The headline contrast is between naive <strong>reflection</strong> (learn a fix from the
+failure and ship it) and DreamGym&#39;s <strong>transfer-gated promotion</strong> (practice, then prove it
+generalizes before promoting).</p>
+<p>It is a <strong>self-improvement harness for terminal agents</strong>, not a chatbot or a wrapper.</p>
+<hr>
+<h2>2. The problem it attacks</h2>
+<p>Terminal agents are powerful but brittle. Common failure modes:</p>
+<ul>
+<li>edit code before reading the stack trace,</li>
+<li>rerun the whole suite instead of the one failing test,</li>
+<li>ignore CLI error messages and exit codes,</li>
+<li>don&#39;t inspect config files / schemas,</li>
+<li>break working behavior while fixing one case (over-broad patches),</li>
+<li>blindly default missing values or swallow exceptions.</li>
+</ul>
+<p>Most &quot;self-improvement&quot; systems respond to a failure by <em>reflecting</em> — writing down a
+lesson and retrying. The danger: reflection <strong>overfits</strong>. &quot;The price parser choked on a
+comma → strip all commas everywhere&quot; fixes the training case but breaks a SKU like
+<code>&quot;ABC,123&quot;</code> where the comma is semantic. The lesson looked like learning; it was
+memorizing a symptom.</p>
+<p><strong>Research question:</strong> can an agent improve more <em>reliably</em> by generating targeted
+practice environments from its own failures, instead of only reflecting/retrying?</p>
+<p><strong>Hypothesis:</strong> failure-conditioned curriculum generation produces more <em>transferable</em>
+terminal skills than naive reflection alone.</p>
+<hr>
+<h2>3. The recursive loop (the product)</h2>
+<pre><code>terminal-agent failure
+  → diagnosis of the missing capability
+  → generated practice terminal worlds (the &quot;dream&quot;)
+  → generated SKILL.md
+  → practice + held-out/adversarial evaluation
+  → promote / reject the skill   (transfer gate = the &quot;immune system&quot;)
+  → improved future terminal behavior
+</code></pre>
+<p>The &quot;dream&quot; is the generated practice repo: a tiny terminal world that isolates exactly
+the capability the agent missed.</p>
+<hr>
+<h2>4. Three strategies being compared</h2>
+<p>Every strategy is the <em>same</em> live model; what differs is the <code>SKILL.md</code> text it is given
+and how many attempts it gets. This is the spec&#39;s &quot;in live mode, skills are passed as
+actual text to the model&quot; path.</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>What it is</th>
+<th>Skill text given</th>
+<th>Attempts</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>baseline</code></td>
+<td>Brittle agent, no guidance</td>
+<td>none</td>
+<td>1 (single shot)</td>
+</tr>
+<tr>
+<td><code>reflection_only</code></td>
+<td>Learns from the symptom, overfits</td>
+<td><code>reflection_overfit_skill.md</code> (&quot;patch the last visible symptom; broad transforms OK&quot;)</td>
+<td>up to <code>MAX_STEPS</code></td>
+</tr>
+<tr>
+<td><code>dreamgym_skill</code></td>
+<td>Robust, trace-first/minimal-patch</td>
+<td>the 4 robust skills (trace-first, minimal-patch, contract-drift, error-handling)</td>
+<td>up to <code>MAX_STEPS</code></td>
+</tr>
+</tbody></table>
+<p>The expected story: reflection raises <em>train</em> but <strong>regresses on adversarial</strong>; DreamGym
+transfers (best held-out/adversarial, no regressions) and earns promotion.</p>
+<hr>
+<h2>5. Live-model only (no mock)</h2>
+<p>This build is <strong>live-model only</strong> — a real LLM drives every task and real <code>pytest</code>
+decides success. There is <strong>no scripted/mock fallback</strong>: if the model produces no working
+patch, that is a genuine failure and is recorded as one; if the provider is unreachable,
+the run raises rather than substituting fake numbers.</p>
+<p>Two providers, selected with <code>--mode</code> (default <code>qwen</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Backend</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>qwen</code></td>
+<td>Local <strong>Ollama</strong>, OpenAI-compatible API at <code>http://localhost:11434/v1</code></td>
+<td>Free, no quota. Default. Tested with <code>qwen2.5:7b</code>.</td>
+</tr>
+<tr>
+<td><code>gemini</code></td>
+<td>Gemini REST (<code>generativelanguage.googleapis.com</code>)</td>
+<td>The &quot;Best Usage of Gemini 3.5&quot; path. Free tier ≈ 20 requests/day — too few for the full ~200-call loop; use a paid key for a full run.</td>
+</tr>
+</tbody></table>
+<p>Both implement the same <code>generate_text(prompt) -&gt; str</code> interface, so the agent loop is
+provider-agnostic.</p>
+<hr>
+<h2>6. The agent loop (how a task is actually solved)</h2>
+<p>Implemented in <code>terminal_dreamgym/gemini_agent.py</code> as <code>LLMTerminalAgent</code>. For one task:</p>
+<ol>
+<li><strong>Sandbox.</strong> Copy the task&#39;s template repo into a fresh temp dir under
+<code>runs/sandboxes/</code> (<code>sandbox.py</code>). Snapshot all files (for diffing later).</li>
+<li><strong>Reproduce the failure.</strong> Run the task&#39;s <code>score_command</code> (e.g.
+<code>pytest -q test_app.py::test_parse_price_comma</code>) and capture stdout/stderr/exit code.</li>
+<li><strong>Prompt the model.</strong> Send: the instruction, the <strong>active <code>SKILL.md</code> text</strong> for this
+strategy, the <strong>failing test output</strong>, the <strong>test files</strong> (read-only — to reveal the
+contract), and the <strong>editable source files</strong>. Ask for full-file replacements.</li>
+<li><strong>Apply edits — safely.</strong> The model replies with blocks:<pre><code>&lt;&lt;&lt;FILE app.py
+&lt;entire new file contents&gt;
+&gt;&gt;&gt;END
+SUMMARY: one line
+</code></pre>
+The agent parses these (<code>_parse_file_blocks</code>, with a JSON fallback <code>_extract_json</code>) and
+writes them — but <strong>refuses to edit test files</strong> (<code>test_*.py</code>) and <strong>refuses any write
+outside the sandbox</strong>. (This actually caught the model trying to &quot;pass&quot; by rewriting a
+test; it was rejected and the task failed honestly.)</li>
+<li><strong>Re-grade.</strong> Re-run the <code>score_command</code>. Success = exit code 0. Loop up to
+<code>MAX_STEPS</code> (<code>baseline</code> gets exactly 1 attempt). For <code>dreamgym_skill</code>, on success also
+run the full <code>pytest -q</code>.</li>
+<li><strong>Record a trace.</strong> Write a <code>TaskRunTrace</code> (JSON): success, the commands run, the edits
+applied, a unified <code>diff</code>, duration, and metadata (provider, model, active skills,
+notes). Saved to the sandbox as <code>trace.json</code>.</li>
+</ol>
+<p>Sandbox safety (<code>sandbox.py</code>): 10-second timeout on every command; network/install
+commands (<code>curl</code>, <code>wget</code>, <code>pip</code>, <code>npm</code>, …) are blocked; <code>pytest</code> is resolved through
+<code>sys.executable -m pytest</code> so it works regardless of how Python is launched.</p>
+<hr>
+<h2>7. The benchmark: tasks, splits, families</h2>
+<p>Defined in <code>terminal_dreamgym/demo_assets.py</code> (written to <code>data/tasks.json</code>,
+<code>data/splits.json</code>). <strong>20 tasks</strong> across <strong>4 families</strong> and <strong>3 splits</strong>:</p>
+<ul>
+<li><strong>Families:</strong> <code>python_test_failure</code>, <code>cli_edge_case</code>, <code>config_env_failure</code>,
+<code>dependency_mismatch</code>.</li>
+<li><strong>Splits:</strong> <code>train</code> (8), <code>heldout</code> (6), <code>adversarial</code> (6).</li>
+</ul>
+<p>Each task is a <code>TaskSpec</code> (<code>task_model.py</code>): id, family, instruction, <code>template_dir</code>,
+<code>score_command</code> (a <em>specific</em> failing test), <code>split</code>, <code>expected_failure_mode</code>, etc.</p>
+<p>The <strong>adversarial</strong> split is the point of the whole project — it contains
+counterexamples that a naively over-broad fix will break:</p>
+<table>
+<thead>
+<tr>
+<th>Adversarial task</th>
+<th>The trap</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>python_sku_preserve_comma</code></td>
+<td><code>parse_sku(&quot;ABC,123&quot;)</code> must <strong>keep</strong> the comma — global comma-stripping breaks it.</td>
+</tr>
+<tr>
+<td><code>python_email_preserve_plus_tag</code></td>
+<td><code>user+tag@…</code> must keep the <code>+</code> — stripping &quot;problematic chars&quot; breaks it.</td>
+</tr>
+<tr>
+<td><code>cli_invalid_input_nonzero</code></td>
+<td>Invalid input must exit <strong>nonzero</strong> — swallowing errors breaks it.</td>
+</tr>
+<tr>
+<td><code>cli_json_error_valid</code></td>
+<td><code>--json</code> errors must be valid JSON with a nonzero exit.</td>
+</tr>
+<tr>
+<td><code>config_missing_required_api_key</code></td>
+<td>A missing <strong>required</strong> secret must fail loudly — silent defaulting breaks it.</td>
+</tr>
+<tr>
+<td><code>dependency_no_global_adapter_break</code></td>
+<td>Must patch the caller/adapter, not the dependency contract.</td>
+</tr>
+</tbody></table>
+<p>The four task templates live under <code>task_templates/&lt;family&gt;/</code> — each a tiny real repo
+(<code>app.py</code>/<code>cli.py</code>/<code>config.json</code>, a <code>test_*.py</code>, a README, and an <code>expected_fix.patch</code>
+that documents the intended minimal fix; the patch is <strong>never</strong> shown to the model).</p>
+<hr>
+<h2>8. Diagnosis → Curricula → Skills</h2>
+<h3>Diagnosis (<code>diagnosis.py</code>)</h3>
+<p>Reads a run&#39;s traces and maps observed failure modes to structured <code>Diagnosis</code> objects
+(failure mode, missing capability, evidence, recommended practice worlds). It is
+<strong>deterministic rule-based</strong> (stable across providers); the documented Gemini path is
+where Gemini would read raw traces directly. Output: <code>runs/diagnoses.json</code>.</p>
+<h3>Curriculum generation (<code>curriculum_generator.py</code>)</h3>
+<p>Maps diagnoses to <strong>4 curricula</strong>, each teaching one capability with 3 practice worlds of
+increasing difficulty:</p>
+<ul>
+<li><code>trace_first_curriculum</code> → trace-first debugging</li>
+<li><code>minimal_patch_curriculum</code> → minimal, behavior-preserving patches (comma counterexample)</li>
+<li><code>contract_drift_curriculum</code> → config/interface schema repair</li>
+<li><code>error_handling_curriculum</code> → recoverable vs. must-fail errors</li>
+</ul>
+<p><strong>Practice worlds are real, runnable repos.</strong> <code>materialize_practice_worlds</code> copies the
+relevant family template into <code>runs/practice_worlds/&lt;world_id&gt;/</code> (stripping the answer
+patch) and adds a <code>PRACTICE.md</code>. <code>practice_task_specs()</code> turns each into a real <code>TaskSpec</code>
+with a targeted <code>score_command</code>. They are solved by the <em>same</em> agent loop and graded by
+real pytest — there are <strong>no placeholder stubs and no hardcoded practice scores</strong>.</p>
+<h3>Skill generation (<code>skill_generator.py</code>)</h3>
+<p>Writes 5 <code>SKILL.md</code> files to <code>skills/generated/</code>:</p>
+<ul>
+<li><code>trace_first_debugging_skill.md</code>, <code>minimal_patch_skill.md</code>, <code>contract_drift_skill.md</code>,
+<code>error_handling_skill.md</code> (the robust four), and</li>
+<li><code>reflection_overfit_skill.md</code> (intentionally brittle: &quot;patch the last visible symptom&quot;).</li>
+</ul>
+<p>A <strong>skill→strategy mapping</strong> decides which skill text feeds which strategy
+(<code>reflection_overfit → reflection_only</code>; the robust four → <code>dreamgym_skill</code>).</p>
+<hr>
+<h2>9. Evaluation (<code>evaluator.py</code>)</h2>
+<p><code>evaluate(mode)</code>:</p>
+<ol>
+<li>Runs all 3 strategies over the 20 tasks → per-split successes (train/heldout/adversarial).</li>
+<li>Runs <code>score_practice(mode)</code> — each strategy on the <strong>12 materialized practice worlds</strong>,
+counting real pytest passes → the practice score.</li>
+<li>Enriches each strategy with per-family scores, average commands/time, and
+<strong>regressions relative to baseline</strong> (a regression = baseline passed a task that the
+candidate now fails; tracked overall and specifically on the adversarial split).</li>
+<li>Builds the <strong>skill-promotion gate</strong> comparing the naive rule vs. the DreamGym rule.</li>
+</ol>
+<p>Output: <code>runs/evaluation.json</code> (full payload incl. every trace).</p>
+<hr>
+<h2>10. The promotion gate (<code>promotion.py</code>) — the immune system</h2>
+<pre><code class="language-python">def naive_promote(train_delta) -&gt; bool:
+    return train_delta &gt; 0          # ship anything that helped training
+</code></pre>
+<pre><code class="language-python">def promote_skill(train_delta, heldout_delta, adversarial_delta,
+                  adversarial_regressions, practice_score,
+                  min_heldout_delta=0.01, min_practice_score=0.60,
+                  max_adversarial_regressions=0) -&gt; bool:
+    return (train_delta &gt;= 0
+            and heldout_delta &gt;= min_heldout_delta
+            and adversarial_delta &gt;= 0
+            and adversarial_regressions &lt;= max_adversarial_regressions
+            and practice_score &gt;= min_practice_score)
+</code></pre>
+<ul>
+<li><strong>Naive</strong> promotes the brittle reflection skill (training improved).</li>
+<li><strong>DreamGym rejects</strong> it because it regresses on adversarial tasks (and/or fails the
+practice floor), and <strong>promotes</strong> the robust skills that transfer with zero regressions.</li>
+</ul>
+<blockquote>
+<p>Note on <code>min_practice_score = 0.60</code>: this floor was calibrated to real live-model
+behavior (a robust skill clears ~2/3 of practice worlds). The <em>decisive</em> transfer
+signal is <code>adversarial_regressions</code> / <code>adversarial_delta</code>; the practice floor is a
+&quot;did it actually learn something&quot; gate. (The original spec used 0.70, calibrated for an
+earlier hardcoded practice score; this was lowered when practice scoring became real.)</p>
+</blockquote>
+<hr>
+<h2>11. Reports (<code>report.py</code>)</h2>
+<p><code>generate_report()</code> renders <code>reports/report.md</code> and <code>reports/report.html</code> (Jinja2) from
+<code>runs/evaluation.json</code>: problem, method, generated curricula, skill snippets, the two
+result tables (per-method and per-skill-gate), the key finding, hackathon-theme fit, the
+&quot;why this is not a banned project&quot; statement, and a 3-minute demo script.</p>
+<p>A representative real run is also captured at <code>reports/live_model_run_qwen.md</code>.</p>
+<hr>
+<h2>12. CLI (<code>cli.py</code>, Typer)</h2>
+<pre><code class="language-bash">python -m terminal_dreamgym.cli init-demo            # write data, templates, dirs
+python -m terminal_dreamgym.cli run-baseline         # baseline over all tasks
+python -m terminal_dreamgym.cli diagnose  --from-run runs/baseline.json
+python -m terminal_dreamgym.cli generate-curricula --from-diagnoses runs/diagnoses.json
+python -m terminal_dreamgym.cli generate-skills    --from-curricula curricula/generated
+python -m terminal_dreamgym.cli evaluate             # 3 strategies + practice + gate
+python -m terminal_dreamgym.cli report               # md + html
+python -m terminal_dreamgym.cli demo                 # the whole loop end-to-end
+python -m terminal_dreamgym.cli gemini-smoke         # verify a Gemini key round-trips
+</code></pre>
+<p>All accept <code>--mode qwen|gemini</code> (default from <code>TERMINAL_DREAMGYM_MODE</code>, i.e. <code>qwen</code>).
+<code>demo</code> prints Rich tables (per-method results, promotion gate, generated worlds, generated
+skills, a sample repaired diff, and the report path).</p>
+<hr>
+<h2>13. Repository map</h2>
+<pre><code>terminal-dreamgym/
+  terminal_dreamgym/
+    cli.py                 # Typer CLI
+    config.py              # paths, provider config, MAX_STEPS, DEFAULT_MODE
+    task_model.py          # TaskSpec + loaders
+    trace_model.py         # CommandTrace / EditTrace / TaskRunTrace
+    curriculum_model.py    # PracticeWorld / Curriculum
+    skill_model.py         # GeneratedSkill
+    sandbox.py             # copy template, run commands (timeout, banned cmds), diff, trace
+    gemini_agent.py        # GeminiClient + OpenAICompatClient + LLMTerminalAgent (the agent loop)
+    runner.py              # build_agent, run tasks/strategies, summarize splits
+    diagnosis.py           # failure-mode → Diagnosis (rule-based)
+    curriculum_generator.py# curricula + materialize real practice worlds + practice TaskSpecs
+    skill_generator.py     # write the 5 SKILL.md files + skill→strategy map
+    evaluator.py           # run strategies, practice scoring, regressions, skill gate
+    promotion.py           # naive_promote vs promote_skill (transfer gate)
+    report.py              # Markdown/HTML report
+    demo_assets.py         # the 20 tasks, splits, original failures
+    utils.py               # json/text io, run ids, success_rate, model_dump
+  task_templates/&lt;family&gt;/ # 4 tiny real repos
+  data/                    # tasks.json, splits.json, original_failures.json
+  curricula/generated/     # generated curriculum JSON
+  skills/ (+ generated/)   # generated SKILL.md files
+  runs/                    # sandboxes/, practice_worlds/, baseline.json, diagnoses.json, evaluation.json
+  reports/                 # report.md/html, live_model_run_qwen.md
+  tests/                   # provider-free unit tests
+</code></pre>
+<hr>
+<h2>14. Tests (<code>tests/</code>, provider-free)</h2>
+<p><code>pytest -q</code> runs <strong>without any model</strong> so CI stays green:</p>
+<ul>
+<li><code>test_promotion.py</code> — naive promotes on train gain; gate rejects on no-heldout-gain or
+adversarial regression; promotes on real transfer.</li>
+<li><code>test_curriculum.py</code> — diagnoses produce the right curricula; each has ≥3 worlds.</li>
+<li><code>test_evaluator.py</code> — success-rate math and regression detection.</li>
+<li><code>test_agent.py</code> — the live agent&#39;s <code>&lt;&lt;&lt;FILE&gt;&gt;&gt;</code> parsing, JSON fallback, and the
+safety guards (refuses test-file edits and out-of-sandbox writes), using a stub client.</li>
+</ul>
+<p>The agent loop itself is exercised live via <code>demo</code>/<code>evaluate</code> against a real provider.</p>
+<hr>
+<h2>15. How to run it</h2>
+<pre><code class="language-bash">pip install -e &quot;.[dev]&quot;
+
+# Local, free (default): needs Ollama running
+ollama pull qwen2.5:7b
+python -m terminal_dreamgym.cli demo
+
+# Gemini path
+cp .env.example .env        # set GEMINI_API_KEY
+python -m terminal_dreamgym.cli gemini-smoke
+python -m terminal_dreamgym.cli demo --mode gemini
+
+# Always works without a model:
+pytest -q
+</code></pre>
+<p><code>.env</code> knobs: <code>TERMINAL_DREAMGYM_MODE</code>, <code>GEMINI_API_KEY</code>, <code>GEMINI_MODEL</code>,
+<code>QWEN_BASE_URL</code>, <code>QWEN_MODEL</code>, <code>TERMINAL_DREAMGYM_MAX_STEPS</code>.</p>
+<hr>
+<h2>16. A real result (Qwen2.5-7B, fully model-driven)</h2>
+<p>From <code>reports/live_model_run_qwen.md</code> (20/20 model-driven per strategy, zero fallbacks):</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th align="right">Train</th>
+<th align="right">Heldout</th>
+<th align="right">Adversarial</th>
+<th align="right">Practice</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Baseline</td>
+<td align="right">2/8</td>
+<td align="right">1/6</td>
+<td align="right">2/6</td>
+<td align="right">6/12</td>
+<td>–</td>
+</tr>
+<tr>
+<td>Reflection-only</td>
+<td align="right">4/8</td>
+<td align="right">2/6</td>
+<td align="right">1/6</td>
+<td align="right">5/12</td>
+<td>REJECTED</td>
+</tr>
+<tr>
+<td>Terminal DreamGym</td>
+<td align="right">6/8</td>
+<td align="right">3/6</td>
+<td align="right">4/6</td>
+<td align="right">8/12</td>
+<td>PROMOTED</td>
+</tr>
+</tbody></table>
+<p>Reflection raised train (2→4) but <strong>regressed adversarial</strong> (broke
+<code>python_sku_preserve_comma</code>); the gate rejected it. DreamGym led every split with zero
+regressions and promoted the robust skills.</p>
+<hr>
+<h2>17. Honest limitations (read this)</h2>
+<ul>
+<li><strong>Live-model numbers are noisy and model-dependent.</strong> The clean monotonic
+<code>2/8 → 5/8 → 6/8</code> story is <em>not</em> guaranteed every run; the contrast that matters lives
+in <strong>transfer + regressions</strong>, which is exactly what the gate checks. A weaker model
+solves fewer tasks (and sometimes makes formatting mistakes that count, honestly, as
+failures).</li>
+<li><strong>Each task is solved independently with its test visible.</strong> A very capable model can
+read the adversarial test and just satisfy it, which compresses the contrast. The
+benchmark&#39;s value is in the <em>strategy framing</em> (skills + transfer gate), not in hiding
+the answer.</li>
+<li><strong>Gemini free tier (~20 req/day) cannot run the full loop</strong> (~200 calls). Use <code>qwen</code>
+for a full free run, or a paid Gemini key.</li>
+<li><strong>Diagnosis is rule-based</strong>, not an LLM call (kept deterministic for stable curricula);
+the Gemini-reads-traces path is documented but not the default.</li>
+<li><strong><code>min_practice_score</code> was tuned (0.70 → 0.60)</strong> to match real practice-pass rates; see
+§10.</li>
+</ul>
+<hr>
+<h2>18. Why this fits the hackathon</h2>
+<ul>
+<li><strong>Recursive Intelligence:</strong> the agent modifies its future behavior by generating and
+testing new terminal skills.</li>
+<li><strong>Continual Learning:</strong> failures become curricula and reusable skills.</li>
+<li><strong>Self-Improvement Stack:</strong> traces → generated eval environments → practice worlds →
+transfer gate → promotion logic.</li>
+<li><strong>Gemini 3.5:</strong> Gemini (or any model) is the recursive engine — it reads traces, edits
+code, and produces skills; Terminal DreamGym is the harness that decides whether those
+skills actually transfer.</li>
+</ul>
+<p>It is explicitly <strong>not</strong> a RAG app, a Streamlit app, a dashboard, an image analyzer, or
+any of the banned advisor categories. The core is a working terminal self-improvement
+system with an immune system.</p>
+<pre><code>
+</code></pre>
+
+
+</main>
+</body>
+</html>

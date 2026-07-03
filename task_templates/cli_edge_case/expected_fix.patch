@@ -1,0 +1,7 @@
+--- a/cli.py
++++ b/cli.py
+@@
+-    if args.as_json:
+-        print("{result: " + result + "}")
++    if args.as_json:
++        print(json.dumps({"result": result}))

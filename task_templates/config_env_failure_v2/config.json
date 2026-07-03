@@ -1,0 +1,7 @@
+{
+  "request_timeout": 12,
+  "auth": {
+    "token": "local-token-v2"
+  },
+  "region": "us-west-2"
+}

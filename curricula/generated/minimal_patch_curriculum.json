@@ -1,0 +1,45 @@
+{
+  "id": "minimal_patch_curriculum",
+  "source_failure_modes": [
+    "overbroad_patch"
+  ],
+  "target_skill": "minimal_patch_skill.md",
+  "worlds": [
+    {
+      "difficulty": "easy",
+      "family": "python_test_failure",
+      "id": "numeric_comma_easy",
+      "instruction": "Fix formatted numbers without changing SKU parsing.",
+      "score_command": "pytest -q test_app.py::test_parse_price_comma",
+      "teaches": [
+        "minimal_patch",
+        "counterexample_preservation"
+      ],
+      "template": "task_templates/python_test_failure"
+    },
+    {
+      "difficulty": "medium",
+      "family": "python_test_failure",
+      "id": "semantic_comma_counterexample",
+      "instruction": "Preserve semantic punctuation while fixing numeric commas.",
+      "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+      "teaches": [
+        "minimal_patch",
+        "adversarial_counterexample"
+      ],
+      "template": "task_templates/python_test_failure"
+    },
+    {
+      "difficulty": "hard",
+      "family": "python_test_failure",
+      "id": "minimal_parser_patch",
+      "instruction": "Patch the narrow parser boundary and keep nearby behavior stable.",
+      "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+      "teaches": [
+        "minimal_patch",
+        "behavior_preservation"
+      ],
+      "template": "task_templates/python_test_failure"
+    }
+  ]
+}

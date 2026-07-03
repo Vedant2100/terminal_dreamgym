@@ -1,0 +1,7 @@
+--- a/app.py
++++ b/app.py
+@@
+-def render_user(name: str, email: str) -> str:
+-    return format_user(name, email)
++def render_user(name: str, email: str) -> str:
++    return format_user({"name": name, "email": email})

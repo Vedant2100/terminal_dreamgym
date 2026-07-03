@@ -1,0 +1,46 @@
+{
+  "id": "error_handling_curriculum",
+  "source_failure_modes": [
+    "swallowed_error",
+    "defaulted_required_secret"
+  ],
+  "target_skill": "error_handling_skill.md",
+  "worlds": [
+    {
+      "difficulty": "easy",
+      "family": "cli_edge_case",
+      "id": "empty_input_recovery",
+      "instruction": "Allow empty input but keep invalid input explicit.",
+      "score_command": "pytest -q test_cli.py::test_empty_input",
+      "teaches": [
+        "recoverable_error",
+        "cli_contract"
+      ],
+      "template": "task_templates/cli_edge_case"
+    },
+    {
+      "difficulty": "medium",
+      "family": "cli_edge_case",
+      "id": "invalid_input_nonzero",
+      "instruction": "Return a clear nonzero CLI error for invalid input.",
+      "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+      "teaches": [
+        "nonzero_exit",
+        "validation"
+      ],
+      "template": "task_templates/cli_edge_case"
+    },
+    {
+      "difficulty": "hard",
+      "family": "cli_edge_case",
+      "id": "json_error_contract",
+      "instruction": "Emit valid JSON error payloads without swallowing failures.",
+      "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+      "teaches": [
+        "json_error",
+        "machine_readable_errors"
+      ],
+      "template": "task_templates/cli_edge_case"
+    }
+  ]
+}

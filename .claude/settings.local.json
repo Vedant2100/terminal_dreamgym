@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python -m pytest -q)",
+      "Read(//Users/vedantb/Downloads/vedant/Repos/skillfalsifier/**)",
+      "Bash(sed -E 's/\\(=.{4}\\).*/\\\\1****REDACTED****/' .env)",
+      "Bash(cp \"/Users/vedantb/Downloads/vedant/Repos/skillfalsifier/.env\" \"/Users/vedantb/Documents/Codex/2026-06-27/files-mentioned-by-the-user-you/terminal-dreamgym/.env\")",
+      "Bash(sed -E 's/\\(=.{6}\\).*/\\\\1****REDACTED****/' .env)",
+      "Bash(.venv/bin/python -m terminal_dreamgym.cli gemini-smoke)",
+      "Bash(.venv/bin/python -m terminal_dreamgym.cli demo --mode gemini)",
+      "Bash(.venv/bin/python -)",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(.venv/bin/python -m terminal_dreamgym.cli demo --mode qwen)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(cd /Users/vedantb/Documents/Codex/2026-06-27/files-mentioned-by-the-user-you/terminal-dreamgym *)",
+      "Bash(.venv/bin/python -m pytest -q tests/test_promotion.py)",
+      "Bash(sed -n '/## 5. Results/,/## 6/p' reports/report.md)",
+      "Bash(.venv/bin/python -m terminal_dreamgym.cli report)",
+      "Bash(.venv/bin/python -c \"import json;d=json.load\\(open\\('runs/evaluation.json'\\)\\);print\\('default evaluation.json mode:',d['mode']\\)\")",
+      "Bash(cursor \"/Users/vedantb/Documents/Codex/2026-06-27/files-mentioned-by-the-user-you/terminal-dreamgym\")"
+    ]
+  }
+}

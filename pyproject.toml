@@ -1,0 +1,28 @@
+[project]
+name = "terminal-dreamgym"
+version = "0.1.0"
+description = "Agents that dream their own practice terminals"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic",
+  "typer",
+  "rich",
+  "jinja2",
+  "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff"
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["terminal_dreamgym*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

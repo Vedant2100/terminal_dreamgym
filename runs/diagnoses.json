@@ -1,0 +1,77 @@
+[
+  {
+    "evidence": [
+      "Baseline attempted broad edits after seeing a red test suite",
+      "The agent did not isolate the smallest failing command",
+      "No file inspection step appeared before the patch"
+    ],
+    "failure_id": "trace_first_debugging",
+    "failure_mode": "edited_before_reading_trace",
+    "missing_capability": "inspect failing command output before editing",
+    "recommended_practice_worlds": [
+      "traceback_single_test",
+      "traceback_wrong_file_trap",
+      "traceback_config_pointer"
+    ]
+  },
+  {
+    "evidence": [
+      "Reflection-only catches invalid input and exits successfully",
+      "JSON error output must remain machine-readable",
+      "Missing required values should not become empty strings"
+    ],
+    "failure_id": "cli_empty_input_train",
+    "failure_mode": "swallowed_error",
+    "missing_capability": "distinguish recoverable inputs from errors that must fail loudly",
+    "recommended_practice_worlds": [
+      "empty_input_recovery",
+      "invalid_input_nonzero",
+      "json_error_contract"
+    ]
+  },
+  {
+    "evidence": [
+      "Config key changed from timeout to request_timeout",
+      "A nested auth.token contract was ignored",
+      "Default values hid required configuration failures"
+    ],
+    "failure_id": "config_timeout_train",
+    "failure_mode": "contract_drift",
+    "missing_capability": "compare expected and observed config schemas",
+    "recommended_practice_worlds": [
+      "renamed_config_key",
+      "nested_secret_contract",
+      "typed_config_adapter"
+    ]
+  },
+  {
+    "evidence": [
+      "Dependency changed from positional arguments to object input",
+      "Naive patch risks breaking consumers that already use the new contract",
+      "The adapter layer is the smallest safe fix location"
+    ],
+    "failure_id": "dependency_user_train",
+    "failure_mode": "interface_contract_drift",
+    "missing_capability": "patch caller adapters without mutating dependency contracts",
+    "recommended_practice_worlds": [
+      "adapter_signature_drift",
+      "schema_result_drift",
+      "new_contract_counterexample"
+    ]
+  },
+  {
+    "evidence": [
+      "Patch removed commas globally",
+      "Adversarial SKU test failed",
+      "Agent did not inspect function-specific contract"
+    ],
+    "failure_id": "price_comma_train",
+    "failure_mode": "overbroad_patch",
+    "missing_capability": "distinguish numeric formatting commas from semantic commas",
+    "recommended_practice_worlds": [
+      "numeric_comma_easy",
+      "semantic_comma_counterexample",
+      "minimal_parser_patch"
+    ]
+  }
+]

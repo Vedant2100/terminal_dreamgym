@@ -1,0 +1,9 @@
+--- a/app.py
++++ b/app.py
+@@
+-        "timeout": data["timeout"],
+-        "api_key": env.get("API_KEY") or data["api_key"],
+-        "region": data["region"],
++        "timeout": int(data.get("request_timeout", data.get("timeout", 30))),
++        "api_key": env.get("API_KEY") or data.get("auth", {}).get("token"),
++        "region": data.get("region", "us-east-1"),

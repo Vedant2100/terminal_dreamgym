@@ -1,0 +1,46 @@
+{
+  "id": "contract_drift_curriculum",
+  "source_failure_modes": [
+    "contract_drift",
+    "interface_contract_drift"
+  ],
+  "target_skill": "contract_drift_skill.md",
+  "worlds": [
+    {
+      "difficulty": "easy",
+      "family": "config_env_failure",
+      "id": "renamed_config_key",
+      "instruction": "Map request_timeout to timeout without hiding missing secrets.",
+      "score_command": "pytest -q test_config.py::test_request_timeout_key",
+      "teaches": [
+        "schema_compare",
+        "adapter_patch"
+      ],
+      "template": "task_templates/config_env_failure"
+    },
+    {
+      "difficulty": "medium",
+      "family": "config_env_failure",
+      "id": "nested_secret_contract",
+      "instruction": "Read auth.token from the new config schema.",
+      "score_command": "pytest -q test_config.py::test_nested_auth_token",
+      "teaches": [
+        "nested_schema",
+        "required_secret"
+      ],
+      "template": "task_templates/config_env_failure"
+    },
+    {
+      "difficulty": "hard",
+      "family": "dependency_mismatch",
+      "id": "adapter_signature_drift",
+      "instruction": "Patch the app adapter for a changed dependency signature.",
+      "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+      "teaches": [
+        "interface_compare",
+        "adapter_patch"
+      ],
+      "template": "task_templates/dependency_mismatch"
+    }
+  ]
+}

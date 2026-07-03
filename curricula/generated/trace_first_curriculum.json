@@ -1,0 +1,45 @@
+{
+  "id": "trace_first_curriculum",
+  "source_failure_modes": [
+    "edited_before_reading_trace"
+  ],
+  "target_skill": "trace_first_debugging_skill.md",
+  "worlds": [
+    {
+      "difficulty": "easy",
+      "family": "python_test_failure",
+      "id": "traceback_single_test",
+      "instruction": "Run the failing test, read the traceback, and patch only the named function.",
+      "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+      "teaches": [
+        "trace_first",
+        "targeted_test"
+      ],
+      "template": "task_templates/python_test_failure"
+    },
+    {
+      "difficulty": "medium",
+      "family": "python_test_failure",
+      "id": "traceback_wrong_file_trap",
+      "instruction": "Avoid editing the caller when the traceback points at the parser.",
+      "score_command": "pytest -q test_app.py::test_parse_price_comma",
+      "teaches": [
+        "trace_first",
+        "file_localization"
+      ],
+      "template": "task_templates/python_test_failure"
+    },
+    {
+      "difficulty": "hard",
+      "family": "config_env_failure",
+      "id": "traceback_config_pointer",
+      "instruction": "Use stderr to find the missing config adapter before editing.",
+      "score_command": "pytest -q test_config.py::test_request_timeout_key",
+      "teaches": [
+        "trace_first",
+        "contract_check"
+      ],
+      "template": "task_templates/config_env_failure"
+    }
+  ]
+}

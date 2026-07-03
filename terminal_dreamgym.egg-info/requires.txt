@@ -1,0 +1,9 @@
+pydantic
+typer
+rich
+jinja2
+python-dotenv
+
+[dev]
+pytest
+ruff

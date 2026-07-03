@@ -1,0 +1,1602 @@
+[
+  {
+    "expected_failure_mode": "edited_before_reading_trace",
+    "family": "python_test_failure",
+    "id": "python_email_whitespace_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "normalization"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "edited_before_reading_trace",
+    "family": "python_test_failure",
+    "id": "python_email_whitespace_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "normalization"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "edited_before_reading_trace",
+    "family": "python_test_failure",
+    "id": "python_email_whitespace_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "normalization"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "edited_before_reading_trace",
+    "family": "python_test_failure",
+    "id": "python_email_whitespace_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "normalization"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "edited_before_reading_trace",
+    "family": "python_test_failure",
+    "id": "python_email_whitespace_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_normalize_email_whitespace",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "normalization"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_price_comma_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_comma",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_price_comma_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_comma",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_price_comma_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_comma",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_price_comma_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_comma",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_price_comma_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_comma",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_empty_input_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_empty_input",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "empty"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v1"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_empty_input_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_empty_input",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "empty"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v2"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_empty_input_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_empty_input",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "empty"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v3"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_empty_input_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_empty_input",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "empty"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v4"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_empty_input_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_empty_input",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "empty"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v5"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_json_flag_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_flag_returns_valid_json",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v1"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_json_flag_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_flag_returns_valid_json",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v2"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_json_flag_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_flag_returns_valid_json",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v3"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_json_flag_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_flag_returns_valid_json",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v4"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_json_flag_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_flag_returns_valid_json",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v5"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_timeout_key_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_key",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "timeout"
+    ],
+    "template_dir": "task_templates/config_env_failure_v1"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_timeout_key_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_key",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "timeout"
+    ],
+    "template_dir": "task_templates/config_env_failure_v2"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_timeout_key_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_key",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "timeout"
+    ],
+    "template_dir": "task_templates/config_env_failure_v3"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_timeout_key_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_key",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "timeout"
+    ],
+    "template_dir": "task_templates/config_env_failure_v4"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_timeout_key_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_key",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "timeout"
+    ],
+    "template_dir": "task_templates/config_env_failure_v5"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_and_optional_values",
+    "family": "config_env_failure",
+    "id": "config_missing_optional_region_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_optional_region_defaults",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "optional"
+    ],
+    "template_dir": "task_templates/config_env_failure_v1"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_and_optional_values",
+    "family": "config_env_failure",
+    "id": "config_missing_optional_region_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_optional_region_defaults",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "optional"
+    ],
+    "template_dir": "task_templates/config_env_failure_v2"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_and_optional_values",
+    "family": "config_env_failure",
+    "id": "config_missing_optional_region_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_optional_region_defaults",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "optional"
+    ],
+    "template_dir": "task_templates/config_env_failure_v3"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_and_optional_values",
+    "family": "config_env_failure",
+    "id": "config_missing_optional_region_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_optional_region_defaults",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "optional"
+    ],
+    "template_dir": "task_templates/config_env_failure_v4"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_and_optional_values",
+    "family": "config_env_failure",
+    "id": "config_missing_optional_region_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_optional_region_defaults",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "optional"
+    ],
+    "template_dir": "task_templates/config_env_failure_v5"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_user_signature_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "signature"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v1"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_user_signature_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "signature"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v2"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_user_signature_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "signature"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v3"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_user_signature_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "signature"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v4"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_user_signature_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_user_signature_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "signature"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v5"
+  },
+  {
+    "expected_failure_mode": "inspected_wrong_layer",
+    "family": "dependency_mismatch",
+    "id": "dependency_parse_result_shape_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_parse_result_shape_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "schema"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v1"
+  },
+  {
+    "expected_failure_mode": "inspected_wrong_layer",
+    "family": "dependency_mismatch",
+    "id": "dependency_parse_result_shape_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_parse_result_shape_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "schema"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v2"
+  },
+  {
+    "expected_failure_mode": "inspected_wrong_layer",
+    "family": "dependency_mismatch",
+    "id": "dependency_parse_result_shape_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_parse_result_shape_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "schema"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v3"
+  },
+  {
+    "expected_failure_mode": "inspected_wrong_layer",
+    "family": "dependency_mismatch",
+    "id": "dependency_parse_result_shape_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_parse_result_shape_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "schema"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v4"
+  },
+  {
+    "expected_failure_mode": "inspected_wrong_layer",
+    "family": "dependency_mismatch",
+    "id": "dependency_parse_result_shape_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_parse_result_shape_drift",
+    "scorer": "pytest",
+    "split": "train",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "schema"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v5"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_slug_punctuation_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_slugify_punctuation",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "slug",
+      "punctuation"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_slug_punctuation_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_slugify_punctuation",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "slug",
+      "punctuation"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_slug_punctuation_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_slugify_punctuation",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "slug",
+      "punctuation"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_slug_punctuation_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_slugify_punctuation",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "slug",
+      "punctuation"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_slug_punctuation_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_slugify_punctuation",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "slug",
+      "punctuation"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "minimal_boundary_condition",
+    "family": "python_test_failure",
+    "id": "python_price_currency_spacing_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "spacing"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "minimal_boundary_condition",
+    "family": "python_test_failure",
+    "id": "python_price_currency_spacing_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "spacing"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "minimal_boundary_condition",
+    "family": "python_test_failure",
+    "id": "python_price_currency_spacing_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "spacing"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "minimal_boundary_condition",
+    "family": "python_test_failure",
+    "id": "python_price_currency_spacing_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "spacing"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "minimal_boundary_condition",
+    "family": "python_test_failure",
+    "id": "python_price_currency_spacing_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_parse_price_currency_spacing",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "price",
+      "spacing"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_missing_file_error_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_missing_file_error_is_clear",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "file"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v1"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_missing_file_error_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_missing_file_error_is_clear",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "file"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v2"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_missing_file_error_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_missing_file_error_is_clear",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "file"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v3"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_missing_file_error_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_missing_file_error_is_clear",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "file"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v4"
+  },
+  {
+    "expected_failure_mode": "ignored_cli_error_message",
+    "family": "cli_edge_case",
+    "id": "cli_missing_file_error_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_missing_file_error_is_clear",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "file"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v5"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_nested_auth_token_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_nested_auth_token",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "auth"
+    ],
+    "template_dir": "task_templates/config_env_failure_v1"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_nested_auth_token_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_nested_auth_token",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "auth"
+    ],
+    "template_dir": "task_templates/config_env_failure_v2"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_nested_auth_token_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_nested_auth_token",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "auth"
+    ],
+    "template_dir": "task_templates/config_env_failure_v3"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_nested_auth_token_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_nested_auth_token",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "auth"
+    ],
+    "template_dir": "task_templates/config_env_failure_v4"
+  },
+  {
+    "expected_failure_mode": "contract_drift",
+    "family": "config_env_failure",
+    "id": "config_nested_auth_token_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_nested_auth_token",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "auth"
+    ],
+    "template_dir": "task_templates/config_env_failure_v5"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_order_signature_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_order_signature_drift",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "order"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v1"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_order_signature_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_order_signature_drift",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "order"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v2"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_order_signature_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_order_signature_drift",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "order"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v3"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_order_signature_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_order_signature_drift",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "order"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v4"
+  },
+  {
+    "expected_failure_mode": "interface_contract_drift",
+    "family": "dependency_mismatch",
+    "id": "dependency_format_order_signature_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_format_order_signature_drift",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "order"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v5"
+  },
+  {
+    "expected_failure_mode": "contract_type_drift",
+    "family": "config_env_failure",
+    "id": "config_request_timeout_type_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_type_is_int",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "type"
+    ],
+    "template_dir": "task_templates/config_env_failure_v1"
+  },
+  {
+    "expected_failure_mode": "contract_type_drift",
+    "family": "config_env_failure",
+    "id": "config_request_timeout_type_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_type_is_int",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "type"
+    ],
+    "template_dir": "task_templates/config_env_failure_v2"
+  },
+  {
+    "expected_failure_mode": "contract_type_drift",
+    "family": "config_env_failure",
+    "id": "config_request_timeout_type_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_type_is_int",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "type"
+    ],
+    "template_dir": "task_templates/config_env_failure_v3"
+  },
+  {
+    "expected_failure_mode": "contract_type_drift",
+    "family": "config_env_failure",
+    "id": "config_request_timeout_type_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_type_is_int",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "type"
+    ],
+    "template_dir": "task_templates/config_env_failure_v4"
+  },
+  {
+    "expected_failure_mode": "contract_type_drift",
+    "family": "config_env_failure",
+    "id": "config_request_timeout_type_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_request_timeout_type_is_int",
+    "scorer": "pytest",
+    "split": "heldout",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "type"
+    ],
+    "template_dir": "task_templates/config_env_failure_v5"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_sku_preserve_comma_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "sku",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_sku_preserve_comma_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "sku",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_sku_preserve_comma_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "sku",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_sku_preserve_comma_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "sku",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_sku_preserve_comma_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_sku_preserves_semantic_comma",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "sku",
+      "comma"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_invalid_input_nonzero_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "invalid"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v1"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_invalid_input_nonzero_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "invalid"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v2"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_invalid_input_nonzero_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "invalid"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v3"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_invalid_input_nonzero_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "invalid"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v4"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_invalid_input_nonzero_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_invalid_input_returns_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "invalid"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v5"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_secret",
+    "family": "config_env_failure",
+    "id": "config_missing_required_api_key_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_required_api_key_fails_loudly",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "secret"
+    ],
+    "template_dir": "task_templates/config_env_failure_v1"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_secret",
+    "family": "config_env_failure",
+    "id": "config_missing_required_api_key_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_required_api_key_fails_loudly",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "secret"
+    ],
+    "template_dir": "task_templates/config_env_failure_v2"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_secret",
+    "family": "config_env_failure",
+    "id": "config_missing_required_api_key_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_required_api_key_fails_loudly",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "secret"
+    ],
+    "template_dir": "task_templates/config_env_failure_v3"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_secret",
+    "family": "config_env_failure",
+    "id": "config_missing_required_api_key_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_required_api_key_fails_loudly",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "secret"
+    ],
+    "template_dir": "task_templates/config_env_failure_v4"
+  },
+  {
+    "expected_failure_mode": "defaulted_required_secret",
+    "family": "config_env_failure",
+    "id": "config_missing_required_api_key_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_config.py::test_missing_required_api_key_fails_loudly",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "config",
+      "secret"
+    ],
+    "template_dir": "task_templates/config_env_failure_v5"
+  },
+  {
+    "expected_failure_mode": "patched_dependency_instead_of_adapter",
+    "family": "dependency_mismatch",
+    "id": "dependency_no_global_adapter_break_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_do_not_break_new_dependency_contract",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "adapter"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v1"
+  },
+  {
+    "expected_failure_mode": "patched_dependency_instead_of_adapter",
+    "family": "dependency_mismatch",
+    "id": "dependency_no_global_adapter_break_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_do_not_break_new_dependency_contract",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "adapter"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v2"
+  },
+  {
+    "expected_failure_mode": "patched_dependency_instead_of_adapter",
+    "family": "dependency_mismatch",
+    "id": "dependency_no_global_adapter_break_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_do_not_break_new_dependency_contract",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "adapter"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v3"
+  },
+  {
+    "expected_failure_mode": "patched_dependency_instead_of_adapter",
+    "family": "dependency_mismatch",
+    "id": "dependency_no_global_adapter_break_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_do_not_break_new_dependency_contract",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "adapter"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v4"
+  },
+  {
+    "expected_failure_mode": "patched_dependency_instead_of_adapter",
+    "family": "dependency_mismatch",
+    "id": "dependency_no_global_adapter_break_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_package.py::test_do_not_break_new_dependency_contract",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "dependency",
+      "adapter"
+    ],
+    "template_dir": "task_templates/dependency_mismatch_v5"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_email_preserve_plus_tag_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_email_preserves_plus_tag",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "plus"
+    ],
+    "template_dir": "task_templates/python_test_failure_v1"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_email_preserve_plus_tag_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_email_preserves_plus_tag",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "plus"
+    ],
+    "template_dir": "task_templates/python_test_failure_v2"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_email_preserve_plus_tag_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_email_preserves_plus_tag",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "plus"
+    ],
+    "template_dir": "task_templates/python_test_failure_v3"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_email_preserve_plus_tag_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_email_preserves_plus_tag",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "plus"
+    ],
+    "template_dir": "task_templates/python_test_failure_v4"
+  },
+  {
+    "expected_failure_mode": "overbroad_patch",
+    "family": "python_test_failure",
+    "id": "python_email_preserve_plus_tag_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_app.py::test_email_preserves_plus_tag",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "email",
+      "plus"
+    ],
+    "template_dir": "task_templates/python_test_failure_v5"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_json_error_valid_v1",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json-error"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v1"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_json_error_valid_v2",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json-error"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v2"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_json_error_valid_v3",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json-error"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v3"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_json_error_valid_v4",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json-error"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v4"
+  },
+  {
+    "expected_failure_mode": "swallowed_error",
+    "family": "cli_edge_case",
+    "id": "cli_json_error_valid_v5",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "max_steps": 8,
+    "score_command": "pytest -q test_cli.py::test_json_error_is_valid_and_nonzero",
+    "scorer": "pytest",
+    "split": "adversarial",
+    "success_condition": "all_tests_pass",
+    "tags": [
+      "cli",
+      "json-error"
+    ],
+    "template_dir": "task_templates/cli_edge_case_v5"
+  }
+]

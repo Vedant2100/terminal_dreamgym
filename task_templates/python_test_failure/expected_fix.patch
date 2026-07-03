@@ -1,0 +1,8 @@
+--- a/app.py
++++ b/app.py
+@@
+-def parse_price(value: str) -> float:
+-    return float(value.replace("$", ""))
++def parse_price(value: str) -> float:
++    cleaned = value.strip().replace("$", "").replace(",", "").replace(" ", "")
++    return float(cleaned)
