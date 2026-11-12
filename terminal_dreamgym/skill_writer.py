@@ -82,8 +82,12 @@ def writer_prompt(digests: list[str]) -> str:
 
 def _clean(reply: str) -> str:
     text = re.sub(r"^```[a-zA-Z]*\n", "", reply.strip())
-    text = re.sub(r"\n```\s*$", "", text)
-    return text.strip()[:MAX_SKILL_CHARS]
+    text = re.sub(r"\n```\s*$", "", text).strip()
+    if len(text) <= MAX_SKILL_CHARS:
+        return text
+    # Over the cap: keep whole lines only, so no step is cut off mid-sentence.
+    cut = text[:MAX_SKILL_CHARS]
+    return cut[: cut.rfind("\n")].rstrip() if "\n" in cut else cut
 
 
 def family_identifiers(family: str) -> set[str]:

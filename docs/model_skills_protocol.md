@@ -32,8 +32,10 @@ The earlier matched evaluation (`docs/matched_eval_protocol.md`,
 - **Writer:** the same `qwen2.5:7b` model, temperature 0.7, max 2,048 output
   tokens, one call per (seed, F). The prompt asks for general guidance with no
   file, function, test names or literal values from the traces, and at most
-  1,500 characters. The reply is cut at 1,700 characters (the four handwritten
-  skills total 1,676).
+  1,500 characters. A reply over 1,700 characters (the four handwritten skills
+  total 1,676) is cut at the last line break before 1,700, so no step ends
+  mid-sentence. (Set after the smoke run, before the counted run: all four smoke
+  skills overran the request, at 2,000–2,500 characters.)
 - 5 seeds × 4 families = 20 skills, saved in `skills/model_written/` with the
   prompt and metadata. A leak check lists any function name from F's repo that
   appears in F's skill. Skills are used as written; none are edited or filtered.

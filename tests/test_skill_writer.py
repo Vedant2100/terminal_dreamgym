@@ -106,3 +106,11 @@ def test_model_skill_condition_uses_the_family_skill(tmp_path, monkeypatch):
 def test_model_skill_without_skills_dir_is_an_error(tmp_path):
     with pytest.raises(ValueError):
         run_matched(tmp_path / "r.jsonl", conditions=["model_skill"], seeds=[1], task_ids=["config_timeout_key_v1"])
+
+
+def test_overlong_skill_is_cut_at_a_line_break():
+    from terminal_dreamgym.skill_writer import _clean
+
+    text = "# Skill: x\n" + "\n".join(f"{i}. " + "word " * 30 for i in range(40))
+    out = _clean(text)
+    assert len(out) <= MAX_SKILL_CHARS and text.startswith(out) and text[len(out)] == "\n"
