@@ -1,3 +1,10 @@
+> **Note (2026-11-12).** This explainer describes the July hackathon design. Parts of
+> it no longer match the code or the evidence: diagnosis is rule-based and the
+> skills are fixed handwritten texts (no model writes them); the committed
+> "sweep" results were unit-test mock data and have been removed; the baseline
+> now gets the same attempt budget as other strategies. The README's "Status and
+> evidence" section is the current account.
+
 # Terminal DreamGym — Project Explainer (from scratch)
 
 > Agents that dream their own practice terminals.

@@ -1,3 +1,11 @@
+> **Superseded (2026-11-12).** This July run is kept for the record but does not
+> support the conclusions written below. The baseline got 1 model attempt while
+> the skill strategies got 3; it was a single run of 20 tasks (8/6/6) at
+> temperature 0.1; one of the 6 held-out tasks passes before any edit; three
+> dependency tests were unsolvable; and the "skills" are fixed handwritten texts,
+> not generated. See `README.md` and `reports/matched_eval.md` for the matched
+> re-evaluation.
+
 # Live-model run: Qwen2.5-7B (Ollama)
 
 This is a real, non-mock run of the Terminal DreamGym loop where an actual LLM
