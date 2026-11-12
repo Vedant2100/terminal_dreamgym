@@ -1,7 +1,9 @@
 # Matched-condition evaluation: protocol
 
 Written and committed before any model run under this protocol (2026-11-12).
-Changes after the run starts are listed at the bottom with a reason.
+Changes are listed under Deviations at the bottom. The text above Deviations
+describes the setup actually used for the reported run (run 2), including those
+changes.
 
 ## Question
 
@@ -16,7 +18,10 @@ generation next; it would not show that the system improves itself.
 
 ## Why a new protocol
 
-- The July demo gave the baseline 1 model attempt and the skill strategies up to 3,
+The July hackathon demo reported large gains from the skills. Its setup had these
+problems:
+
+- The demo gave the baseline 1 model attempt and the skill strategies up to 3,
   so a skill effect was confounded with extra attempts.
 - Success counted only the target test. A fix that broke other behaviour still
   counted.
@@ -48,7 +53,8 @@ All differ only in the prompt's ACTIVE SKILLS block.
 
 ## Outcome
 
-**Strict success:** the task's scoring command exits 0 **and** no test that passed
+**Strict success:** the task's scoring command (pytest on the one target test)
+exits 0 **and** no test that passed
 in the untouched repo fails after the agent's edits (pass-to-pass check over the
 whole suite, run by the harness and not shown to the agent). A full-suite pass
 is not required because every template repo contains other tasks' bugs by design.
@@ -99,12 +105,16 @@ is trained on anything, so all splits are evaluation data here.
 
 ## Run rules
 
-- One GPU, serialized with the user's other jobs
-  (`--job-name=fm-serial --dependency=singleton`).
-- A smoke run on a few tasks with a separate output file and seed 99 checks the
-  pipeline and timing. It is not analysed.
-- Runs with a model-call failure (`infra_error`) are rerun automatically by the
-  resume logic; nothing else is rerun. If the server stalls, restart the server
+- Command: `sbatch scripts/matched_eval.sbatch runs/matched_eval.jsonl --seeds 1,2,3`,
+  which starts Ollama on one GPU and runs `python -m terminal_dreamgym.cli
+  matched-eval`. Smoke run: same script with `runs/smoke_matched.jsonl --seeds 99
+  --tasks <4 task ids>`. Analysis: `python -m terminal_dreamgym.cli matched-report`.
+- One GPU. On the shared UCR cluster, GPU jobs run one at a time under a common job
+  name (`--job-name=fm-serial --dependency=singleton`).
+- The smoke run checks the pipeline and timing only and is not analysed.
+- Rerunning `matched-eval` with the same output file resumes it: finished records
+  are kept, and only records with a model-call or harness failure (`infra_error`)
+  are rerun. Nothing else is rerun. If the server stalls, restart the server
   and resume; record it below.
 - All 1,200 records are reported; no task, seed or condition is dropped except by
   the exclusion rule above.
