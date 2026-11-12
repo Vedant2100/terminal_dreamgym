@@ -113,4 +113,7 @@ def test_overlong_skill_is_cut_at_a_line_break():
 
     text = "# Skill: x\n" + "\n".join(f"{i}. " + "word " * 30 for i in range(40))
     out = _clean(text)
-    assert len(out) <= MAX_SKILL_CHARS and text.startswith(out) and text[len(out)] == "\n"
+    kept, original = out.split("\n"), text.split("\n")
+    assert len(out) <= MAX_SKILL_CHARS
+    assert kept[:-1] == original[: len(kept) - 1]  # whole lines only
+    assert kept[-1] == original[len(kept) - 1].rstrip()
