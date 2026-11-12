@@ -55,7 +55,8 @@ is not required because every template repo contains other tasks' bugs by design
 
 Limit of the regression check: in the untouched repos almost no test passes. The
 only passing test is `test_parse_price_currency_spacing` in the Python repos, so
-for 15 of the 19 analysed base tasks strict success equals target-only success.
+for 14 of the 19 analysed base tasks (all cli, config and dependency tasks) strict
+success equals target-only success.
 The check catches the agent breaking that one test or breaking imports; it is not
 a general regression guard. A real guard needs extra tests that pass at baseline.
 
