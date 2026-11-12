@@ -19,7 +19,7 @@ from typing import Any
 from terminal_dreamgym.config import LLM_MAX_OUTPUT_TOKENS, LLM_MAX_STEPS, LLM_TEMPERATURE
 from terminal_dreamgym.task_model import TaskSpec, load_tasks
 
-CONDITIONS = ["no_skill", "handwritten_skills", "placebo", "symptom_patch"]
+CONDITIONS = ["no_skill", "handwritten_skills", "placebo", "symptom_patch", "model_skill"]
 PRIMARY = ("handwritten_skills", "no_skill")
 SECONDARY = [("handwritten_skills", "placebo"), ("placebo", "no_skill"), ("symptom_patch", "no_skill")]
 SPLITS = ["train", "heldout", "adversarial"]
@@ -94,10 +94,13 @@ def run_matched(
     mode: str = "qwen",
     concurrency: int = 4,
     task_ids: list[str] | None = None,
+    skills_dir: Path | None = None,
 ) -> int:
     from terminal_dreamgym.gemini_agent import LLMTerminalAgent
 
-    conditions = conditions or CONDITIONS
+    conditions = conditions or CONDITIONS[:4]
+    if "model_skill" in conditions and skills_dir is None:
+        raise ValueError("model_skill needs skills_dir (see skill_writer.py)")
     seeds = seeds or [1, 2, 3]
     tasks = load_tasks()
     if task_ids:
@@ -119,7 +122,12 @@ def run_matched(
     def work(job):
         condition, seed, task = job
         try:
-            agent = LLMTerminalAgent(strategy=condition, provider=mode)
+            texts = None
+            if condition == "model_skill":
+                from terminal_dreamgym.skill_writer import load_model_skill
+
+                texts = [load_model_skill(skills_dir, seed, task.family)]
+            agent = LLMTerminalAgent(strategy=condition, provider=mode, skill_texts=texts)
             return _record(condition, seed, task, agent.run_task(task, seed=seed))
         except Exception as exc:  # never lose the rest of the run to one job
             return _infra_record(condition, seed, task, exc)
@@ -183,7 +191,8 @@ def paired_difference(records, a, b, metric="success", include=lambda r: True, r
     }
 
 
-def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
+def analyze(records: list[dict[str, Any]], primary=PRIMARY, secondary=None) -> dict[str, Any]:
+    secondary = SECONDARY if secondary is None else secondary
     infra = [r for r in records if r.get("infra_error")]
     records = [r for r in records if not r.get("infra_error")]
     free = {r["base_task"] for r in records if r["solved_before_any_edit"]}
@@ -221,10 +230,10 @@ def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
         }
 
     comparisons = []
-    for a, b in [PRIMARY, *SECONDARY]:
+    for a, b in [primary, *secondary]:
         if a not in conditions or b not in conditions:
             continue
-        entry = {"primary": (a, b) == PRIMARY}
+        entry = {"primary": (a, b) == tuple(primary)}
         entry["overall"] = paired_difference(records, a, b, include=primary_include)
         entry["first_attempt"] = paired_difference(records, a, b, "first_attempt_success", include=primary_include)
         entry["score_only"] = paired_difference(records, a, b, "score_passed", include=primary_include)
@@ -240,7 +249,7 @@ def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
             per_base_task.setdefault(k, {})[c] = round(v, 3)
 
     by_family = {}
-    for a, b in [PRIMARY, *SECONDARY]:
+    for a, b in [primary, *secondary]:
         if a in conditions and b in conditions:
             fam = {}
             for family in sorted({r["family"] for r in records}):

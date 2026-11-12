@@ -101,6 +101,7 @@ def matched_eval_cmd(
     seeds: str = typer.Option("1,2,3", "--seeds"),
     concurrency: int = typer.Option(4, "--concurrency"),
     tasks: str = typer.Option(None, "--tasks", help="Comma-separated task ids (default: all 100)"),
+    skills_dir: Path = typer.Option(None, "--skills-dir", help="Model-written skills, for the model_skill condition"),
 ) -> None:
     """Run the matched-condition evaluation (docs/matched_eval_protocol.md). Resumable."""
     from terminal_dreamgym.matched_eval import current_settings, run_matched
@@ -113,24 +114,44 @@ def matched_eval_cmd(
         mode=mode,
         concurrency=concurrency,
         task_ids=[t.strip() for t in tasks.split(",")] if tasks else None,
+        skills_dir=skills_dir,
     )
     console.print(f"[green]Ran {n} task runs; results in[/green] {out}")
+
+
+@app.command("write-skills")
+def write_skills_cmd(
+    source: Path = typer.Option(RUNS_DIR / "matched_eval.jsonl", "--source", help="Earlier matched-eval results"),
+    out_dir: Path = typer.Option(Path("skills/model_written"), "--out-dir"),
+    seeds: str = typer.Option("1,2,3,4,5", "--seeds"),
+    mode: str = typer.Option(DEFAULT_MODE, "--mode"),
+) -> None:
+    """Have the model write leave-one-family-out skills from its own no-skill traces."""
+    from terminal_dreamgym.skill_writer import write_model_skills
+
+    manifest = write_model_skills(source, [int(x) for x in seeds.split(",")], out_dir, mode=mode)
+    for m in manifest:
+        console.print(f"seed {m['seed']} {m['held_out_family']}: {m['chars']} chars, leaks={m['leaked_identifiers']}")
 
 
 @app.command("matched-report")
 def matched_report_cmd(
     results: Path = typer.Option(RUNS_DIR / "matched_eval.jsonl", "--results"),
     out_dir: Path = typer.Option(REPORTS_DIR, "--out-dir"),
+    name: str = typer.Option("matched_eval", "--name", help="Output file stem"),
+    primary: str = typer.Option("handwritten_skills,no_skill", "--primary", help="A,B"),
+    secondary: str = typer.Option(None, "--secondary", help="A,B;C,D (default: the matched-eval set)"),
 ) -> None:
-    """Analyze matched-eval results into reports/matched_eval.{md,json}."""
+    """Analyze matched-eval results into reports/<name>.{md,json}."""
     import json
 
     from terminal_dreamgym.matched_eval import analyze, load_records, render_markdown
 
-    result = analyze(load_records(results))
+    pairs = [tuple(x.split(",")) for x in secondary.split(";")] if secondary else None
+    result = analyze(load_records(results), primary=tuple(primary.split(",")), secondary=pairs)
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "matched_eval.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-    (out_dir / "matched_eval.md").write_text(render_markdown(result), encoding="utf-8")
+    (out_dir / f"{name}.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    (out_dir / f"{name}.md").write_text(render_markdown(result), encoding="utf-8")
     console.print(render_markdown(result))
 
 

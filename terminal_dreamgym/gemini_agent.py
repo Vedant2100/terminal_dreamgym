@@ -191,6 +191,8 @@ STRATEGY_SKILLS = {
     # Deliberately bad advice ("patch the visible symptom"). The old name
     # "reflection_only" is kept for compatibility; it is not model reflection.
     "symptom_patch": ["reflection_overfit_skill.md"],
+    # Text supplied per task via skill_texts (see skill_writer.py).
+    "model_skill": [],
     "reflection_only": ["reflection_overfit_skill.md"],
     "dreamgym_skill": [
         "trace_first_debugging_skill.md",
@@ -255,12 +257,21 @@ class LLMTerminalAgent:
     is unreachable, the run raises rather than substituting fake results.
     """
 
-    def __init__(self, strategy: str = "dreamgym_skill", provider: str = "gemini", client=None, active_skills: list[str] | None = None):
+    def __init__(
+        self,
+        strategy: str = "dreamgym_skill",
+        provider: str = "gemini",
+        client=None,
+        active_skills: list[str] | None = None,
+        skill_texts: list[str] | None = None,
+    ):
         self.strategy = strategy
         self.provider = provider
         self.client = client or make_client(provider)
         self.max_steps = max(1, LLM_MAX_STEPS)
         self.active_skills = active_skills
+        # Raw skill texts (e.g. model-written skills); used instead of named skills when set.
+        self.skill_texts = skill_texts
 
     @property
     def available(self) -> bool:
@@ -350,6 +361,7 @@ class LLMTerminalAgent:
                 "provider": self.client.name,
                 "model": self.client.model,
                 "active_skills": current_skills,
+                "skill_texts_chars": [len(t) for t in self.skill_texts] if self.skill_texts is not None else None,
                 "notes": notes,
                 "seed": seed,
                 "temperature": LLM_TEMPERATURE,
@@ -405,7 +417,8 @@ class LLMTerminalAgent:
 
     def _build_prompt(self, task: TaskSpec, sandbox: Sandbox, failing_output: str) -> str:
         active_skills = self.active_skills if self.active_skills is not None else STRATEGY_SKILLS.get(self.strategy, [])
-        skills = "\n\n".join(PROMPT_TEXTS[name] for name in active_skills)
+        texts = self.skill_texts if self.skill_texts is not None else [PROMPT_TEXTS[n] for n in active_skills]
+        skills = "\n\n".join(texts)
         skills_block = skills or "(no extra skills provided)"
         editable = self._editable_files(sandbox)
         tests = self._test_files(sandbox)
