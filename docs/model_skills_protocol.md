@@ -82,4 +82,7 @@ the leak check.
 
 ## Deviations
 
-(none yet)
+- Job 311228 was submitted while a unit test of the line-break cut was failing
+  and was cancelled after 5 seconds, before any skill or result was written. The
+  test, not the code, was wrong; it was fixed and the counted run is job 311230
+  (commit `9f2974f`).
