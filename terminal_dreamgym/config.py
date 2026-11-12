@@ -34,4 +34,10 @@ QWEN_MODEL = os.getenv("QWEN_MODEL", "qwen2.5:7b")
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", "ollama")
 
 # How many edit/rerun iterations an LLM agent gets per task before giving up.
+# Every strategy gets the same budget (the baseline used to get 1 while skill
+# strategies got this many, which confounded skill effects with extra attempts).
 LLM_MAX_STEPS = int(os.getenv("TERMINAL_DREAMGYM_MAX_STEPS", "3"))
+# Sampling settings, identical for every strategy. Temperature 0.1 with a fixed
+# seed makes "different seeds" near-duplicates; replication runs use a higher value.
+LLM_TEMPERATURE = float(os.getenv("TERMINAL_DREAMGYM_TEMPERATURE", "0.1"))
+LLM_MAX_OUTPUT_TOKENS = int(os.getenv("TERMINAL_DREAMGYM_MAX_OUTPUT_TOKENS", "2048"))

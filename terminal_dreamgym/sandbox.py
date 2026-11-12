@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import difflib
+import re
 import shlex
 import shutil
 import subprocess
@@ -44,7 +45,7 @@ class Sandbox:
         shutil.copytree(self.task.template_path, root, ignore=shutil.ignore_patterns(*SKIP_DIRS))
         return root
 
-    def run_command(self, cmd: str) -> CommandTrace:
+    def run_command(self, cmd: str, record: bool = True) -> CommandTrace:
         args = shlex.split(cmd)
         if not args:
             raise SandboxError("Empty command")
@@ -77,8 +78,24 @@ class Sandbox:
                 stderr=(exc.stderr or "") + f"\nTimed out after {self.timeout}s",
                 duration_seconds=round(time.perf_counter() - started, 3),
             )
-        self.commands.append(trace)
+        if record:
+            self.commands.append(trace)
         return trace
+
+    def suite_outcomes(self) -> dict[str, str]:
+        """Per-test outcome of the whole suite, e.g. {"test_app.py::test_x": "passed"}.
+
+        This is the harness's own check and is not shown to the agent. A collection
+        error (e.g. the agent broke an import) yields an empty dict, so every test
+        that used to pass counts as a regression.
+        """
+        result = self.run_command("pytest -q -rA -p no:cacheprovider", record=False)
+        outcomes: dict[str, str] = {}
+        for line in result.stdout.splitlines():
+            match = re.match(r"^(PASSED|FAILED|ERROR|SKIPPED|XFAIL|XPASS) (\S+::\S+)", line)
+            if match:
+                outcomes[match.group(2)] = match.group(1).lower()
+        return outcomes
 
     def snapshot(self) -> dict[str, str]:
         files: dict[str, str] = {}

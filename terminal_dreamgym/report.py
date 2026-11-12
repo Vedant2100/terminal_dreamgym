@@ -102,7 +102,7 @@ def build_markdown(evals: dict) -> str:
 
         lines += [
             "",
-            f"**Dreamed-Curriculum trust metric**: The False-Promotion Rate of self-gating is **{_fmt_rate(stats['self_gating_false_promotion_rate'])}**. This represents the percentage of runs where a skill passed the dreamed gate (practice score ≥ 60.0%) but failed to generalize in reality (held-out delta ≤ 0.0%).",
+            f"**Practice-gate false-pass rate**: **{_fmt_rate(stats['practice_gate_false_pass_rate'])}** of skill runs that cleared the practice floor alone (practice score ≥ 60.0%) had a flat or negative held-out delta. This is not the transfer gate's false-promotion rate, which is reported per skill above.",
             "",
             "### Stacking & Interference Diagnostics",
             "",
@@ -188,10 +188,10 @@ def build_html(evals: dict) -> str:
                 <div class="row">
                     {baseline_html}
                     <div class="card trust-card">
-                        <h3>Dreamed-Curriculum Trust Metric</h3>
-                        <div class="metric-value">{_fmt_rate(stats['self_gating_false_promotion_rate'])}</div>
-                        <p class="metric-label">Self-Gating False-Promotion Rate</p>
-                        <p class="metric-desc">Percentage of runs where a skill passed the dreamed gate (practice score ≥ 60.0%) but failed to generalize in reality (held-out delta ≤ 0.0%).</p>
+                        <h3>Practice-Gate Check</h3>
+                        <div class="metric-value">{_fmt_rate(stats['practice_gate_false_pass_rate'])}</div>
+                        <p class="metric-label">Practice-gate false-pass rate</p>
+                        <p class="metric-desc">Share of skill runs that cleared the practice floor alone (practice score ≥ 60.0%) but had a flat or negative held-out delta. Not the transfer gate's false-promotion rate.</p>
                     </div>
                 </div>
                 <h3>Per-Skill Evaluation</h3>

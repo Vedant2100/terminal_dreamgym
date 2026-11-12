@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import uuid
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -10,16 +11,20 @@ from pathlib import Path
 from terminal_dreamgym.config import (
     GEMINI_API_KEY,
     GEMINI_MODEL,
+    LLM_MAX_OUTPUT_TOKENS,
     LLM_MAX_STEPS,
+    LLM_TEMPERATURE,
     QWEN_API_KEY,
     QWEN_BASE_URL,
     QWEN_MODEL,
 )
 from terminal_dreamgym.sandbox import Sandbox
-from terminal_dreamgym.skill_generator import SKILL_TEXTS
+from terminal_dreamgym.skill_generator import CONTROL_TEXTS, SKILL_TEXTS
 from terminal_dreamgym.task_model import TaskSpec
 from terminal_dreamgym.trace_model import EditTrace, TaskRunTrace
 from terminal_dreamgym.utils import make_run_id, write_text
+
+PROMPT_TEXTS = {**SKILL_TEXTS, **CONTROL_TEXTS}
 
 EDIT_BLOCKLIST = {"expected_fix.patch", "trace.json"}
 MAX_OUTPUT_CHARS = 4000
@@ -50,7 +55,8 @@ class GeminiClient:
             "https://generativelanguage.googleapis.com/v1beta/models/"
             f"{self.model}:generateContent?key={self.api_key}"
         )
-        generation_config = {"temperature": 0.1, "maxOutputTokens": 2048}
+        self.last_usage = {}
+        generation_config = {"temperature": LLM_TEMPERATURE, "maxOutputTokens": LLM_MAX_OUTPUT_TOKENS}
         if seed is not None:
             generation_config["seed"] = seed
         body = json.dumps(
@@ -75,6 +81,11 @@ class GeminiClient:
             raise GeminiClientError(f"Gemini network error: {exc.reason}") from exc
         try:
             parts = payload["candidates"][0]["content"]["parts"]
+            meta = payload.get("usageMetadata") or {}
+            self.last_usage = {
+                "prompt_tokens": meta.get("promptTokenCount"),
+                "completion_tokens": meta.get("candidatesTokenCount"),
+            }
             return "\n".join(part.get("text", "") for part in parts).strip()
         except (KeyError, IndexError, TypeError) as exc:
             raise GeminiClientError(f"Unexpected Gemini response: {payload}") from exc
@@ -107,10 +118,12 @@ class OpenAICompatClient:
 
     def generate_text(self, prompt: str, seed: int | None = None) -> str:
         url = f"{self.base_url}/chat/completions"
+        self.last_usage = {}
         req_body = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.1,
+            "temperature": LLM_TEMPERATURE,
+            "max_tokens": LLM_MAX_OUTPUT_TOKENS,
             "stream": False,
         }
         if seed is not None:
@@ -128,6 +141,12 @@ class OpenAICompatClient:
             raise GeminiClientError(f"{self.model} HTTP {exc.code}: {detail}") from exc
         except urllib.error.URLError as exc:
             raise GeminiClientError(f"{self.model} network error ({self.base_url}): {exc.reason}") from exc
+        usage = payload.get("usage") or {}
+        self.last_usage = {
+            "prompt_tokens": usage.get("prompt_tokens"),
+            "completion_tokens": usage.get("completion_tokens"),
+            "finish_reason": (payload.get("choices") or [{}])[0].get("finish_reason"),
+        }
         try:
             return payload["choices"][0]["message"]["content"].strip()
         except (KeyError, IndexError, TypeError) as exc:
@@ -143,10 +162,25 @@ def make_client(provider: str):
     raise GeminiClientError(f"Unknown LLM provider: {provider}")
 
 
-# Strategy -> the skill text the model is told to follow. This is the spec's
-# "in Gemini mode, skills are passed as actual text to the model" path.
+HANDWRITTEN_SKILLS = [
+    "trace_first_debugging_skill.md",
+    "minimal_patch_skill.md",
+    "contract_drift_skill.md",
+    "error_handling_skill.md",
+]
+
+# Strategy -> the text placed in the prompt's ACTIVE SKILLS block. All skill texts
+# are fixed, handwritten strings (see skill_generator.py); no model writes them.
+# The strategies differ ONLY in this block: same model, attempts, sampling and tests.
 STRATEGY_SKILLS = {
     "baseline": [],
+    "no_skill": [],
+    "handwritten_skills": HANDWRITTEN_SKILLS,
+    # Length-matched text with no debugging advice: controls for "any extra text".
+    "placebo": ["placebo_skill.md"],
+    # Deliberately bad advice ("patch the visible symptom"). The old name
+    # "reflection_only" is kept for compatibility; it is not model reflection.
+    "symptom_patch": ["reflection_overfit_skill.md"],
     "reflection_only": ["reflection_overfit_skill.md"],
     "dreamgym_skill": [
         "trace_first_debugging_skill.md",
@@ -215,7 +249,7 @@ class LLMTerminalAgent:
         self.strategy = strategy
         self.provider = provider
         self.client = client or make_client(provider)
-        self.max_steps = max(1, min(LLM_MAX_STEPS, 4))
+        self.max_steps = max(1, LLM_MAX_STEPS)
         self.active_skills = active_skills
 
     @property
@@ -229,44 +263,60 @@ class LLMTerminalAgent:
                 "Set GEMINI_API_KEY (mode gemini) or run Ollama (mode qwen)."
             )
 
-        run_id = make_run_id(f"{self.client.name}_{self.strategy}")
+        tag = f"{self.client.name}_{self.strategy}" + (f"_s{seed}" if seed is not None else "")
+        run_id = f"{make_run_id(tag)}_{uuid.uuid4().hex[:6]}"
         sandbox = Sandbox(task, run_id)
         started = time.perf_counter()
 
+        # Harness-only check (not shown to the agent): which tests pass before any edit.
+        suite_before = sandbox.suite_outcomes()
         first = sandbox.run_command(task.score_command)
         edits: list[EditTrace] = []
         notes: list[str] = []
+        attempts: list[dict] = []
         last_output = self._command_text(first)
-        success = first.exit_code == 0
+        score_passed = first.exit_code == 0
+        infra_error = False
 
-        # The brittle baseline gets a single shot with no skills; the skill-guided
-        # strategies get the full trace-first / minimal-patch iterative loop.
-        steps = 1 if self.strategy == "baseline" else self.max_steps
-        for _ in range(steps):
-            if success:
+        # Same budget for every strategy. A reply with no usable edit still uses up
+        # an attempt; the loop only stops early when the scoring command passes.
+        for attempt_index in range(self.max_steps):
+            if score_passed:
                 break
             prompt = self._build_prompt(task, sandbox, last_output)
             try:
                 reply = self.client.generate_text(prompt, seed=seed)
             except GeminiClientError as exc:
                 notes.append(f"model call failed: {exc}")
+                infra_error = True
                 break
+            usage = dict(getattr(self.client, "last_usage", {}) or {})
             applied, summary = self._apply_reply(sandbox, reply)
             if summary:
                 notes.append(summary)
             edits.extend(applied)
-            if not applied:
-                break
-            result = sandbox.run_command(task.score_command)
-            last_output = self._command_text(result)
-            success = result.exit_code == 0
+            if applied:
+                result = sandbox.run_command(task.score_command)
+                last_output = self._command_text(result)
+                score_passed = result.exit_code == 0
+            regressions = self._regressions(suite_before, sandbox.suite_outcomes())
+            attempts.append(
+                {
+                    "attempt": attempt_index + 1,
+                    "parsed_edit": bool(applied),
+                    "score_passed": score_passed,
+                    "regressions": regressions,
+                    "prompt_chars": len(prompt),
+                    **usage,
+                }
+            )
 
-        if success and self.strategy in {"dreamgym", "dreamgym_skill"}:
-            sandbox.run_command("pytest -q")
+        suite_after = sandbox.suite_outcomes()
+        regressions = self._regressions(suite_before, suite_after)
+        # Strict success: the target test passes AND no test that passed before broke.
+        success = score_passed and not regressions
+        first_attempt = attempts[0] if attempts else None
 
-        # If the model produced no usable edit, that is a genuine agent failure and is
-        # recorded as such — there is no scripted fallback, so scores reflect real
-        # model capability.
         current_skills = self.active_skills if self.active_skills is not None else STRATEGY_SKILLS.get(self.strategy, [])
         trace = TaskRunTrace(
             run_id=run_id,
@@ -275,11 +325,11 @@ class LLMTerminalAgent:
             split=task.split,
             strategy=self.strategy,
             success=success,
-            failure_reason="" if success else self._failure_reason(task, last_output),
+            failure_reason="" if success else self._failure_reason(task, score_passed, regressions),
             commands=sandbox.commands,
             edits=edits,
             diff=sandbox.diff(),
-            tests_passed=success,
+            tests_passed=score_passed,
             duration_seconds=round(time.perf_counter() - started, 3),
             run_dir=str(sandbox.root),
             metadata={
@@ -288,10 +338,31 @@ class LLMTerminalAgent:
                 "model": self.client.model,
                 "active_skills": current_skills,
                 "notes": notes,
+                "seed": seed,
+                "temperature": LLM_TEMPERATURE,
+                "max_output_tokens": LLM_MAX_OUTPUT_TOKENS,
+                "max_steps": self.max_steps,
+                "solved_before_any_edit": first.exit_code == 0,
+                "score_passed": score_passed,
+                "regressions": regressions,
+                "suite_before": suite_before,
+                "suite_after": suite_after,
+                "attempts": attempts,
+                "model_calls": len(attempts),
+                "infra_error": infra_error,
+                "first_attempt_score_passed": bool(first_attempt and first_attempt["score_passed"]),
+                "first_attempt_success": bool(
+                    first_attempt and first_attempt["score_passed"] and not first_attempt["regressions"]
+                ),
             },
         )
         sandbox.write_trace(trace)
         return trace
+
+    @staticmethod
+    def _regressions(before: dict[str, str], after: dict[str, str]) -> list[str]:
+        """Tests that passed before the agent's edits and no longer pass."""
+        return sorted(test for test, outcome in before.items() if outcome == "passed" and after.get(test) != "passed")
 
     # -- prompt + reply handling -------------------------------------------------
 
@@ -321,7 +392,7 @@ class LLMTerminalAgent:
 
     def _build_prompt(self, task: TaskSpec, sandbox: Sandbox, failing_output: str) -> str:
         active_skills = self.active_skills if self.active_skills is not None else STRATEGY_SKILLS.get(self.strategy, [])
-        skills = "\n\n".join(SKILL_TEXTS[name] for name in active_skills)
+        skills = "\n\n".join(PROMPT_TEXTS[name] for name in active_skills)
         skills_block = skills or "(no extra skills provided)"
         editable = self._editable_files(sandbox)
         tests = self._test_files(sandbox)
@@ -378,8 +449,10 @@ class LLMTerminalAgent:
     def _command_text(self, command) -> str:
         return f"$ {command.cmd}\n[exit {command.exit_code}]\n{command.stdout}\n{command.stderr}"
 
-    def _failure_reason(self, task: TaskSpec, output: str) -> str:
-        return f"{self.client.name} did not satisfy {task.score_command} within {self.max_steps} steps"
+    def _failure_reason(self, task: TaskSpec, score_passed: bool, regressions: list[str]) -> str:
+        if score_passed and regressions:
+            return f"target test passed but broke previously passing tests: {', '.join(regressions)}"
+        return f"{self.client.name} did not satisfy {task.score_command} within {self.max_steps} attempts"
 
 
 class GeminiTerminalAgent(LLMTerminalAgent):

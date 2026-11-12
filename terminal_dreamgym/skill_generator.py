@@ -58,6 +58,41 @@ This skill may improve the observed training case but can overfit and cause regr
 """,
 }
 
+# Control texts are prompt filler for ablations, not skills: generate_skills()
+# never writes them and promotion never considers them.
+CONTROL_TEXTS = {
+    "placebo_skill.md": """# Note: Background on the tools in this environment
+
+1. Python was first released by Guido van Rossum in 1991 and is named after a British comedy group.
+2. The pytest project began as part of the PyPy effort and was later split out as its own package.
+3. Small repositories like this one are often used in teaching exercises and coding workshops.
+4. Many teams keep a README file at the top level that describes what a project is for.
+5. Text files in this sandbox use UTF-8, which can represent characters from most writing systems.
+
+# Note: Background on terminals
+
+1. Early computer terminals were electromechanical teleprinters connected to a central machine.
+2. Video display terminals became common in the 1970s and showed about 24 lines of 80 characters.
+3. Modern terminal emulators reproduce many conventions of those older devices.
+4. Shells such as bash read a line of input, expand it, and start the requested programs.
+5. Exit codes are small integers that programs report to the shell when they finish.
+
+# Note: Background on JSON and configuration
+
+1. JSON was popularised in the early 2000s as a lightweight data-interchange format.
+2. It supports objects, arrays, strings, numbers, booleans and null.
+3. Configuration for small tools is often stored in JSON, TOML or INI files.
+4. TOML was created in 2013 and is now used by Python packaging metadata.
+5. INI files date back to early versions of personal-computer operating systems.
+
+# Note: Background on version control
+
+1. Git was created in 2005 to manage development of the Linux kernel.
+2. A commit records a snapshot of files together with a message and author.
+3. Diffs show which lines were added or removed between two versions of a file.
+""",
+}
+
 SKILL_STRATEGY = {
     "reflection_overfit_skill.md": "reflection_only",
     "trace_first_debugging_skill.md": "dreamgym_skill",

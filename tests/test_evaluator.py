@@ -30,7 +30,7 @@ def test_compute_stats_ci():
 
 @patch("terminal_dreamgym.evaluator.run_strategy")
 @patch("terminal_dreamgym.evaluator.score_practice_for_skill")
-def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
+def test_evaluate_sweep_logic(mock_practice, mock_run_strategy, tmp_path):
     mock_run_strategy.side_effect = lambda strategy, mode, active_skills=None, seed=None: {
         "strategy": strategy,
         "mode": mode,
@@ -44,7 +44,9 @@ def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
     }
     mock_practice.return_value = 0.8
 
-    payload = evaluate(mode="qwen", models=["qwen"], seeds=[42, 43])
+    # Write to a temp file: this test used to overwrite runs/evaluation.json with its
+    # mock numbers, which were then committed as if they were a real two-seed sweep.
+    payload = evaluate(mode="qwen", models=["qwen"], seeds=[42, 43], output_path=tmp_path / "evaluation.json")
 
     assert payload["mode"] == "qwen"
     assert payload["models"] == ["qwen"]
@@ -61,4 +63,5 @@ def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
         assert "naive_false_promotion_rate" in eval_stat
         assert "gated_false_promotion_rate" in eval_stat
         assert "wrongly_rejected_rate" in eval_stat
+    assert "practice_gate_false_pass_rate" in qwen_stats
 

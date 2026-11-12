@@ -118,7 +118,7 @@ def evaluate(
             # 2. Run each candidate skill individually
             evaluations = []
             for skill in CANDIDATE_SKILLS:
-                strategy = "reflection_only" if skill == "reflection_overfit_skill.md" else "dreamgym_skill"
+                strategy = "symptom_patch" if skill == "reflection_overfit_skill.md" else "dreamgym_skill"
                 skill_run = run_strategy(strategy, mode=model, active_skills=[skill], seed=seed)
                 practice_score = score_practice_for_skill(skill, model, seed)
 
@@ -151,6 +151,7 @@ def evaluate(
                     "gated_promote": decision.gated,
                     "disagree": decision.disagree,
                     "false_promotion": decision.false_promotion,
+                    "naive_false_promotion": decision.naive_false_promotion,
                     "wrongly_rejected": decision.wrongly_rejected,
                     "scores": {
                         "train": skill_run["summary"]["train"]["rate"],
@@ -218,8 +219,11 @@ def evaluate(
         }
 
         eval_stats = []
-        passed_dreamed_gate_count = 0
-        failed_reality_passed_gate_count = 0
+        # Practice-only gate check: how often does passing the practice floor alone
+        # (practice >= 0.60) coincide with a flat or negative held-out delta? This is
+        # NOT the transfer gate's false-promotion rate; that is gated_false_promotion_rate.
+        passed_practice_gate_count = 0
+        practice_gate_false_pass_count = 0
 
         for skill in CANDIDATE_SKILLS:
             skill_runs_data = []
@@ -227,11 +231,10 @@ def evaluate(
                 se = next(e for e in r["evaluations"] if e["name"] == skill)
                 skill_runs_data.append(se)
 
-                # Dreamed-curriculum trust checks
                 if se["practice_score"] >= 0.60:
-                    passed_dreamed_gate_count += 1
+                    passed_practice_gate_count += 1
                     if se["heldout_delta"] <= 0:
-                        failed_reality_passed_gate_count += 1
+                        practice_gate_false_pass_count += 1
 
             train_deltas = [s["train_delta"] for s in skill_runs_data]
             heldout_deltas = [s["heldout_delta"] for s in skill_runs_data]
@@ -267,9 +270,9 @@ def evaluate(
                 "wrongly_rejected_rate": round(wrongly_rejected_rate, 4),
             })
 
-        self_gating_false_promotion_rate = (
-            failed_reality_passed_gate_count / passed_dreamed_gate_count
-            if passed_dreamed_gate_count > 0
+        practice_gate_false_pass_rate = (
+            practice_gate_false_pass_count / passed_practice_gate_count
+            if passed_practice_gate_count > 0
             else 0.0
         )
 
@@ -299,7 +302,7 @@ def evaluate(
         aggregated[model] = {
             "baseline_scores": baseline_stats,
             "evaluations": eval_stats,
-            "self_gating_false_promotion_rate": round(self_gating_false_promotion_rate, 4),
+            "practice_gate_false_pass_rate": round(practice_gate_false_pass_rate, 4),
             "interference": interference_stats,
         }
 
