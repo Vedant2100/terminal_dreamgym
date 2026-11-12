@@ -100,3 +100,38 @@ def test_strategies_differ_only_in_skill_text():
     handwritten = sum(len(PROMPT_TEXTS[n]) for n in STRATEGY_SKILLS["handwritten_skills"])
     placebo = len(PROMPT_TEXTS["placebo_skill.md"])
     assert abs(placebo - handwritten) / handwritten < 0.10
+
+
+def test_read_timeout_is_recorded_as_infra_error(email_task, monkeypatch):
+    # On Python 3.13 a read timeout escapes urllib as a bare TimeoutError.
+    import urllib.request
+
+    from terminal_dreamgym.gemini_agent import OpenAICompatClient
+
+    def timeout(*args, **kwargs):
+        raise TimeoutError("The read operation timed out")
+
+    monkeypatch.setattr(urllib.request, "urlopen", timeout)
+    client = OpenAICompatClient(base_url="http://127.0.0.1:9", timeout=1)
+    agent = LLMTerminalAgent(strategy="no_skill", provider="qwen", client=client)
+    trace = agent.run_task(email_task, seed=1)
+    shutil.rmtree(trace.run_dir, ignore_errors=True)
+    assert trace.metadata["infra_error"] and not trace.success
+
+
+def test_each_attempt_uses_a_distinct_seed(email_task):
+    seen = []
+
+    class Recorder(ScriptedClient):
+        def generate_text(self, prompt, seed=None):
+            seen.append(seed)
+            return "no blocks"
+
+    _run("no_skill", Recorder([]), email_task)
+    assert len(seen) == 3 and len(set(seen)) == 3
+
+
+def test_agent_cannot_write_pytest_config(email_task):
+    reply = "<<<FILE conftest.py\nimport pytest\n>>>END\n<<<FILE pytest.ini\n[pytest]\n>>>END"
+    _, trace = _run("no_skill", ScriptedClient([reply]), email_task)
+    assert trace.edits == []

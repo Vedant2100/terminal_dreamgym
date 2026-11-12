@@ -28,9 +28,10 @@ def test_compute_stats_ci():
     assert stats["ci95"] > 0
 
 
+@patch("terminal_dreamgym.evaluator.init_demo_assets")  # would rebuild task_templates/ and data/
 @patch("terminal_dreamgym.evaluator.run_strategy")
 @patch("terminal_dreamgym.evaluator.score_practice_for_skill")
-def test_evaluate_sweep_logic(mock_practice, mock_run_strategy, tmp_path):
+def test_evaluate_sweep_logic(mock_practice, mock_run_strategy, mock_init, tmp_path):
     mock_run_strategy.side_effect = lambda strategy, mode, active_skills=None, seed=None: {
         "strategy": strategy,
         "mode": mode,

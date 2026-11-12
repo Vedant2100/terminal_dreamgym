@@ -64,11 +64,27 @@ def _record(condition: str, seed: int, task: TaskSpec, trace) -> dict[str, Any]:
     }
 
 
+def _infra_record(condition: str, seed: int, task: TaskSpec, exc: Exception) -> dict[str, Any]:
+    return {
+        "condition": condition, "seed": seed, "task_id": task.id, "base_task": base_task(task.id),
+        "split": task.split, "family": task.family, "infra_error": True, "notes": [f"harness error: {exc!r}"],
+    }
+
+
 def load_records(path: Path) -> list[dict[str, Any]]:
+    """Read results; a partial last line (job killed mid-write) is skipped."""
     if not path.exists():
         return []
+    records = []
     with path.open(encoding="utf-8") as handle:
-        return [json.loads(line) for line in handle if line.strip()]
+        for line in handle:
+            if not line.strip():
+                continue
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return records
 
 
 def run_matched(
@@ -102,8 +118,11 @@ def run_matched(
 
     def work(job):
         condition, seed, task = job
-        agent = LLMTerminalAgent(strategy=condition, provider=mode)
-        return _record(condition, seed, task, agent.run_task(task, seed=seed))
+        try:
+            agent = LLMTerminalAgent(strategy=condition, provider=mode)
+            return _record(condition, seed, task, agent.run_task(task, seed=seed))
+        except Exception as exc:  # never lose the rest of the run to one job
+            return _infra_record(condition, seed, task, exc)
 
     finished = 0
     with ThreadPoolExecutor(max_workers=concurrency) as pool, out_path.open("a", encoding="utf-8") as handle:
@@ -141,6 +160,7 @@ def paired_difference(records, a, b, metric="success", include=lambda r: True, r
     pa = _per_base_task(records, a, metric, include)
     pb = _per_base_task(records, b, metric, include)
     keys = sorted(set(pa) & set(pb))
+    unpaired = sorted(set(pa) ^ set(pb))
     if not keys:
         return None
     diffs = [pa[k] - pb[k] for k in keys]
@@ -158,10 +178,14 @@ def paired_difference(records, a, b, metric="success", include=lambda r: True, r
         "base_tasks_better": sum(d > 0 for d in diffs),
         "base_tasks_worse": sum(d < 0 for d in diffs),
         "base_tasks_tied": sum(d == 0 for d in diffs),
+        "unpaired_base_tasks_dropped": unpaired,
+        "per_base_task_diff": {k: round(pa[k] - pb[k], 4) for k in keys},
     }
 
 
 def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
+    infra = [r for r in records if r.get("infra_error")]
+    records = [r for r in records if not r.get("infra_error")]
     free = {r["base_task"] for r in records if r["solved_before_any_edit"]}
     primary_include = lambda r: r["base_task"] not in free  # noqa: E731
     conditions = [c for c in CONDITIONS if any(r["condition"] == c for r in records)]
@@ -175,8 +199,8 @@ def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
             "success": round(mean(r["success"] for r in scored), 4) if scored else None,
             "score_passed": round(mean(r["score_passed"] for r in scored), 4) if scored else None,
             "first_attempt_success": round(mean(r["first_attempt_success"] for r in scored), 4) if scored else None,
-            "runs_with_regressions": sum(1 for r in rs if r["regressions"]),
-            "score_passed_but_regressed": sum(1 for r in rs if r["score_passed"] and r["regressions"]),
+            "runs_with_regressions": sum(1 for r in scored if r["regressions"]),
+            "score_passed_but_regressed": sum(1 for r in scored if r["score_passed"] and r["regressions"]),
             "mean_model_calls": round(mean(r["model_calls"] for r in rs), 3) if rs else None,
             "unparseable_reply_rate": round(
                 1 - sum(r["parsed_edits"] for r in rs) / max(1, sum(r["model_calls"] for r in rs)), 4
@@ -215,7 +239,21 @@ def analyze(records: list[dict[str, Any]]) -> dict[str, Any]:
         for k, v in _per_base_task(records, c, "success", lambda r: True).items():
             per_base_task.setdefault(k, {})[c] = round(v, 3)
 
+    by_family = {}
+    for a, b in [PRIMARY, *SECONDARY]:
+        if a in conditions and b in conditions:
+            fam = {}
+            for family in sorted({r["family"] for r in records}):
+                d = paired_difference(
+                    records, a, b, include=lambda r, f=family: primary_include(r) and r["family"] == f, reps=1
+                )
+                if d:
+                    fam[family] = {"diff": d["diff"], "n_base_tasks": d["n_base_tasks"]}
+            by_family[f"{a} - {b}"] = fam
+
     return {
+        "infra_error_records": len(infra),
+        "by_family": by_family,
         "excluded_base_tasks_solved_before_edit": sorted(free),
         "per_condition": per_condition,
         "comparisons": comparisons,
@@ -276,6 +314,21 @@ def render_markdown(result: dict[str, Any]) -> str:
             f"{_fmt_ci(cmp['first_attempt'])} | {_fmt_ci(cmp['score_only'])} | "
             f"{_fmt_ci(cmp['by_split']['train'])} | {_fmt_ci(cmp['by_split']['heldout'])} | {_fmt_ci(cmp['by_split']['adversarial'])} |"
         )
+    lines += [
+        "",
+        "## By task family (sensitivity)",
+        "",
+        "Base tasks within a family share one repository, so they are not fully independent. "
+        "Mean (A − B) per family, no interval (only four families):",
+        "",
+        "| A − B | " + " | ".join(sorted({f for v in result["by_family"].values() for f in v})) + " |",
+    ]
+    fams = sorted({f for v in result["by_family"].values() for f in v})
+    lines.append("| --- |" + " ---: |" * len(fams))
+    for label, v in result["by_family"].items():
+        lines.append(f"| {label} | " + " | ".join(f"{v[f]['diff']:+.3f}" if f in v else "n/a" for f in fams) + " |")
+    if result["infra_error_records"]:
+        lines += ["", f"Infrastructure-error records excluded: {result['infra_error_records']}."]
     conds = list(result["per_condition"])
     lines += ["", "## Per base task (strict success, all variants and seeds)", "",
               "| Base task | " + " | ".join(conds) + " |", "| --- |" + " ---: |" * len(conds)]

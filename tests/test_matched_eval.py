@@ -72,3 +72,21 @@ def test_analyze_excludes_tasks_solved_before_any_edit():
     assert primary["primary"] and primary["overall"]["n_base_tasks"] == 1
     assert result["per_condition"]["no_skill"]["success"] == 0.0
     assert "Matched-condition evaluation" in render_markdown(result)
+
+
+def test_load_records_skips_partial_last_line(tmp_path):
+    path = tmp_path / "r.jsonl"
+    path.write_text('{"a": 1}\n{"a": 2', encoding="utf-8")
+    assert load_records(path) == [{"a": 1}]
+
+
+def test_harness_exception_becomes_infra_record(tmp_path, monkeypatch):
+    def boom(provider):
+        raise RuntimeError("server gone")
+
+    monkeypatch.setattr(agent_mod, "make_client", boom)
+    out = tmp_path / "res.jsonl"
+    run_matched(out, conditions=["no_skill"], seeds=[1], concurrency=1, task_ids=["python_email_whitespace_v1"])
+    (record,) = load_records(out)
+    assert record["infra_error"] and "server gone" in record["notes"][0]
+    assert analyze([record])["infra_error_records"] == 1

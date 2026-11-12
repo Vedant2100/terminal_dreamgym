@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import http.client
 import json
 import re
 import time
@@ -27,6 +28,11 @@ from terminal_dreamgym.utils import make_run_id, write_text
 PROMPT_TEXTS = {**SKILL_TEXTS, **CONTROL_TEXTS}
 
 EDIT_BLOCKLIST = {"expected_fix.patch", "trace.json"}
+# Files that could change how pytest scores the run; the agent may not write them.
+SCORING_CONFIG_FILES = {"conftest.py", "pytest.ini", "tox.ini", "setup.cfg"}
+# Transport failures that urllib does not wrap in URLError on Python 3.13
+# (e.g. a read timeout or a dropped connection while reading the response).
+TRANSPORT_ERRORS = (TimeoutError, OSError, http.client.HTTPException, json.JSONDecodeError)
 MAX_OUTPUT_CHARS = 4000
 
 
@@ -79,6 +85,8 @@ class GeminiClient:
             raise GeminiClientError(f"Gemini HTTP {exc.code}: {detail}") from exc
         except urllib.error.URLError as exc:
             raise GeminiClientError(f"Gemini network error: {exc.reason}") from exc
+        except TRANSPORT_ERRORS as exc:
+            raise GeminiClientError(f"Gemini transport error: {exc!r}") from exc
         try:
             parts = payload["candidates"][0]["content"]["parts"]
             meta = payload.get("usageMetadata") or {}
@@ -141,6 +149,8 @@ class OpenAICompatClient:
             raise GeminiClientError(f"{self.model} HTTP {exc.code}: {detail}") from exc
         except urllib.error.URLError as exc:
             raise GeminiClientError(f"{self.model} network error ({self.base_url}): {exc.reason}") from exc
+        except TRANSPORT_ERRORS as exc:
+            raise GeminiClientError(f"{self.model} transport error ({self.base_url}): {exc!r}") from exc
         usage = payload.get("usage") or {}
         self.last_usage = {
             "prompt_tokens": usage.get("prompt_tokens"),
@@ -285,7 +295,10 @@ class LLMTerminalAgent:
                 break
             prompt = self._build_prompt(task, sandbox, last_output)
             try:
-                reply = self.client.generate_text(prompt, seed=seed)
+                # Distinct seed per attempt: with one seed, a retry after an unparseable
+                # reply resends the same prompt and gets the same reply back.
+                call_seed = None if seed is None else seed * 1000 + attempt_index
+                reply = self.client.generate_text(prompt, seed=call_seed)
             except GeminiClientError as exc:
                 notes.append(f"model call failed: {exc}")
                 infra_error = True
@@ -437,7 +450,9 @@ class LLMTerminalAgent:
         root = sandbox.root.resolve()
         for rel, content in files.items():
             name = Path(rel).name
-            if name in EDIT_BLOCKLIST or name.startswith("test_"):
+            if name in EDIT_BLOCKLIST or name in SCORING_CONFIG_FILES or name.startswith("test_"):
+                continue
+            if name == "pyproject.toml" and "[tool.pytest" in content:
                 continue
             target = (sandbox.root / rel).resolve()
             if root not in target.parents and target != root:
