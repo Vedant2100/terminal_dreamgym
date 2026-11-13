@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Skills written by a larger model, then evaluated (docs/strong_writer_protocol.md). Two GPUs: the writer needs ~19 GB.
+# Skills written by a larger model, then evaluated (docs/strong_writer_protocol.md). One RTX 6000 Ada (48 GB): the writer needs ~19 GB.
 # Usage: sbatch scripts/strong_writer.sbatch <strong_skills_dir> <out.jsonl> <seeds> [extra matched-eval args...]
 # Paths below are for the UCR csgrad cluster; override with env vars elsewhere.
 #SBATCH --job-name=fm-serial
 #SBATCH --dependency=singleton
-#SBATCH --partition=batch
-#SBATCH --gres=gpu:2
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=24:00:00
@@ -38,6 +38,8 @@ apptainer exec --fakeroot --bind "${MODEL_STORE}:/models" --env OLLAMA_MODELS=/m
 curl --fail --silent "http://127.0.0.1:${PORT}/api/tags" | grep -q '"qwen2.5:7b"'
 curl --fail --silent "http://127.0.0.1:${PORT}/api/tags" | grep -q "\"${WRITER}\""
 nvidia-smi -L
+# Load the writer before the first timed call (cold load from network storage is slow).
+curl --fail --silent --max-time 1200 "http://127.0.0.1:${PORT}/api/generate" -d "{\"model\": \"${WRITER}\", \"prompt\": \"\", \"keep_alive\": \"30m\"}" >/dev/null
 git rev-parse HEAD
 
 export QWEN_BASE_URL="http://127.0.0.1:${PORT}/v1" QWEN_MODEL=qwen2.5:7b

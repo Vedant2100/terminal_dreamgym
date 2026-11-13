@@ -29,7 +29,8 @@ Everything is as in the model-written skills protocol except the writer model:
   skill was written from.
 - Same prompt, temperature 0.7, max 2,048 output tokens, the same per-call seed,
   and the same 1,700-character cut at a line break.
-- Writer: `qwen3-coder:30b` (Ollama, 18.6 GB, on two RTX 2080 Ti GPUs). It was
+- Writer: `qwen3-coder:30b` (Ollama, 18.6 GB). The job runs on one RTX 6000 Ada
+  (48 GB), which holds the whole model; writer calls may take up to 10 minutes. It was
   chosen before any run as the largest coding model already in the local model
   store. No other writer is tried under this protocol.
 - 5 seeds × 4 families = 20 skills, saved in `skills/strong_written/` with
@@ -71,11 +72,17 @@ changing tests, compared with the 7B skills (0 of 20 and 8 of 20).
 - Smoke run first: seed 99, `skills/strong_written_smoke/`,
   `runs/smoke_strong_writer.jsonl`, conditions `no_skill,strong_skill`, 4 tasks.
   Not analysed.
-- One GPU job (`scripts/strong_writer.sbatch`, two GPUs) runs `write-skills`
+- One GPU job (`scripts/strong_writer.sbatch`, one RTX 6000 Ada) runs `write-skills`
   with the 30B writer, unloads it, then runs `matched-eval`.
 - Records with `infra_error` are rerun by resuming; nothing else is rerun. A
   skill is never rewritten once its file exists.
 
 ## Deviations
 
-None yet.
+- Smoke job 311743 (two RTX 2080 Ti) failed on its first writer call: the
+  client's 120-second timeout expired while the model, partly offloaded to CPU,
+  loaded and read the prompt. Nothing was written. Before any counted run the
+  writer timeout was raised to 600 seconds, the job now loads the writer before
+  the first call, and the job moved to one RTX 6000 Ada. The earlier
+  evaluations ran on RTX 2080 Ti; all four conditions here share one job and
+  one GPU, so the comparison stays matched.

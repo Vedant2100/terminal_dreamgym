@@ -105,7 +105,8 @@ def write_model_skills(
     from terminal_dreamgym.gemini_agent import OpenAICompatClient, make_client
 
     if client is None:
-        client = OpenAICompatClient(model=writer_model) if writer_model else make_client(mode)
+        # A large writer can be slow to load and to read a long prompt: allow 10 minutes per call.
+        client = OpenAICompatClient(model=writer_model, timeout=600) if writer_model else make_client(mode)
     records = load_records(source)
     source_seeds = sorted({r["seed"] for r in records if r.get("condition") == "no_skill"})
     out_dir.mkdir(parents=True, exist_ok=True)
