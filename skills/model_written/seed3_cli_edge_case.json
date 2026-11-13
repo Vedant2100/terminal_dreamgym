@@ -1,0 +1,26 @@
+{
+  "seed": 3,
+  "held_out_family": "cli_edge_case",
+  "source_seed": 3,
+  "source_task_ids": [
+    "dependency_parse_result_shape_v5",
+    "python_email_preserve_plus_tag_v3",
+    "config_missing_required_api_key_v3",
+    "python_email_whitespace_v5",
+    "python_slug_punctuation_v2",
+    "dependency_format_order_signature_v1"
+  ],
+  "source_families": [
+    "config_env_failure",
+    "dependency_mismatch",
+    "python_test_failure"
+  ],
+  "chars": 1687,
+  "raw_reply_chars": 2370,
+  "leaked_identifiers": [],
+  "usage": {
+    "prompt_tokens": 2891,
+    "completion_tokens": 479,
+    "finish_reason": "stop"
+  }
+}

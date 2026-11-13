@@ -9,18 +9,23 @@ self-improving agent: diagnose a failure, generate practice repos, write a
 
 ## Status (2026-11-12)
 
-The hackathon pipeline exists, but in this code no model writes the skills or the
-diagnoses. `generate_skills()` writes four fixed handwritten texts, and
-`diagnose_run()` maps failures to diagnoses with fixed rules. What can be tested is
-whether those handwritten texts help, and that is what the matched evaluation
-below measures.
+Two preregistered experiments on Qwen2.5-7B, both scored by strict success (the
+target test passes and nothing that passed before breaks), found no detectable
+gain from skill text:
 
-On Qwen2.5-7B, the four handwritten skills did not produce a detectable
-improvement over no skill text. The success rate (target test passes and nothing
-that passed before breaks) was 0.572 against 0.512, a difference of +0.060 with a
-95% CI of −0.028 to +0.151, over 19 base tasks with 3 seeds each. A July demo had
-reported a large gain from the skills; it gave the skills three times as many
-model attempts as the baseline (see [History](#history-the-july-results)).
+- **Handwritten skills** (four fixed texts): +0.060 over no skill text, 95% CI
+  −0.028 to +0.151 (3 seeds). Rerun with 5 seeds alongside the next experiment:
+  +0.017, CI −0.072 to +0.114.
+- **Model-written skills** (the model writes its own `SKILL.md` from traces of its
+  earlier failures, never seeing the repo it is tested on): +0.000, CI −0.088 to
+  +0.097 (5 seeds, a new skill per seed).
+
+A July demo had reported a large gain from the handwritten skills; it gave them
+three times as many model attempts as the baseline (see
+[History](#history-the-july-results)). In the original hackathon pipeline the
+skills and diagnoses are fixed text and rules, not model output; the model-written
+skill experiment is the first test in this repo of the model learning from its own
+failures.
 
 ## The tasks
 
@@ -157,6 +162,65 @@ How to read these numbers:
 - **Visible tests.** The agent sees every test file in the repo, including the
   tests of other tasks, though it cannot edit them.
 
+## Model-written skills
+
+Protocol: [`docs/model_skills_protocol.md`](docs/model_skills_protocol.md), written
+before the run. Results: [`reports/model_skills_eval.md`](reports/model_skills_eval.md),
+raw records in `runs/model_skills_eval.jsonl`, the 20 skills with their prompts in
+`skills/model_written/`.
+
+**How the skills were written.** Qwen2.5-7B read six of its own `no_skill` attempts
+from the matched evaluation (five failures and one success, each shown as the
+initial failing output, its final diff and the final test output) and wrote a
+`SKILL.md` of general guidance. Skills are written leave-one-family-out: the skill
+used on a family's tasks comes only from attempts in the other three families, so
+the writer never sees the repo the skill is tested on. One skill per family per
+seed, 20 in all, 1,544–1,693 characters each; none contains a function name from
+the repo it is tested on. Skills were used as written.
+
+**Run.** `no_skill`, `model_skill`, `handwritten_skills` and `placebo`, all 100
+tasks, seeds 1–5, the same settings as the matched evaluation, run together in one
+job: 2,000 runs, no infrastructure errors. Every run was re-scored from its saved
+sandbox with `scripts/reverify_matched.py`.
+
+| Condition | Strict success | First attempt | Unparseable replies |
+| --- | ---: | ---: | ---: |
+| no_skill | 0.558 | 0.290 | 24.2% |
+| model_skill | 0.558 | 0.293 | 11.1% |
+| handwritten_skills | 0.575 | 0.299 | 12.1% |
+| placebo | 0.537 | 0.194 | 30.6% |
+
+| A − B | Strict success, 95% CI | Base tasks better / worse / tied |
+| --- | --- | --- |
+| model_skill − no_skill (primary) | +0.000 [−0.088, +0.097] | 6 / 8 / 5 |
+| model_skill − handwritten_skills | −0.017 [−0.105, +0.059] | 6 / 7 / 6 |
+| model_skill − placebo | +0.021 [−0.088, +0.139] | 6 / 8 / 5 |
+| handwritten_skills − no_skill | +0.017 [−0.072, +0.114] | 7 / 7 / 5 |
+
+What the results show:
+
+- The model-written skills made no detectable difference. By the preregistered
+  rule this is a null result. The interval's upper end is about +10 points, so a
+  large gain on this benchmark is unlikely (the interval is somewhat too narrow,
+  because base tasks within a family share a repo).
+- Both kinds of skill text cut replies with no usable edit roughly in half (11–12%
+  against 24% with no skill text), while the placebo did not (31%). Numbered
+  instructions seem to help the model follow the reply format, but that did not
+  raise success.
+- The handwritten-skill gain from the matched evaluation (+0.060) shrank to +0.017.
+  The `no_skill` rate itself moved from 0.512 to 0.558 between the two jobs, and
+  per-seed rates ranged from 0.505 to 0.611, so differences of a few points are
+  within run-to-run variation.
+- The skills are generic. No skill says to keep existing functions and imports
+  when rewriting a file, though 6 writer prompts showed an import error after a
+  rewrite and 7 showed an attempt that broke another test. Only 2 mention stderr or
+  exit codes, though 15 prompts included stderr-related test output. 8 of the 20
+  advise changing the tests or assertions, which the agent is not allowed to do.
+
+A 7B model asked to reflect on its failures wrote textbook debugging advice
+rather than lessons from those failures, and that advice did not change how often
+it solved tasks.
+
 ## The hackathon pipeline
 
 ```text
@@ -217,6 +281,20 @@ python -m terminal_dreamgym.cli matched-eval --out runs/matched_eval.jsonl --see
 python -m terminal_dreamgym.cli matched-report   # writes reports/matched_eval.{md,json}
 ```
 
+Model-written skills (writes the skills into the given directory, then evaluates
+four conditions):
+
+```bash
+python -m terminal_dreamgym.cli write-skills --source runs/matched_eval.jsonl --out-dir skills/model_written --seeds 1,2,3,4,5
+python -m terminal_dreamgym.cli matched-eval --out runs/model_skills_eval.jsonl --seeds 1,2,3,4,5 \
+  --skills-dir skills/model_written --conditions no_skill,model_skill,handwritten_skills,placebo
+python -m terminal_dreamgym.cli matched-report --results runs/model_skills_eval.jsonl --name model_skills_eval \
+  --primary model_skill,no_skill --secondary "model_skill,handwritten_skills;model_skill,placebo;handwritten_skills,no_skill"
+```
+
+On the cluster: `sbatch scripts/model_skills.sbatch skills/model_written runs/model_skills_eval.jsonl 1,2,3,4,5`
+(about 2 h 15 min for 2,000 runs on an RTX 2080 Ti).
+
 `matched-eval` resumes from its output file and reruns only records marked
 `infra_error`. On the UCR cluster, `sbatch scripts/matched_eval.sbatch
 runs/matched_eval.jsonl --seeds 1,2,3` starts Ollama in the FrontierMemory Apptainer
@@ -246,10 +324,11 @@ matched evaluation uses 0.7).
 terminal_dreamgym/   agent, sandbox, pipeline steps, matched_eval.py, cli.py
 task_templates/      20 task repos (*_v1..v5), generated by demo_assets.py from the 4 base repos
 data/                tasks.json (100 tasks), splits.json
-docs/                matched_eval_protocol.md
-reports/             matched_eval.{md,json}; live_model_run_qwen.md (July, superseded)
-runs/                matched_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
-scripts/             matched_eval.sbatch
+docs/                matched_eval_protocol.md, model_skills_protocol.md
+reports/             matched_eval.{md,json}; model_skills_eval.{md,json}; live_model_run_qwen.md (July, superseded)
+runs/                matched_eval.jsonl, model_skills_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
+scripts/             matched_eval.sbatch, model_skills.sbatch, reverify_matched.py
+skills/model_written/ the 20 model-written skills, their prompts and metadata
 tests/               provider-free unit tests, including task solvability
 ```
 
@@ -259,17 +338,21 @@ a task, edit `demo_assets.py`.
 ## Next steps
 
 The question this project was built for is whether an agent can improve itself by
-practising its failures. That is still untested, because the model only writes
-patches; the diagnoses and skills it is supposed to learn from are fixed. Fixed handwritten skills gave no detectable gain here, so
-adding RL on top of this loop is not justified yet. Work that would answer the
-question:
+practising its failures. In the simplest version tested here, a skill the model
+writes from its own failures, the answer for Qwen2.5-7B is no detectable gain, and
+the skills it wrote did not reflect its actual failures. Adding RL on top of this
+loop is not justified by this evidence. Options, roughly in order of cost:
 
-1. Have the model write the diagnoses and `SKILL.md` from its own failure traces,
-   and compare against the handwritten skills and the placebo with this protocol.
+1. Test whether a stronger writer helps: have a larger model write the skills from
+   the same 7B traces. If its skills carry the specific lessons the 7B skills
+   missed and still produce no gain, prompt-level skills are the bottleneck, not
+   the writer.
 2. Make the benchmark able to show a difference: add tasks in new repos for
    held-out evaluation, add pass-to-pass tests that pass at baseline, and replace
    tasks that every condition solves or none does. Independent terminal tasks
    such as [Endless Terminals](https://github.com/kanishkg/endless-terminals)
    would avoid sharing repos with the training tasks.
-3. Only if model-written skills beat the handwritten ones on held-out repos, test
+3. Only if some skill text beats no skill text on held-out repos, test
    accumulating skills over successive task batches, with forgetting measured.
+4. Otherwise, deprioritise this workstream: on this evidence, prompt-level
+   skills do not move a 7B model's repair success.

@@ -1,0 +1,25 @@
+{
+  "seed": 2,
+  "held_out_family": "config_env_failure",
+  "source_seed": 2,
+  "source_task_ids": [
+    "python_email_preserve_plus_tag_v3",
+    "python_slug_punctuation_v1",
+    "cli_json_error_valid_v5",
+    "cli_missing_file_error_v2",
+    "cli_invalid_input_nonzero_v1",
+    "cli_json_flag_v1"
+  ],
+  "source_families": [
+    "cli_edge_case",
+    "python_test_failure"
+  ],
+  "chars": 1654,
+  "raw_reply_chars": 2162,
+  "leaked_identifiers": [],
+  "usage": {
+    "prompt_tokens": 3428,
+    "completion_tokens": 437,
+    "finish_reason": "stop"
+  }
+}
