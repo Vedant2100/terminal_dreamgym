@@ -13,19 +13,20 @@ Two preregistered experiments on Qwen2.5-7B, both scored by strict success (the
 target test passes and nothing that passed before breaks), found no detectable
 gain from skill text:
 
-- **Handwritten skills** (four fixed texts): +0.060 over no skill text, 95% CI
-  −0.028 to +0.151 (3 seeds). Rerun with 5 seeds alongside the next experiment:
-  +0.017, CI −0.072 to +0.114.
+- **Handwritten skills** (four fixed texts) over no skill text: +0.060, 95% CI
+  −0.028 to +0.151, in the first experiment (3 seeds), and +0.017, CI −0.072 to
+  +0.114, when run again in the second (5 seeds). Neither shows a gain.
 - **Model-written skills** (the model writes its own `SKILL.md` from traces of its
-  earlier failures, never seeing the repo it is tested on): +0.000, CI −0.088 to
-  +0.097 (5 seeds, a new skill per seed).
+  earlier failures, never seeing the repo it is tested on) over no skill text:
+  +0.000, CI −0.088 to +0.097 (5 seeds; a seed is one independent repetition of
+  the whole run, with its own sampled skills and agent replies).
 
 A July demo had reported a large gain from the handwritten skills; it gave them
 three times as many model attempts as the baseline (see
 [History](#history-the-july-results)). In the original hackathon pipeline the
-skills and diagnoses are fixed text and rules, not model output; the model-written
-skill experiment is the first test in this repo of the model learning from its own
-failures.
+skills, and the failure labels they were meant to be written from, are fixed text
+and rules rather than model output. The model-written skill experiment is the
+first test in this repo of the model learning from its own failures.
 
 ## The tasks
 
@@ -104,7 +105,10 @@ How to read these numbers:
 - The primary comparison's interval includes zero, so by the preregistered rule
   there is no detectable difference. The point estimate is positive, and the test
   has little power: 9 of the 19 base tasks tie because every condition solves them
-  or none does, and four of the five cli base tasks are never solved.
+  or none does, and four of the five cli base tasks are never solved. Those are
+  solvable (a reference fix passes them); in the failures inspected, the model's
+  edits printed errors to stdout instead of stderr, returned the wrong exit code,
+  or broke the file.
 - The clearest effect of the skill text is on output format. With the handwritten
   skills, 11% of replies had no usable file edit, against 27% with no skill text
   and 32% with the placebo. That did not show up as a first-attempt gain (+0.007).
@@ -170,13 +174,16 @@ raw records in `runs/model_skills_eval.jsonl`, the 20 skills with their prompts 
 `skills/model_written/`.
 
 **How the skills were written.** Qwen2.5-7B read six of its own `no_skill` attempts
-from the matched evaluation (five failures and one success, each shown as the
-initial failing output, its final diff and the final test output) and wrote a
-`SKILL.md` of general guidance. Skills are written leave-one-family-out: the skill
+from the matched evaluation and wrote a `SKILL.md` of general guidance. The six are
+drawn at random, at most one per base task: five failures, plus one success so
+the writer also sees what worked. Each is shown as the initial failing output, the
+model's final diff and the final test output. Skills are written leave-one-family-out: the skill
 used on a family's tasks comes only from attempts in the other three families, so
-the writer never sees the repo the skill is tested on. One skill per family per
-seed, 20 in all, 1,544–1,693 characters each; none contains a function name from
-the repo it is tested on. Skills were used as written.
+the writer never sees the repo the skill is tested on. For each of the 5
+seeds the model writes four skills, one per family (a new writing sample each
+time), and that seed's evaluation runs use them: 20 skills, 1,544–1,693 characters
+each. None contains a function name from the repo it is tested on, and none was
+edited or filtered.
 
 **Run.** `no_skill`, `model_skill`, `handwritten_skills` and `placebo`, all 100
 tasks, seeds 1–5, the same settings as the matched evaluation, run together in one
@@ -194,7 +201,7 @@ sandbox with `scripts/reverify_matched.py`.
 | --- | --- | --- |
 | model_skill − no_skill (primary) | +0.000 [−0.088, +0.097] | 6 / 8 / 5 |
 | model_skill − handwritten_skills | −0.017 [−0.105, +0.059] | 6 / 7 / 6 |
-| model_skill − placebo | +0.021 [−0.088, +0.139] | 6 / 8 / 5 |
+| model_skill − placebo | +0.021 [−0.088, +0.139] | 6 / 8 / 5 (a few large gains, more small losses) |
 | handwritten_skills − no_skill | +0.017 [−0.072, +0.114] | 7 / 7 / 5 |
 
 What the results show:
@@ -204,18 +211,20 @@ What the results show:
   large gain on this benchmark is unlikely (the interval is somewhat too narrow,
   because base tasks within a family share a repo).
 - Both kinds of skill text cut replies with no usable edit roughly in half (11–12%
-  against 24% with no skill text), while the placebo did not (31%). Numbered
+  against 24% with no skill text), while the placebo did not (31%), and the
+  placebo also had the lowest first-attempt success (0.194). Numbered
   instructions seem to help the model follow the reply format, but that did not
-  raise success.
+  raise final success.
 - The handwritten-skill gain from the matched evaluation (+0.060) shrank to +0.017.
   The `no_skill` rate itself moved from 0.512 to 0.558 between the two jobs, and
   per-seed rates ranged from 0.505 to 0.611, so differences of a few points are
   within run-to-run variation.
 - The skills are generic. No skill says to keep existing functions and imports
-  when rewriting a file, though 6 writer prompts showed an import error after a
-  rewrite and 7 showed an attempt that broke another test. Only 2 mention stderr or
-  exit codes, though 15 prompts included stderr-related test output. 8 of the 20
-  advise changing the tests or assertions, which the agent is not allowed to do.
+  when rewriting a file, though of the 20 prompts given to the writer, 6 showed an
+  import error after a rewrite and 7 an attempt that broke another test. Only 2
+  skills mention stderr or exit codes, though 15 prompts included stderr-related
+  test output. 8 of the 20 advise changing the tests or assertions; the harness
+  ignores any edit to a test file.
 
 A 7B model asked to reflect on its failures wrote textbook debugging advice
 rather than lessons from those failures, and that advice did not change how often
@@ -237,10 +246,9 @@ run tasks -> diagnose failures -> practice repos -> SKILL.md -> evaluate -> prom
 
 The pipeline still runs (`python -m terminal_dreamgym.cli demo` or `evaluate`; see
 [Running it](#running-it)), but it promotes or rejects the fixed handwritten skills,
-so its output says nothing about self-improvement. `evaluate` reports `gated_false_promotion_rate` (the transfer gate promoted a skill
-whose held-out score did not improve) and `practice_gate_false_pass_rate` (a skill
-cleared the practice floor alone but its held-out score did not improve). These
-are different measures.
+so its output says nothing about self-improvement. `evaluate` reports `gated_false_promotion_rate` (promoted by the transfer gate, held-out
+not improved) and `practice_gate_false_pass_rate` (cleared the practice floor, held-out
+not improved).
 
 ## History: the July results
 
