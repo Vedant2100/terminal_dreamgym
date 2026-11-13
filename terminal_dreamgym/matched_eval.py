@@ -19,7 +19,7 @@ from typing import Any
 from terminal_dreamgym.config import LLM_MAX_OUTPUT_TOKENS, LLM_MAX_STEPS, LLM_TEMPERATURE
 from terminal_dreamgym.task_model import TaskSpec, load_tasks
 
-CONDITIONS = ["no_skill", "handwritten_skills", "placebo", "symptom_patch", "model_skill"]
+CONDITIONS = ["no_skill", "handwritten_skills", "placebo", "symptom_patch", "model_skill", "strong_skill"]
 PRIMARY = ("handwritten_skills", "no_skill")
 SECONDARY = [("handwritten_skills", "placebo"), ("placebo", "no_skill"), ("symptom_patch", "no_skill")]
 SPLITS = ["train", "heldout", "adversarial"]
@@ -95,12 +95,15 @@ def run_matched(
     concurrency: int = 4,
     task_ids: list[str] | None = None,
     skills_dir: Path | None = None,
+    strong_skills_dir: Path | None = None,
 ) -> int:
     from terminal_dreamgym.gemini_agent import LLMTerminalAgent
 
     conditions = conditions or CONDITIONS[:4]
     if "model_skill" in conditions and skills_dir is None:
         raise ValueError("model_skill needs skills_dir (see skill_writer.py)")
+    if "strong_skill" in conditions and strong_skills_dir is None:
+        raise ValueError("strong_skill needs strong_skills_dir (see skill_writer.py)")
     seeds = seeds or [1, 2, 3]
     tasks = load_tasks()
     if task_ids:
@@ -123,10 +126,11 @@ def run_matched(
         condition, seed, task = job
         try:
             texts = None
-            if condition == "model_skill":
+            if condition in ("model_skill", "strong_skill"):
                 from terminal_dreamgym.skill_writer import load_model_skill
 
-                texts = [load_model_skill(skills_dir, seed, task.family)]
+                folder = skills_dir if condition == "model_skill" else strong_skills_dir
+                texts = [load_model_skill(folder, seed, task.family)]
             agent = LLMTerminalAgent(strategy=condition, provider=mode, skill_texts=texts)
             return _record(condition, seed, task, agent.run_task(task, seed=seed))
         except Exception as exc:  # never lose the rest of the run to one job

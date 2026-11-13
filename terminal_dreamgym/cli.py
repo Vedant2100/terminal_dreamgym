@@ -102,6 +102,7 @@ def matched_eval_cmd(
     concurrency: int = typer.Option(4, "--concurrency"),
     tasks: str = typer.Option(None, "--tasks", help="Comma-separated task ids (default: all 100)"),
     skills_dir: Path = typer.Option(None, "--skills-dir", help="Model-written skills, for the model_skill condition"),
+    strong_skills_dir: Path = typer.Option(None, "--strong-skills-dir", help="Skills from a larger writer, for strong_skill"),
 ) -> None:
     """Run the matched-condition evaluation (docs/matched_eval_protocol.md). Resumable."""
     from terminal_dreamgym.matched_eval import current_settings, run_matched
@@ -115,6 +116,7 @@ def matched_eval_cmd(
         concurrency=concurrency,
         task_ids=[t.strip() for t in tasks.split(",")] if tasks else None,
         skills_dir=skills_dir,
+        strong_skills_dir=strong_skills_dir,
     )
     console.print(f"[green]Ran {n} task runs; results in[/green] {out}")
 
@@ -125,11 +127,12 @@ def write_skills_cmd(
     out_dir: Path = typer.Option(Path("skills/model_written"), "--out-dir"),
     seeds: str = typer.Option("1,2,3,4,5", "--seeds"),
     mode: str = typer.Option(DEFAULT_MODE, "--mode"),
+    writer_model: str = typer.Option(None, "--writer-model", help="Write with this OpenAI-compatible model instead"),
 ) -> None:
     """Have the model write leave-one-family-out skills from its own no-skill traces."""
     from terminal_dreamgym.skill_writer import write_model_skills
 
-    manifest = write_model_skills(source, [int(x) for x in seeds.split(",")], out_dir, mode=mode)
+    manifest = write_model_skills(source, [int(x) for x in seeds.split(",")], out_dir, mode=mode, writer_model=writer_model)
     for m in manifest:
         console.print(f"seed {m['seed']} {m['held_out_family']}: {m['chars']} chars, leaks={m['leaked_identifiers']}")
 

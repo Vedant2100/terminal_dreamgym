@@ -193,6 +193,7 @@ STRATEGY_SKILLS = {
     "symptom_patch": ["reflection_overfit_skill.md"],
     # Text supplied per task via skill_texts (see skill_writer.py).
     "model_skill": [],
+    "strong_skill": [],
     "reflection_only": ["reflection_overfit_skill.md"],
     "dreamgym_skill": [
         "trace_first_debugging_skill.md",

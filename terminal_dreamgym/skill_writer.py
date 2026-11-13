@@ -98,10 +98,14 @@ def family_identifiers(family: str) -> set[str]:
     return {n for n in names if len(n) > 4 and n != "main"}
 
 
-def write_model_skills(source: Path, seeds: list[int], out_dir: Path, mode: str = "qwen", client=None) -> list[dict]:
-    from terminal_dreamgym.gemini_agent import make_client
+def write_model_skills(
+    source: Path, seeds: list[int], out_dir: Path, mode: str = "qwen", client=None, writer_model: str | None = None
+) -> list[dict]:
+    """writer_model: an OpenAI-compatible model name to write with instead of the solver model."""
+    from terminal_dreamgym.gemini_agent import OpenAICompatClient, make_client
 
-    client = client or make_client(mode)
+    if client is None:
+        client = OpenAICompatClient(model=writer_model) if writer_model else make_client(mode)
     records = load_records(source)
     source_seeds = sorted({r["seed"] for r in records if r.get("condition") == "no_skill"})
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -122,6 +126,7 @@ def write_model_skills(source: Path, seeds: list[int], out_dir: Path, mode: str 
             meta = {
                 "seed": seed,
                 "held_out_family": family,
+                "writer_model": getattr(client, "model", None),
                 "source_seed": source_seed,
                 "source_task_ids": [r["task_id"] for r in chosen],
                 "source_families": sorted({r["family"] for r in chosen}),
