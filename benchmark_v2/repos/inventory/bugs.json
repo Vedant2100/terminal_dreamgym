@@ -1,0 +1,142 @@
+[
+  {
+    "id": "receive_accepts_zero",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_stock.py::test_receive_rejects_zero",
+    "note": "receive() validation uses < 0 so a zero quantity is accepted. Fix in Stock.receive: qty <= 0.",
+    "edits": [
+      {
+        "file": "stock.py",
+        "old": "        if qty <= 0:\n            raise ValueError(\"quantity must be positive\")\n        self.on_hand[sku]",
+        "new": "        if qty < 0:\n            raise ValueError(\"quantity must be positive\")\n        self.on_hand[sku]"
+      }
+    ]
+  },
+  {
+    "id": "release_checks_on_hand",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_stock.py::test_release_more_than_reserved_raises",
+    "note": "release() compares against on-hand units instead of reserved units, so over-releasing is allowed. Fix in Stock.release: compare with held.",
+    "edits": [
+      {
+        "file": "stock.py",
+        "old": "        if qty > held:",
+        "new": "        if qty > self.on_hand.get(sku, 0):"
+      }
+    ]
+  },
+  {
+    "id": "ship_skips_release",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_stock.py::test_ship_frees_reservation",
+    "note": "ship() no longer releases the reservation, so shipped units stay reserved. Tempting fix: stop decrementing on_hand in ship(), which makes available() right but breaks test_ship_order_updates_on_hand. Correct fix: call self.release(sku, qty) in ship().",
+    "edits": [
+      {
+        "file": "stock.py",
+        "old": "        self.release(sku, qty)\n        self.on_hand[sku] -= qty",
+        "new": "        self.on_hand[sku] -= qty"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "stock.py",
+        "old": "        self.on_hand[sku] -= qty\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "low_stock_strict",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_orders.py::test_low_stock_includes_threshold",
+    "note": "low_stock uses < instead of <=, contradicting its docstring. Fix in Network.low_stock.",
+    "edits": [
+      {
+        "file": "warehouse.py",
+        "old": "self.total_available(sku) <= threshold)",
+        "new": "self.total_available(sku) < threshold)"
+      }
+    ]
+  },
+  {
+    "id": "reserve_zero_from_empty_site",
+    "category": "trap",
+    "difficulty": "hard",
+    "target_test": "test_orders.py::test_allocate_skips_empty_warehouse",
+    "note": "allocate() lost its 'if take > 0' guard, so it calls reserve(sku, 0) on an empty warehouse and Stock.reserve raises ValueError. Tempting fix: let Stock.reserve accept 0, which breaks test_reserve_rejects_zero. Correct fix: skip sites with nothing to take in Network.allocate.",
+    "edits": [
+      {
+        "file": "warehouse.py",
+        "old": "            if take > 0:\n                self.sites[name].reserve(sku, take)\n                plan.append((name, take))\n                remaining -= take\n",
+        "new": "            self.sites[name].reserve(sku, take)\n            plan.append((name, take))\n            remaining -= take\n"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "stock.py",
+        "old": "        if qty <= 0:\n            raise ValueError(\"quantity must be positive\")\n        if qty > self.available",
+        "new": "        if qty < 0:\n            raise ValueError(\"quantity must be positive\")\n        if qty > self.available"
+      }
+    ]
+  },
+  {
+    "id": "cancel_release_argument_order",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_orders.py::test_failed_order_rolls_back",
+    "note": "Order.cancel calls network.release(sku, plan) but Network.release takes (plan, sku); the unpacking error surfaces in warehouse.py. Fix the call in orders.py.",
+    "edits": [
+      {
+        "file": "orders.py",
+        "old": "            network.release(plan, sku)",
+        "new": "            network.release(sku, plan)"
+      }
+    ]
+  },
+  {
+    "id": "backorder_status_overwritten",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_orders.py::test_failed_order_rolls_back",
+    "note": "place() sets status 'backordered' before calling cancel(), which then overwrites it with 'cancelled'. Fix: set the status after cancel().",
+    "edits": [
+      {
+        "file": "orders.py",
+        "old": "                self.cancel(network)\n                self.status = \"backordered\"",
+        "new": "                self.status = \"backordered\"\n                self.cancel(network)"
+      }
+    ]
+  },
+  {
+    "id": "unknown_site_created",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_orders.py::test_unknown_warehouse_raises",
+    "note": "Network.receive silently creates an unknown warehouse via setdefault instead of raising KeyError.",
+    "edits": [
+      {
+        "file": "warehouse.py",
+        "old": "        if site not in self.sites:\n            raise KeyError(f\"unknown warehouse: {site}\")\n        self.sites[site].receive(sku, qty)",
+        "new": "        self.sites.setdefault(site, Stock()).receive(sku, qty)"
+      }
+    ]
+  },
+  {
+    "id": "picking_list_overwrites_site",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_orders.py::test_picking_list_groups_by_site",
+    "note": "picking_list replaces the per-site dict for every SKU, so only the last SKU per site survives. Fix: setdefault(site, {})[sku] = units.",
+    "edits": [
+      {
+        "file": "orders.py",
+        "old": "                out.setdefault(site, {})[sku] = units",
+        "new": "                out[site] = {sku: units}"
+      }
+    ]
+  }
+]

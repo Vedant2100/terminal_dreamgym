@@ -1,0 +1,135 @@
+[
+  {
+    "id": "newline_dropped",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cells.py::test_newline_becomes_space",
+    "note": "escape() deletes newlines instead of replacing them with a space, as its docstring says. Fix in cells.escape.",
+    "edits": [
+      {
+        "file": "cells.py",
+        "old": ".replace(\"\\n\", \" \")",
+        "new": ".replace(\"\\n\", \"\")"
+      }
+    ]
+  },
+  {
+    "id": "int_without_separators",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cells.py::test_int_has_thousands_separators",
+    "note": "Integers are formatted without the ',' thousands separator. Fix in cells.format_number.",
+    "edits": [
+      {
+        "file": "cells.py",
+        "old": "return f\"{value:,}\"",
+        "new": "return f\"{value}\""
+      }
+    ]
+  },
+  {
+    "id": "alignment_any_numeric",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_table.py::test_mixed_column_is_left_aligned",
+    "note": "infer_columns right-aligns a column when any value is numeric instead of all of them (docstring says all). Fix in columns.infer_columns: all().",
+    "edits": [
+      {
+        "file": "columns.py",
+        "old": "numeric = bool(values) and all(is_numeric(v) for v in values)",
+        "new": "numeric = bool(values) and any(is_numeric(v) for v in values)"
+      }
+    ]
+  },
+  {
+    "id": "width_ignores_header",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_table.py::test_header_wider_than_values",
+    "note": "Column width no longer includes the header title, so 'Unit Price' overflows a 3-wide column. Fix the widths computation in table.render.",
+    "edits": [
+      {
+        "file": "table.py",
+        "old": "max([MIN_WIDTH, len(title)] + [len(r[i]) for r in body])",
+        "new": "max([MIN_WIDTH] + [len(r[i]) for r in body])"
+      }
+    ]
+  },
+  {
+    "id": "decimals_not_passed",
+    "category": "config",
+    "difficulty": "medium",
+    "target_test": "test_table.py::test_decimals_option",
+    "note": "render() accepts decimals but does not pass it to format_cell, so the option is ignored and the default 2 is used. Fix the format_cell call in table.render.",
+    "edits": [
+      {
+        "file": "table.py",
+        "old": "format_cell(row.get(c.key), decimals)",
+        "new": "format_cell(row.get(c.key))"
+      }
+    ]
+  },
+  {
+    "id": "whole_float_as_int",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_cells.py::test_float_always_shows_decimals",
+    "note": "format_number tests `value == int(value)` instead of isinstance(value, int), so 2.0 prints as '2'. Tempting fix: delete the integer branch so everything gets decimals, which breaks test_int_has_thousands_separators and the table tests. Correct fix: isinstance(value, int).",
+    "edits": [
+      {
+        "file": "cells.py",
+        "old": "    if isinstance(value, int):\n        return f\"{value:,}\"",
+        "new": "    if value == int(value):\n        return f\"{int(value):,}\""
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "cells.py",
+        "old": "    if value == int(value):\n        return f\"{int(value):,}\"\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "bool_checked_after_int",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_cells.py::test_bool_is_yes_or_no",
+    "note": "The bool check was moved after the int check; bool is a subclass of int, so True formats as '1'. Fix the order of the checks in cells.format_number.",
+    "edits": [
+      {
+        "file": "cells.py",
+        "old": "    if isinstance(value, bool):\n        return \"yes\" if value else \"no\"\n    if isinstance(value, int):\n        return f\"{value:,}\"",
+        "new": "    if isinstance(value, int):\n        return f\"{value:,}\"\n    if isinstance(value, bool):\n        return \"yes\" if value else \"no\""
+      }
+    ]
+  },
+  {
+    "id": "none_counts_against_alignment",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_table.py::test_missing_values_are_blank_and_ignored_for_alignment",
+    "note": "infer_columns no longer filters out None before checking numeric, so a numeric column with a missing value is left-aligned. Failure in the table test; fix the values list in columns.infer_columns.",
+    "edits": [
+      {
+        "file": "columns.py",
+        "old": "values = [row.get(key) for row in rows if row.get(key) is not None]",
+        "new": "values = [row.get(key) for row in rows]"
+      }
+    ]
+  },
+  {
+    "id": "spec_symbol_not_translated",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_table.py::test_spec_string_sets_alignment",
+    "note": "parse_spec stores the raw symbol ('^') as Column.align, but marker() and _pad expect 'left'/'right'/'center', so '^' falls through to left. Fix in columns.parse_spec (map through SYMBOLS), not in table.py.",
+    "edits": [
+      {
+        "file": "columns.py",
+        "old": "columns.append(Column(key, title_for(key), SYMBOLS[symbol or \"<\"]))",
+        "new": "columns.append(Column(key, title_for(key), symbol or \"left\"))"
+      }
+    ]
+  }
+]

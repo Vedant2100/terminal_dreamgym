@@ -1,0 +1,135 @@
+[
+  {
+    "id": "list_keeps_blanks",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_coerce.py::test_to_list_drops_blanks",
+    "note": "to_list no longer filters out empty items.",
+    "edits": [
+      {
+        "file": "coerce.py",
+        "old": "return [item.strip() for item in str(value).split(\",\") if item.strip()]",
+        "new": "return [item.strip() for item in str(value).split(\",\")]"
+      }
+    ]
+  },
+  {
+    "id": "int_truncates_fraction",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_coerce.py::test_to_int_rejects_fraction",
+    "note": "to_int goes through float(), silently truncating '2.5' to 2.",
+    "edits": [
+      {
+        "file": "coerce.py",
+        "old": "return int(str(value).strip())",
+        "new": "return int(float(str(value).strip()))"
+      }
+    ]
+  },
+  {
+    "id": "file_beats_env",
+    "category": "config",
+    "difficulty": "easy",
+    "target_test": "test_settings.py::test_env_overrides_file",
+    "note": "load checks file values before environment values; precedence must be env > file > default.",
+    "edits": [
+      {
+        "file": "settings.py",
+        "old": "        if field.name in env_values:\n            raw = env_values[field.name]\n        elif field.name in file_values:\n            raw = file_values[field.name]",
+        "new": "        if field.name in file_values:\n            raw = file_values[field.name]\n        elif field.name in env_values:\n            raw = env_values[field.name]"
+      }
+    ]
+  },
+  {
+    "id": "empty_env_counts_as_set",
+    "category": "config",
+    "difficulty": "medium",
+    "target_test": "test_settings.py::test_empty_env_var_falls_back_to_file",
+    "note": "from_env keeps empty variables, so APP_PORT='' hides the file value and int('') fails in load. Fix in sources.from_env.",
+    "edits": [
+      {
+        "file": "sources.py",
+        "old": "if key.startswith(prefix) and value != \"\":",
+        "new": "if key.startswith(prefix):"
+      }
+    ]
+  },
+  {
+    "id": "bool_case_sensitive",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_settings.py::test_bool_is_case_insensitive",
+    "note": "to_bool no longer lower-cases, so 'Off' is rejected. Tempting fix: return False instead of raising for unknown words, which breaks test_to_bool_rejects_other_words. Correct fix: lower-case the text.",
+    "edits": [
+      {
+        "file": "coerce.py",
+        "old": "text = str(value).strip().lower()",
+        "new": "text = str(value).strip()"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "coerce.py",
+        "old": "    raise ValueError(f\"not a boolean: {value!r}\")",
+        "new": "    return False"
+      }
+    ]
+  },
+  {
+    "id": "missing_raised_on_first",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_settings.py::test_missing_required_lists_all",
+    "note": "load raises MissingSetting at the first missing field instead of collecting all of them.",
+    "edits": [
+      {
+        "file": "settings.py",
+        "old": "            if field.required:\n                missing.append(field.name)",
+        "new": "            if field.required:\n                raise MissingSetting(f\"missing required settings: {field.name}\")"
+      }
+    ]
+  },
+  {
+    "id": "ini_missing_section_crashes",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_settings.py::test_ini_without_app_section_uses_defaults",
+    "note": "parse_ini lost its has_section guard; configparser.NoSectionError escapes load. Fix in sources.parse_ini.",
+    "edits": [
+      {
+        "file": "sources.py",
+        "old": "    if not parser.has_section(section):\n        return {}\n    return dict(parser.items(section))",
+        "new": "    return dict(parser.items(section))"
+      }
+    ]
+  },
+  {
+    "id": "json_keys_keep_case",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_settings.py::test_json_keys_case_insensitive",
+    "note": "parse_json no longer lower-cases keys, breaking the 'every source returns lower-case keys' contract; load silently falls back to the default. Fix in sources.parse_json.",
+    "edits": [
+      {
+        "file": "sources.py",
+        "old": "return {key.lower(): value for key, value in data.items()}",
+        "new": "return {key: value for key, value in data.items()}"
+      }
+    ]
+  },
+  {
+    "id": "unknown_kind_keyerror",
+    "category": "error_handling",
+    "difficulty": "hard",
+    "target_test": "test_settings.py::test_unknown_kind_is_settings_error",
+    "note": "coerce indexes CONVERTERS directly, so an unknown kind raises KeyError, which load's except ValueError does not wrap. Fix in coerce.coerce (raise ValueError).",
+    "edits": [
+      {
+        "file": "coerce.py",
+        "old": "    if kind not in CONVERTERS:\n        raise ValueError(f\"unknown setting type: {kind}\")\n    return CONVERTERS[kind](value)",
+        "new": "    return CONVERTERS[kind](value)"
+      }
+    ]
+  }
+]

@@ -98,10 +98,31 @@ def family_identifiers(family: str) -> set[str]:
     return {n for n in names if len(n) > 4 and n != "main"}
 
 
+ALL = "all"  # pseudo-family: write from every family (for repos outside the original benchmark)
+
+
+def _leak_names(family: str) -> set[str]:
+    if family != ALL:
+        return family_identifiers(family)
+    from terminal_dreamgym.benchmark_v2 import repo_dirs
+
+    names: set[str] = set()
+    for repo in repo_dirs():
+        for path in repo.glob("*.py"):
+            names.update(re.findall(r"def (\w+)", path.read_text(encoding="utf-8")))
+    return {n for n in names if len(n) > 4 and n != "main" and not n.startswith("test_")}
+
+
 def write_model_skills(
-    source: Path, seeds: list[int], out_dir: Path, mode: str = "qwen", client=None, writer_model: str | None = None
+    source: Path, seeds: list[int], out_dir: Path, mode: str = "qwen", client=None, writer_model: str | None = None,
+    families: list[str] | None = None,
 ) -> list[dict]:
-    """writer_model: an OpenAI-compatible model name to write with instead of the solver model."""
+    """writer_model: an OpenAI-compatible model name to write with instead of the solver model.
+
+    families: which held-out families to write for (default: the four original
+    ones, leave-one-family-out). ["all"] writes one skill per seed from every
+    family, for evaluation on repos outside the original benchmark.
+    """
     from terminal_dreamgym.gemini_agent import OpenAICompatClient, make_client
 
     if client is None:
@@ -113,7 +134,7 @@ def write_model_skills(
     manifest = []
     for seed in seeds:
         source_seed = source_seeds[(seed - 1) % len(source_seeds)]
-        for family in FAMILIES:
+        for family in families or FAMILIES:
             path = out_dir / f"seed{seed}_{family}.md"
             if path.exists():
                 manifest.append(json.loads((out_dir / f"seed{seed}_{family}.json").read_text()))
@@ -121,9 +142,9 @@ def write_model_skills(
             rng = random.Random(f"{seed}-{family}")
             chosen = select_source_records(records, family, source_seed, rng)
             prompt = writer_prompt([trace_digest(r) for r in chosen])
-            reply = client.generate_text(prompt, seed=7000 + seed * 10 + FAMILIES.index(family))
+            reply = client.generate_text(prompt, seed=7000 + seed * 10 + (FAMILIES + [ALL]).index(family))
             skill = _clean(reply)
-            leaks = sorted(n for n in family_identifiers(family) if n in skill)
+            leaks = sorted(n for n in _leak_names(family) if n in skill)
             meta = {
                 "seed": seed,
                 "held_out_family": family,

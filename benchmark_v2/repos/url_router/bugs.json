@@ -1,0 +1,145 @@
+[
+  {
+    "id": "int_param_not_converted",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_router.py::test_match_converts_int",
+    "note": "IntConverter.to_python returns the matched text instead of an int.",
+    "edits": [
+      {
+        "file": "converters.py",
+        "old": "    def to_python(self, text: str):\n        return int(text)",
+        "new": "    def to_python(self, text: str):\n        return text"
+      }
+    ]
+  },
+  {
+    "id": "head_not_mapped_to_get",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_router.py::test_head_falls_back_to_get",
+    "note": "The HEAD-as-GET fallback was dropped from Router.match, so HEAD gets a 405.",
+    "edits": [
+      {
+        "file": "router.py",
+        "old": "if method in route.methods or (method == \"HEAD\" and \"GET\" in route.methods):",
+        "new": "if method in route.methods:"
+      }
+    ]
+  },
+  {
+    "id": "build_skips_param_check",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_router.py::test_url_for_missing_param",
+    "note": "Pattern.build no longer checks for missing/extra names, so a missing one raises KeyError instead of ValueError.",
+    "edits": [
+      {
+        "file": "patterns.py",
+        "old": "        missing = set(self.params) - set(values)\n        extra = set(values) - set(self.params)\n        if missing or extra:\n            raise ValueError(f\"{self.text}: missing {sorted(missing)}, unexpected {sorted(extra)}\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "last_route_wins",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_router.py::test_first_route_wins",
+    "note": "Router.match iterates routes in reverse, so a later catch-all shadows an earlier static route.",
+    "edits": [
+      {
+        "file": "router.py",
+        "old": "        for route in self.routes:\n            params",
+        "new": "        for route in reversed(self.routes):\n            params"
+      }
+    ]
+  },
+  {
+    "id": "allowed_methods_overwritten",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_router.py::test_405_lists_all_allowed_methods",
+    "note": "allowed is reassigned per matching route instead of accumulated, so the 405 lists only the last route's methods.",
+    "edits": [
+      {
+        "file": "router.py",
+        "old": "            allowed |= route.methods",
+        "new": "            allowed = set(route.methods)"
+      }
+    ]
+  },
+  {
+    "id": "path_to_url_uses_str_quoting",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_router.py::test_url_for_path_keeps_slashes",
+    "note": "PathConverter.to_url delegates to the str converter, which encodes '/'. Tempting fix: make the base Converter.to_url keep '/', which breaks test_url_for_quotes_str. Correct fix: PathConverter.to_url quotes with safe='/'.",
+    "edits": [
+      {
+        "file": "converters.py",
+        "old": "        return quote(str(value), safe=\"/\")",
+        "new": "        return super().to_url(value)"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "converters.py",
+        "old": "        return quote(str(value), safe=\"\")",
+        "new": "        return quote(str(value), safe=\"/\")"
+      }
+    ]
+  },
+  {
+    "id": "unknown_converter_falls_back",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_router.py::test_unknown_converter_rejected",
+    "note": "Pattern silently treats an unknown converter kind as str instead of raising ValueError. Fix in patterns.py.",
+    "edits": [
+      {
+        "file": "patterns.py",
+        "old": "            if kind not in CONVERTERS:\n                raise ValueError(f\"unknown converter: {kind}\")\n            converter = CONVERTERS[kind]",
+        "new": "            converter = CONVERTERS.get(kind, CONVERTERS[\"str\"])"
+      }
+    ]
+  },
+  {
+    "id": "str_param_not_unquoted",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_router.py::test_dispatch_unquotes_str_param",
+    "note": "The base converter's to_python no longer percent-decodes, so the handler receives 'caf%C3%A9'. Fails in router dispatch; fix in converters.Converter.to_python.",
+    "edits": [
+      {
+        "file": "converters.py",
+        "old": "        return unquote(text)",
+        "new": "        return text"
+      },
+      {
+        "file": "converters.py",
+        "old": "from urllib.parse import quote, unquote",
+        "new": "from urllib.parse import quote"
+      }
+    ]
+  },
+  {
+    "id": "static_text_not_escaped",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_router.py::test_dot_in_pattern_is_literal",
+    "note": "Pattern compiles literal text without re.escape, so '.' in '/feed.json' matches any character and '/feed-json' is routed. Fix in patterns.py.",
+    "edits": [
+      {
+        "file": "patterns.py",
+        "old": "            parts.append(re.escape(text[pos:m.start()]))",
+        "new": "            parts.append(text[pos:m.start()])"
+      },
+      {
+        "file": "patterns.py",
+        "old": "        parts.append(re.escape(text[pos:]))",
+        "new": "        parts.append(text[pos:])"
+      }
+    ]
+  }
+]
