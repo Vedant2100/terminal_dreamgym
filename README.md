@@ -7,25 +7,31 @@ decides success. It started as a hackathon project (July 2026) whose pitch was a
 self-improving agent: diagnose a failure, generate practice repos, write a
 `SKILL.md`, and promote the skill only if it transfers to held-out tasks.
 
-## Status (2026-11-12)
+## Status (2026-11-13)
 
-Two preregistered experiments on Qwen2.5-7B, both scored by strict success (the
+Three preregistered experiments on Qwen2.5-7B, all scored by strict success (the
 target test passes and nothing that passed before breaks), found no detectable
-gain from skill text:
+gain from skill text. Each experiment was repeated over several seeds; a seed is
+one independent repetition of the whole run, with its own sampled skills and
+agent replies.
 
 - **Handwritten skills** (four fixed texts) over no skill text: +0.060, 95% CI
-  −0.028 to +0.151, in the first experiment (3 seeds), and +0.017, CI −0.072 to
-  +0.114, when run again in the second (5 seeds). Neither shows a gain.
-- **Model-written skills** (the model writes its own `SKILL.md` from traces of its
-  earlier failures, never seeing the repo it is tested on) over no skill text:
-  +0.000, CI −0.088 to +0.097 (5 seeds; a seed is one independent repetition of
-  the whole run, with its own sampled skills and agent replies).
+  −0.028 to +0.151, in the [matched evaluation](#matched-evaluation-method-and-results)
+  (3 seeds), and +0.017, CI −0.072 to +0.114, when run again alongside the
+  model-written skills (5 seeds). Neither shows a gain.
+- **[Model-written skills](#model-written-skills)**: the model writes its own
+  `SKILL.md` from records of its earlier failed attempts (the failing test output,
+  its edit, and the result), never seeing the repo it is tested on. Over no skill
+  text: +0.000, CI −0.088 to +0.097 (5 seeds).
+- **[Skills from a larger writer](#skills-from-a-larger-writer)**: `qwen3-coder:30b`
+  writes the skill from the same records of Qwen2.5-7B's attempts, and Qwen2.5-7B
+  still solves the tasks. Over no skill text: +0.023, CI −0.072 to +0.118 (5 seeds).
 
 A July demo had reported a large gain from the handwritten skills; it gave them
 three times as many model attempts as the baseline (see
 [History](#history-the-july-results)). In the original hackathon pipeline the
-skills, and the failure labels they were meant to be written from, are fixed text
-and rules rather than model output. The model-written skill experiment is the
+skills, and the failure diagnoses they were meant to be written from, are fixed
+text and rules rather than model output. The model-written skill experiment is the
 first test in this repo of the model learning from its own failures.
 
 ## The tasks
@@ -179,9 +185,10 @@ drawn at random, at most one per base task: five failures, plus one success so
 the writer also sees what worked. Each is shown as the initial failing output, the
 model's final diff and the final test output. Skills are written leave-one-family-out: the skill
 used on a family's tasks comes only from attempts in the other three families, so
-the writer never sees the repo the skill is tested on. For each of the 5
-seeds the model writes four skills, one per family (a new writing sample each
-time), and that seed's evaluation runs use them: 20 skills, 1,544–1,693 characters
+the writer never sees the repo the skill is tested on. The matched evaluation
+had 3 seeds, so seeds 4 and 5 reuse the attempts of seeds 1 and 2. For each of
+the 5 seeds the model writes four skills, one per family, each from a fresh draw
+of attempts and a fresh model sample, and that seed's evaluation runs use them: 20 skills, 1,544–1,693 characters
 each. None contains a function name from the repo it is tested on, and none was
 edited or filtered.
 
@@ -229,6 +236,77 @@ What the results show:
 A 7B model asked to reflect on its failures wrote textbook debugging advice
 rather than lessons from those failures, and that advice did not change how often
 it solved tasks.
+
+## Skills from a larger writer
+
+Protocol: [`docs/strong_writer_protocol.md`](docs/strong_writer_protocol.md),
+written before the run. Results:
+[`reports/strong_writer_eval.md`](reports/strong_writer_eval.md), raw records in
+`runs/strong_writer_eval.jsonl`, the 20 skills with their prompts in
+`skills/strong_written/`.
+
+This tests whether the model-written skills failed because Qwen2.5-7B is a weak
+writer. `qwen3-coder:30b` wrote the skills instead, from exactly the same six
+attempts per skill, with the same prompt and settings as the 7B writer. The
+solver is still Qwen2.5-7B. The 20 skills are 1,116–1,698 characters; none
+contains a function name from the repo it is tested on.
+
+**Run.** `no_skill`, `strong_skill` (30B-written), `model_skill` (the unchanged
+7B-written skills from the previous section) and `placebo`, all 100 tasks, seeds
+1–5, the same settings as before, run together in one job: 2,000 runs, no
+infrastructure errors. The job ran on an RTX 6000 Ada rather than the RTX 2080 Ti
+used earlier, because the 30B writer needs about 19 GB; every condition shared that
+GPU. Every run
+was re-scored from its saved sandbox.
+
+| Condition | Strict success | First attempt | Unparseable replies | Passed but broke another test |
+| --- | ---: | ---: | ---: | ---: |
+| no_skill | 0.568 | 0.312 | 23.1% | 10 |
+| strong_skill | 0.592 | 0.335 | 6.9% | 17 |
+| model_skill | 0.549 | 0.297 | 11.9% | 5 |
+| placebo | 0.571 | 0.217 | 27.9% | 4 |
+
+| A − B | Strict success, 95% CI | Base tasks better / worse / tied |
+| --- | --- | --- |
+| strong_skill − no_skill (primary) | +0.023 [−0.072, +0.118] | 8 / 4 / 7 |
+| strong_skill − model_skill | +0.042 [−0.008, +0.095] | 9 / 4 / 6 |
+| strong_skill − placebo | +0.021 [−0.082, +0.118] | 9 / 4 / 6 |
+| model_skill − no_skill | −0.019 [−0.084, +0.055] | 6 / 8 / 5 |
+
+What the results show:
+
+- Skills from the 30B writer made no detectable difference either. By the
+  preregistered rule this is a null result.
+- They may be slightly better than the 7B skills (+0.042), but that interval also
+  includes zero, and this comparison was exploratory.
+- The 30B skills cut replies with no usable edit to 6.9%, against 23.1% with no
+  skill text and 11.9% with the 7B skills. As before, a better-formed reply did
+  not lead to more solved tasks. 13 of the 17 runs that passed the target test but
+  broke another were on one base task, `python_email_whitespace`.
+- The model-written result replicated: 7B skills against no skill text,
+  −0.019 here and +0.000 before.
+- Both kinds of model-written skill move the same tasks the same way, and the
+  placebo does not. `python_slug_punctuation` rose from 0.44 with no skill text to
+  0.92 (7B) and 0.96 (30B); `python_sku_preserve_comma` fell from 0.84 to 0.56 and
+  0.36. Skill text changes what the model does on particular tasks, but the gains
+  and losses cancel.
+
+The 30B skills are cleaner than the 7B ones, but mostly still generic advice.
+Counted by hand before the results were in:
+
+| Skill content | 7B writer | 30B writer |
+| --- | ---: | ---: |
+| Says to keep existing functions, signatures or imports | 0 / 20 | 4 / 20 |
+| Advises writing or changing tests | 8 / 20 | 2 / 20 |
+
+11 of the 30B skills tell the solver to run the tests after each edit, which it
+cannot do. 11 recommend `.get()` with a default to avoid a `KeyError` (1 of the 7B
+skills does), which is wrong for tasks where a missing required setting should
+raise an error.
+
+A stronger writer did not make the learn-from-failures loop work. With both a 7B
+and a 30B writer, the skills were generic, and neither set changed how often
+Qwen2.5-7B solved tasks.
 
 ## The hackathon pipeline
 
@@ -303,6 +381,12 @@ python -m terminal_dreamgym.cli matched-report --results runs/model_skills_eval.
 On the cluster: `sbatch scripts/model_skills.sbatch skills/model_written runs/model_skills_eval.jsonl 1,2,3,4,5`
 (about 2 h 15 min for 2,000 runs on an RTX 2080 Ti).
 
+Skills from a larger writer: `write-skills --writer-model qwen3-coder:30b` writes
+with that model, and `matched-eval --strong-skills-dir DIR` supplies the
+`strong_skill` condition. On the cluster, `sbatch scripts/strong_writer.sbatch
+skills/strong_written runs/strong_writer_eval.jsonl 1,2,3,4,5` does both on one
+RTX 6000 Ada (about 2 h 16 min). The writer model needs about 19 GB of GPU memory.
+
 `matched-eval` resumes from its output file and reruns only records marked
 `infra_error`. On the UCR cluster, `sbatch scripts/matched_eval.sbatch
 runs/matched_eval.jsonl --seeds 1,2,3` starts Ollama in the FrontierMemory Apptainer
@@ -332,11 +416,12 @@ matched evaluation uses 0.7).
 terminal_dreamgym/   agent, sandbox, pipeline steps, matched_eval.py, cli.py
 task_templates/      20 task repos (*_v1..v5), generated by demo_assets.py from the 4 base repos
 data/                tasks.json (100 tasks), splits.json
-docs/                matched_eval_protocol.md, model_skills_protocol.md
-reports/             matched_eval.{md,json}; model_skills_eval.{md,json}; live_model_run_qwen.md (July, superseded)
-runs/                matched_eval.jsonl, model_skills_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
-scripts/             matched_eval.sbatch, model_skills.sbatch, reverify_matched.py
-skills/model_written/ the 20 model-written skills, their prompts and metadata
+docs/                matched_eval_protocol.md, model_skills_protocol.md, strong_writer_protocol.md
+reports/             matched_eval, model_skills_eval, strong_writer_eval (.md and .json); live_model_run_qwen.md (July, superseded)
+runs/                matched_eval.jsonl, model_skills_eval.jsonl, strong_writer_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
+scripts/             matched_eval.sbatch, model_skills.sbatch, strong_writer.sbatch, reverify_matched.py
+skills/model_written/ the 20 skills written by Qwen2.5-7B, their prompts and metadata
+skills/strong_written/ the 20 skills written by qwen3-coder:30b, same layout
 tests/               provider-free unit tests, including task solvability
 ```
 
@@ -348,19 +433,16 @@ a task, edit `demo_assets.py`.
 The question this project was built for is whether an agent can improve itself by
 practising its failures. In the simplest version tested here, a skill the model
 writes from its own failures, the answer for Qwen2.5-7B is no detectable gain, and
-the skills it wrote did not reflect its actual failures. Adding RL on top of this
-loop is not justified by this evidence. Options, roughly in order of cost:
+the skills it wrote did not reflect its actual failures. Skills written from the
+same failures by a 30B model gave no detectable gain either. Adding RL on top of
+this loop is not justified by this evidence. Options, roughly in order of cost:
 
-1. Test whether a stronger writer helps: have a larger model write the skills from
-   the same 7B traces. If its skills carry the specific lessons the 7B skills
-   missed and still produce no gain, prompt-level skills are the bottleneck, not
-   the writer.
-2. Make the benchmark able to show a difference: add tasks in new repos for
+1. Make the benchmark able to show a difference: add tasks in new repos for
    held-out evaluation, add pass-to-pass tests that pass at baseline, and replace
    tasks that every condition solves or none does. Independent terminal tasks
    such as [Endless Terminals](https://github.com/kanishkg/endless-terminals)
    would avoid sharing repos with the training tasks.
-3. Only if some skill text beats no skill text on held-out repos, test
+2. Only if some skill text beats no skill text on held-out repos, test
    accumulating skills over successive task batches, with forgetting measured.
-4. Otherwise, deprioritise this workstream: on this evidence, prompt-level
+3. Otherwise, deprioritise this workstream: on this evidence, prompt-level
    skills do not move a 7B model's repair success.

@@ -28,13 +28,15 @@ Everything is as in the model-written skills protocol except the writer model:
   so each strong skill is written from exactly the attempts the matching 7B
   skill was written from.
 - Same prompt, temperature 0.7, max 2,048 output tokens, the same per-call seed,
-  and the same 1,700-character cut at a line break.
+  and the same length cap: a skill over 1,700 characters is cut at its last line
+  break before 1,700.
 - Writer: `qwen3-coder:30b` (Ollama, 18.6 GB). The job runs on one RTX 6000 Ada
   (48 GB), which holds the whole model; writer calls may take up to 10 minutes. It was
   chosen before any run as the largest coding model already in the local model
   store. No other writer is tried under this protocol.
 - 5 seeds × 4 families = 20 skills, saved in `skills/strong_written/` with
-  prompts and metadata. Leak check as before. Skills are used as written.
+  prompts and metadata. The leak check lists any function name from the tested
+  family's repo that appears in that family's skill. Skills are used as written.
 
 ## Conditions
 
@@ -47,14 +49,15 @@ Everything is as in the model-written skills protocol except the writer model:
 
 The solver is `qwen2.5:7b` in every condition. All other settings are those of
 the earlier evaluations: up to 3 attempts per task, temperature 0.7, a distinct
-seed per attempt, max 2,048 output tokens, context 16,384, all 100 tasks, seeds
+seed per attempt, max 2,048 output tokens, context 16,384 tokens, all 100 tasks, seeds
 1–5, so 4 × 100 × 5 = 2,000 runs in a shuffled order, in one job. Results from
 earlier runs are not reused.
 
 ## Outcome and analysis
 
-As before: strict success; `python_price_currency_spacing` excluded; per
-condition, a base task's score is its mean over variants and seeds; 95%
+Strict success: the target test passes and no test that passed before the edit
+fails afterwards. As before, `python_price_currency_spacing` is excluded (it
+passes before any edit); per condition, a base task's score is its mean over variants and seeds; 95%
 bootstrap CIs resample the 19 base tasks.
 
 **Primary:** `strong_skill − no_skill`. Claim an improvement only if the CI
@@ -72,8 +75,9 @@ changing tests, compared with the 7B skills (0 of 20 and 8 of 20).
 - Smoke run first: seed 99, `skills/strong_written_smoke/`,
   `runs/smoke_strong_writer.jsonl`, conditions `no_skill,strong_skill`, 4 tasks.
   Not analysed.
-- One GPU job (`scripts/strong_writer.sbatch`, one RTX 6000 Ada) runs `write-skills`
-  with the 30B writer, unloads it, then runs `matched-eval`.
+- One GPU job (`scripts/strong_writer.sbatch`, one RTX 6000 Ada) runs
+  `python -m terminal_dreamgym.cli write-skills` with the 30B writer, unloads it,
+  then runs `python -m terminal_dreamgym.cli matched-eval`.
 - Records with `infra_error` are rerun by resuming; nothing else is rerun. A
   skill is never rewritten once its file exists.
 
@@ -85,4 +89,10 @@ changing tests, compared with the 7B skills (0 of 20 and 8 of 20).
   writer timeout was raised to 600 seconds, the job now loads the writer before
   the first call, and the job moved to one RTX 6000 Ada. The earlier
   evaluations ran on RTX 2080 Ti; all four conditions here share one job and
-  one GPU, so the comparison stays matched.
+  one GPU, so the comparison stays matched. The smoke run was repeated on the
+  RTX 6000 Ada (job 311744) and passed: 4 skills, 8 runs, no infrastructure
+  errors.
+- After the run, some wording in this file was made self-contained (the length
+  cap, the leak check, strict success, token units, full CLI commands). The
+  method did not change; `git diff 373325f -- docs/strong_writer_protocol.md`
+  shows every edit.

@@ -1,0 +1,27 @@
+{
+  "seed": 4,
+  "held_out_family": "python_test_failure",
+  "writer_model": "qwen3-coder:30b",
+  "source_seed": 1,
+  "source_task_ids": [
+    "cli_invalid_input_nonzero_v1",
+    "config_request_timeout_type_v5",
+    "config_nested_auth_token_v1",
+    "cli_missing_file_error_v4",
+    "cli_json_error_valid_v5",
+    "dependency_format_user_signature_v1"
+  ],
+  "source_families": [
+    "cli_edge_case",
+    "config_env_failure",
+    "dependency_mismatch"
+  ],
+  "chars": 1383,
+  "raw_reply_chars": 1383,
+  "leaked_identifiers": [],
+  "usage": {
+    "prompt_tokens": 3952,
+    "completion_tokens": 263,
+    "finish_reason": "stop"
+  }
+}
