@@ -28,9 +28,10 @@ def test_compute_stats_ci():
     assert stats["ci95"] > 0
 
 
+@patch("terminal_dreamgym.evaluator.init_demo_assets")  # would rebuild task_templates/ and data/
 @patch("terminal_dreamgym.evaluator.run_strategy")
 @patch("terminal_dreamgym.evaluator.score_practice_for_skill")
-def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
+def test_evaluate_sweep_logic(mock_practice, mock_run_strategy, mock_init, tmp_path):
     mock_run_strategy.side_effect = lambda strategy, mode, active_skills=None, seed=None: {
         "strategy": strategy,
         "mode": mode,
@@ -44,7 +45,9 @@ def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
     }
     mock_practice.return_value = 0.8
 
-    payload = evaluate(mode="qwen", models=["qwen"], seeds=[42, 43])
+    # Write to a temp file: this test used to overwrite runs/evaluation.json with its
+    # mock numbers, which were then committed as if they were a real two-seed sweep.
+    payload = evaluate(mode="qwen", models=["qwen"], seeds=[42, 43], output_path=tmp_path / "evaluation.json")
 
     assert payload["mode"] == "qwen"
     assert payload["models"] == ["qwen"]
@@ -61,4 +64,20 @@ def test_evaluate_sweep_logic(mock_practice, mock_run_strategy):
         assert "naive_false_promotion_rate" in eval_stat
         assert "gated_false_promotion_rate" in eval_stat
         assert "wrongly_rejected_rate" in eval_stat
+    assert "practice_gate_false_pass_rate" in qwen_stats
 
+
+
+@patch("terminal_dreamgym.evaluator.init_demo_assets")
+@patch("terminal_dreamgym.evaluator.run_strategy")
+@patch("terminal_dreamgym.evaluator.score_practice_for_skill")
+def test_report_renders_from_evaluation_payload(mock_practice, mock_run_strategy, mock_init, tmp_path):
+    from terminal_dreamgym.report import build_html, build_markdown
+
+    mock_run_strategy.side_effect = lambda strategy, mode, active_skills=None, seed=None: {
+        "summary": {s: {"rate": 0.5} for s in ["train", "heldout", "adversarial"]}, "traces": []
+    }
+    mock_practice.return_value = 0.7
+    payload = evaluate(mode="qwen", models=["qwen"], seeds=[1], output_path=tmp_path / "e.json")
+    assert "Practice-gate false-pass rate" in build_markdown(payload)
+    assert "Practice-gate false-pass rate" in build_html(payload)

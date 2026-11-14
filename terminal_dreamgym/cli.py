@@ -93,6 +93,47 @@ def evaluate_cmd(
     _print_evaluation(evaluation)
 
 
+@app.command("matched-eval")
+def matched_eval_cmd(
+    out: Path = typer.Option(RUNS_DIR / "matched_eval.jsonl", "--out"),
+    mode: str = typer.Option(DEFAULT_MODE, "--mode"),
+    conditions: str = typer.Option(None, "--conditions", help="Comma-separated; default: all four"),
+    seeds: str = typer.Option("1,2,3", "--seeds"),
+    concurrency: int = typer.Option(4, "--concurrency"),
+    tasks: str = typer.Option(None, "--tasks", help="Comma-separated task ids (default: all 100)"),
+) -> None:
+    """Run the matched-condition evaluation (docs/matched_eval_protocol.md). Resumable."""
+    from terminal_dreamgym.matched_eval import current_settings, run_matched
+
+    console.print(f"Settings: {current_settings()}")
+    n = run_matched(
+        out,
+        conditions=[c.strip() for c in conditions.split(",")] if conditions else None,
+        seeds=[int(s) for s in seeds.split(",")],
+        mode=mode,
+        concurrency=concurrency,
+        task_ids=[t.strip() for t in tasks.split(",")] if tasks else None,
+    )
+    console.print(f"[green]Ran {n} task runs; results in[/green] {out}")
+
+
+@app.command("matched-report")
+def matched_report_cmd(
+    results: Path = typer.Option(RUNS_DIR / "matched_eval.jsonl", "--results"),
+    out_dir: Path = typer.Option(REPORTS_DIR, "--out-dir"),
+) -> None:
+    """Analyze matched-eval results into reports/matched_eval.{md,json}."""
+    import json
+
+    from terminal_dreamgym.matched_eval import analyze, load_records, render_markdown
+
+    result = analyze(load_records(results))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "matched_eval.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    (out_dir / "matched_eval.md").write_text(render_markdown(result), encoding="utf-8")
+    console.print(render_markdown(result))
+
+
 @app.command("gemini-smoke")
 def gemini_smoke() -> None:
     """Verify GEMINI_API_KEY/GEMINI_MODEL without running the full benchmark."""
@@ -195,7 +236,7 @@ def _print_evaluation(evaluation: dict[str, object]) -> None:
                 f"{skill_stat['disagreement_rate']*100:.1f}%",
             )
         console.print(skills_table)
-        console.print(f"[bold red]Self-Gating False-Promotion Rate:[/bold red] {stats['self_gating_false_promotion_rate']*100:.1f}%")
+        console.print(f"[bold red]Practice-gate false-pass rate:[/bold red] {stats['practice_gate_false_pass_rate']*100:.1f}%")
 
 
 def _print_curricula(curricula: list[dict[str, object]]) -> None:

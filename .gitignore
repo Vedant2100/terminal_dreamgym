@@ -7,3 +7,5 @@ __pycache__/
 
 runs/sandboxes/
 runs/practice_worlds/*/__pycache__/
+logs/
+runs/smoke_matched.jsonl

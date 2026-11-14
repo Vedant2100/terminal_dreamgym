@@ -65,6 +65,15 @@ def test_false_promotion_detection():
     assert decision.naive
     assert not decision.gated
     assert decision.disagree
-    assert decision.false_promotion
+    # Only the naive policy promoted it, so only naive counts a false promotion.
+    assert decision.naive_false_promotion
+    assert not decision.false_promotion
     assert not decision.wrongly_rejected
+
+
+def test_unpromoted_flat_skill_is_not_a_false_promotion():
+    decision = decide(SkillMetrics(name="flat", train_delta=0.0, heldout_delta=0.0,
+                                   adversarial_delta=0.0, adversarial_regressions=0, practice_score=0.8))
+    assert not decision.naive and not decision.gated
+    assert not decision.false_promotion and not decision.naive_false_promotion
 

@@ -55,8 +55,17 @@ class Decision:
 
     @property
     def false_promotion(self) -> bool:
-        """A false promotion happens if the policy promotes but held-out is flat/regressed."""
-        return self.heldout_delta <= 0
+        """The transfer gate promoted the skill, but held-out did not improve.
+
+        (Previously this ignored the promotion decision and was true whenever
+        held-out was flat, so unpromoted skills were counted as false promotions.)
+        """
+        return self.gated and self.heldout_delta <= 0
+
+    @property
+    def naive_false_promotion(self) -> bool:
+        """Naive (train-only) promotion promoted the skill, but held-out did not improve."""
+        return self.naive and self.heldout_delta <= 0
 
     @property
     def wrongly_rejected(self) -> bool:

@@ -3,7 +3,7 @@ from package import format_user
 
 
 def test_format_user_signature_drift():
-    assert render_user("Ada_v1", "ada_v1@example1.com") == "Ada <ada@example.com>"
+    assert render_user("Ada_v1", "ada_v1@example1.com") == "Ada_v1 <ada_v1@example1.com>"
 
 
 def test_parse_result_shape_drift():
@@ -15,7 +15,7 @@ def test_format_order_signature_drift():
 
 
 def test_do_not_break_new_dependency_contract():
-    assert format_user({"name": "Grace_v1", "email": "grace_v1@example1.com"}) == "Grace <grace@example.com>"
+    assert format_user({"name": "Grace_v1", "email": "grace_v1@example1.com"}) == "Grace_v1 <grace_v1@example1.com>"
     assert render_user_list([{"name": "Grace_v1", "email": "grace_v1@example1.com"}]) == [
-        "Grace <grace@example.com>"
+        "Grace_v1 <grace_v1@example1.com>"
     ]

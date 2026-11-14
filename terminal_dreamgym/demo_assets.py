@@ -301,6 +301,11 @@ def _modify_cloned_files(dst_dir: Path, family: str, index: int) -> None:
         test_file = dst_dir / "test_package.py"
         if test_file.exists():
             content = test_file.read_text(encoding="utf-8")
+            # Expected outputs must change with the inputs; the original generator
+            # renamed only the inputs, which made three dependency tests unsolvable.
+            content = content.replace('"Ada <ada@example.com>"', f'"Ada_v{index} <ada_v{index}@example{index}.com>"')
+            content = content.replace('"Grace <grace@example.com>"', f'"Grace_v{index} <grace_v{index}@example{index}.com>"')
+            content = content.replace('"A-1: $', f'"A-{index}: $')
             content = content.replace('"Ada"', f'"Ada_v{index}"')
             content = content.replace('"ada@example.com"', f'"ada_v{index}@example{index}.com"')
             content = content.replace('42', f'{42 + index}')

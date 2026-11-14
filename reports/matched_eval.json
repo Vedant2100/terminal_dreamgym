@@ -1,0 +1,1098 @@
+{
+  "infra_error_records": 0,
+  "by_family": {
+    "handwritten_skills - no_skill": {
+      "cli_edge_case": {
+        "diff": 0.0,
+        "n_base_tasks": 5
+      },
+      "config_env_failure": {
+        "diff": 0.08,
+        "n_base_tasks": 5
+      },
+      "dependency_mismatch": {
+        "diff": -0.1,
+        "n_base_tasks": 4
+      },
+      "python_test_failure": {
+        "diff": 0.2267,
+        "n_base_tasks": 5
+      }
+    },
+    "handwritten_skills - placebo": {
+      "cli_edge_case": {
+        "diff": 0.0133,
+        "n_base_tasks": 5
+      },
+      "config_env_failure": {
+        "diff": 0.0267,
+        "n_base_tasks": 5
+      },
+      "dependency_mismatch": {
+        "diff": -0.1333,
+        "n_base_tasks": 4
+      },
+      "python_test_failure": {
+        "diff": 0.2267,
+        "n_base_tasks": 5
+      }
+    },
+    "placebo - no_skill": {
+      "cli_edge_case": {
+        "diff": -0.0133,
+        "n_base_tasks": 5
+      },
+      "config_env_failure": {
+        "diff": 0.0533,
+        "n_base_tasks": 5
+      },
+      "dependency_mismatch": {
+        "diff": 0.0333,
+        "n_base_tasks": 4
+      },
+      "python_test_failure": {
+        "diff": 0.0,
+        "n_base_tasks": 5
+      }
+    },
+    "symptom_patch - no_skill": {
+      "cli_edge_case": {
+        "diff": 0.0,
+        "n_base_tasks": 5
+      },
+      "config_env_failure": {
+        "diff": 0.0533,
+        "n_base_tasks": 5
+      },
+      "dependency_mismatch": {
+        "diff": 0.0333,
+        "n_base_tasks": 4
+      },
+      "python_test_failure": {
+        "diff": -0.3467,
+        "n_base_tasks": 5
+      }
+    }
+  },
+  "excluded_base_tasks_solved_before_edit": [
+    "python_price_currency_spacing"
+  ],
+  "per_condition": {
+    "no_skill": {
+      "runs": 300,
+      "success": 0.5123,
+      "score_passed": 0.5368,
+      "first_attempt_success": 0.2842,
+      "runs_with_regressions": 13,
+      "score_passed_but_regressed": 7,
+      "mean_model_calls": 2.12,
+      "unparseable_reply_rate": 0.272,
+      "mean_prompt_tokens": 2075.2,
+      "mean_completion_tokens": 384.4,
+      "length_truncated_runs": 0,
+      "infra_errors": 0,
+      "by_split": {
+        "train": 0.7167,
+        "heldout": 0.4533,
+        "adversarial": 0.2889
+      },
+      "by_seed": {
+        "1": 0.5263,
+        "2": 0.4947,
+        "3": 0.5158
+      }
+    },
+    "handwritten_skills": {
+      "runs": 300,
+      "success": 0.5719,
+      "score_passed": 0.6211,
+      "first_attempt_success": 0.2912,
+      "runs_with_regressions": 20,
+      "score_passed_but_regressed": 14,
+      "mean_model_calls": 2.063,
+      "unparseable_reply_rate": 0.1115,
+      "mean_prompt_tokens": 2733.1,
+      "mean_completion_tokens": 401.8,
+      "length_truncated_runs": 0,
+      "infra_errors": 0,
+      "by_split": {
+        "train": 0.6583,
+        "heldout": 0.6,
+        "adversarial": 0.4333
+      },
+      "by_seed": {
+        "1": 0.5368,
+        "2": 0.5684,
+        "3": 0.6105
+      }
+    },
+    "placebo": {
+      "runs": 300,
+      "success": 0.5298,
+      "score_passed": 0.5333,
+      "first_attempt_success": 0.2526,
+      "runs_with_regressions": 7,
+      "score_passed_but_regressed": 1,
+      "mean_model_calls": 2.19,
+      "unparseable_reply_rate": 0.3196,
+      "mean_prompt_tokens": 2970.5,
+      "mean_completion_tokens": 404.0,
+      "length_truncated_runs": 0,
+      "infra_errors": 0,
+      "by_split": {
+        "train": 0.6833,
+        "heldout": 0.4133,
+        "adversarial": 0.4222
+      },
+      "by_seed": {
+        "1": 0.5684,
+        "2": 0.4947,
+        "3": 0.5263
+      }
+    },
+    "symptom_patch": {
+      "runs": 300,
+      "success": 0.4421,
+      "score_passed": 0.4456,
+      "first_attempt_success": 0.2175,
+      "runs_with_regressions": 8,
+      "score_passed_but_regressed": 1,
+      "mean_model_calls": 2.29,
+      "unparseable_reply_rate": 0.3901,
+      "mean_prompt_tokens": 2369.1,
+      "mean_completion_tokens": 409.0,
+      "length_truncated_runs": 0,
+      "infra_errors": 0,
+      "by_split": {
+        "train": 0.625,
+        "heldout": 0.4,
+        "adversarial": 0.2333
+      },
+      "by_seed": {
+        "1": 0.5158,
+        "2": 0.4105,
+        "3": 0.4
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "primary": true,
+      "overall": {
+        "a": "handwritten_skills",
+        "b": "no_skill",
+        "metric": "success",
+        "n_base_tasks": 19,
+        "mean_a": 0.5719,
+        "mean_b": 0.5123,
+        "diff": 0.0596,
+        "ci95": [
+          -0.0281,
+          0.1509
+        ],
+        "base_tasks_better": 6,
+        "base_tasks_worse": 4,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.3333,
+          "config_nested_auth_token": 0.3333,
+          "config_request_timeout_type": -0.1333,
+          "config_timeout_key": -0.1333,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": -0.3333,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": -0.0667,
+          "python_email_preserve_plus_tag": 0.2667,
+          "python_email_whitespace": 0.0667,
+          "python_price_comma": 0.0,
+          "python_sku_preserve_comma": 0.2667,
+          "python_slug_punctuation": 0.5333
+        }
+      },
+      "first_attempt": {
+        "a": "handwritten_skills",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "n_base_tasks": 19,
+        "mean_a": 0.2912,
+        "mean_b": 0.2842,
+        "diff": 0.007,
+        "ci95": [
+          -0.0667,
+          0.0947
+        ],
+        "base_tasks_better": 4,
+        "base_tasks_worse": 5,
+        "base_tasks_tied": 10,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": -0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.0667,
+          "config_nested_auth_token": 0.1333,
+          "config_request_timeout_type": 0.0,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": -0.2,
+          "dependency_no_global_adapter_break": 0.2,
+          "dependency_parse_result_shape": -0.1333,
+          "python_email_preserve_plus_tag": 0.0,
+          "python_email_whitespace": 0.0,
+          "python_price_comma": -0.3333,
+          "python_sku_preserve_comma": -0.1333,
+          "python_slug_punctuation": 0.6
+        }
+      },
+      "score_only": {
+        "a": "handwritten_skills",
+        "b": "no_skill",
+        "metric": "score_passed",
+        "n_base_tasks": 19,
+        "mean_a": 0.6211,
+        "mean_b": 0.5368,
+        "diff": 0.0842,
+        "ci95": [
+          -0.014,
+          0.1825
+        ],
+        "base_tasks_better": 6,
+        "base_tasks_worse": 4,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.3333,
+          "config_nested_auth_token": 0.3333,
+          "config_request_timeout_type": -0.1333,
+          "config_timeout_key": -0.1333,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": -0.3333,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": -0.0667,
+          "python_email_preserve_plus_tag": 0.4,
+          "python_email_whitespace": 0.4,
+          "python_price_comma": 0.0,
+          "python_sku_preserve_comma": 0.2667,
+          "python_slug_punctuation": 0.5333
+        }
+      },
+      "by_split": {
+        "train": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 8,
+          "mean_a": 0.6583,
+          "mean_b": 0.7167,
+          "diff": -0.0583,
+          "ci95": [
+            -0.15,
+            0.0083
+          ],
+          "base_tasks_better": 1,
+          "base_tasks_worse": 3,
+          "base_tasks_tied": 4,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_empty_input": 0.0,
+            "cli_json_flag": 0.0,
+            "config_missing_optional_region": 0.0,
+            "config_timeout_key": -0.1333,
+            "dependency_format_user_signature": -0.3333,
+            "dependency_parse_result_shape": -0.0667,
+            "python_email_whitespace": 0.0667,
+            "python_price_comma": 0.0
+          }
+        },
+        "heldout": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 5,
+          "mean_a": 0.6,
+          "mean_b": 0.4533,
+          "diff": 0.1467,
+          "ci95": [
+            -0.0533,
+            0.3733
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 1,
+          "base_tasks_tied": 2,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_missing_file_error": 0.0,
+            "config_nested_auth_token": 0.3333,
+            "config_request_timeout_type": -0.1333,
+            "dependency_format_order_signature": 0.0,
+            "python_slug_punctuation": 0.5333
+          }
+        },
+        "adversarial": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 6,
+          "mean_a": 0.4333,
+          "mean_b": 0.2889,
+          "diff": 0.1444,
+          "ci95": [
+            0.0444,
+            0.2556
+          ],
+          "base_tasks_better": 3,
+          "base_tasks_worse": 0,
+          "base_tasks_tied": 3,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_invalid_input_nonzero": 0.0,
+            "cli_json_error_valid": 0.0,
+            "config_missing_required_api_key": 0.3333,
+            "dependency_no_global_adapter_break": 0.0,
+            "python_email_preserve_plus_tag": 0.2667,
+            "python_sku_preserve_comma": 0.2667
+          }
+        }
+      }
+    },
+    {
+      "primary": false,
+      "overall": {
+        "a": "handwritten_skills",
+        "b": "placebo",
+        "metric": "success",
+        "n_base_tasks": 19,
+        "mean_a": 0.5719,
+        "mean_b": 0.5298,
+        "diff": 0.0421,
+        "ci95": [
+          -0.0491,
+          0.1474
+        ],
+        "base_tasks_better": 7,
+        "base_tasks_worse": 5,
+        "base_tasks_tied": 7,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.0667,
+          "config_nested_auth_token": 0.3333,
+          "config_request_timeout_type": -0.1333,
+          "config_timeout_key": -0.1333,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": -0.4,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": -0.1333,
+          "python_email_preserve_plus_tag": 0.0667,
+          "python_email_whitespace": 0.2667,
+          "python_price_comma": 0.1333,
+          "python_sku_preserve_comma": -0.0667,
+          "python_slug_punctuation": 0.7333
+        }
+      },
+      "first_attempt": {
+        "a": "handwritten_skills",
+        "b": "placebo",
+        "metric": "first_attempt_success",
+        "n_base_tasks": 19,
+        "mean_a": 0.2912,
+        "mean_b": 0.2526,
+        "diff": 0.0386,
+        "ci95": [
+          -0.0456,
+          0.1298
+        ],
+        "base_tasks_better": 8,
+        "base_tasks_worse": 3,
+        "base_tasks_tied": 8,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0667,
+          "config_missing_required_api_key": -0.0667,
+          "config_nested_auth_token": 0.1333,
+          "config_request_timeout_type": 0.0,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": 0.0667,
+          "dependency_format_user_signature": -0.0667,
+          "dependency_no_global_adapter_break": 0.1333,
+          "dependency_parse_result_shape": -0.4667,
+          "python_email_preserve_plus_tag": 0.0,
+          "python_email_whitespace": 0.0,
+          "python_price_comma": 0.0667,
+          "python_sku_preserve_comma": 0.1333,
+          "python_slug_punctuation": 0.6667
+        }
+      },
+      "score_only": {
+        "a": "handwritten_skills",
+        "b": "placebo",
+        "metric": "score_passed",
+        "n_base_tasks": 19,
+        "mean_a": 0.6211,
+        "mean_b": 0.5333,
+        "diff": 0.0877,
+        "ci95": [
+          -0.0316,
+          0.2175
+        ],
+        "base_tasks_better": 7,
+        "base_tasks_worse": 5,
+        "base_tasks_tied": 7,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.0667,
+          "config_nested_auth_token": 0.3333,
+          "config_request_timeout_type": -0.1333,
+          "config_timeout_key": -0.1333,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": -0.4,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": -0.1333,
+          "python_email_preserve_plus_tag": 0.5333,
+          "python_email_whitespace": 0.6667,
+          "python_price_comma": 0.1333,
+          "python_sku_preserve_comma": -0.0667,
+          "python_slug_punctuation": 0.7333
+        }
+      },
+      "by_split": {
+        "train": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "n_base_tasks": 8,
+          "mean_a": 0.6583,
+          "mean_b": 0.6833,
+          "diff": -0.025,
+          "ci95": [
+            -0.1583,
+            0.1
+          ],
+          "base_tasks_better": 3,
+          "base_tasks_worse": 3,
+          "base_tasks_tied": 2,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_empty_input": 0.0,
+            "cli_json_flag": 0.0667,
+            "config_missing_optional_region": 0.0,
+            "config_timeout_key": -0.1333,
+            "dependency_format_user_signature": -0.4,
+            "dependency_parse_result_shape": -0.1333,
+            "python_email_whitespace": 0.2667,
+            "python_price_comma": 0.1333
+          }
+        },
+        "heldout": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "n_base_tasks": 5,
+          "mean_a": 0.6,
+          "mean_b": 0.4133,
+          "diff": 0.1867,
+          "ci95": [
+            -0.0533,
+            0.48
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 1,
+          "base_tasks_tied": 2,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_missing_file_error": 0.0,
+            "config_nested_auth_token": 0.3333,
+            "config_request_timeout_type": -0.1333,
+            "dependency_format_order_signature": 0.0,
+            "python_slug_punctuation": 0.7333
+          }
+        },
+        "adversarial": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "n_base_tasks": 6,
+          "mean_a": 0.4333,
+          "mean_b": 0.4222,
+          "diff": 0.0111,
+          "ci95": [
+            -0.0222,
+            0.0444
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 1,
+          "base_tasks_tied": 3,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_invalid_input_nonzero": 0.0,
+            "cli_json_error_valid": 0.0,
+            "config_missing_required_api_key": 0.0667,
+            "dependency_no_global_adapter_break": 0.0,
+            "python_email_preserve_plus_tag": 0.0667,
+            "python_sku_preserve_comma": -0.0667
+          }
+        }
+      }
+    },
+    {
+      "primary": false,
+      "overall": {
+        "a": "placebo",
+        "b": "no_skill",
+        "metric": "success",
+        "n_base_tasks": 19,
+        "mean_a": 0.5298,
+        "mean_b": 0.5123,
+        "diff": 0.0175,
+        "ci95": [
+          -0.0386,
+          0.0772
+        ],
+        "base_tasks_better": 5,
+        "base_tasks_worse": 4,
+        "base_tasks_tied": 10,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": -0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.2667,
+          "config_nested_auth_token": 0.0,
+          "config_request_timeout_type": 0.0,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": 0.0667,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": 0.0667,
+          "python_email_preserve_plus_tag": 0.2,
+          "python_email_whitespace": -0.2,
+          "python_price_comma": -0.1333,
+          "python_sku_preserve_comma": 0.3333,
+          "python_slug_punctuation": -0.2
+        }
+      },
+      "first_attempt": {
+        "a": "placebo",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "n_base_tasks": 19,
+        "mean_a": 0.2526,
+        "mean_b": 0.2842,
+        "diff": -0.0316,
+        "ci95": [
+          -0.0947,
+          0.0316
+        ],
+        "base_tasks_better": 3,
+        "base_tasks_worse": 7,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": -0.1333,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": -0.0667,
+          "config_missing_required_api_key": 0.1333,
+          "config_nested_auth_token": 0.0,
+          "config_request_timeout_type": 0.0,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": -0.0667,
+          "dependency_format_user_signature": -0.1333,
+          "dependency_no_global_adapter_break": 0.0667,
+          "dependency_parse_result_shape": 0.3333,
+          "python_email_preserve_plus_tag": 0.0,
+          "python_email_whitespace": 0.0,
+          "python_price_comma": -0.4,
+          "python_sku_preserve_comma": -0.2667,
+          "python_slug_punctuation": -0.0667
+        }
+      },
+      "score_only": {
+        "a": "placebo",
+        "b": "no_skill",
+        "metric": "score_passed",
+        "n_base_tasks": 19,
+        "mean_a": 0.5333,
+        "mean_b": 0.5368,
+        "diff": -0.0035,
+        "ci95": [
+          -0.0632,
+          0.0596
+        ],
+        "base_tasks_better": 4,
+        "base_tasks_worse": 5,
+        "base_tasks_tied": 10,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": -0.0667,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.2667,
+          "config_nested_auth_token": 0.0,
+          "config_request_timeout_type": 0.0,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": 0.0,
+          "dependency_format_user_signature": 0.0667,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": 0.0667,
+          "python_email_preserve_plus_tag": -0.1333,
+          "python_email_whitespace": -0.2667,
+          "python_price_comma": -0.1333,
+          "python_sku_preserve_comma": 0.3333,
+          "python_slug_punctuation": -0.2
+        }
+      },
+      "by_split": {
+        "train": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 8,
+          "mean_a": 0.6833,
+          "mean_b": 0.7167,
+          "diff": -0.0333,
+          "ci95": [
+            -0.1,
+            0.025
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 3,
+          "base_tasks_tied": 3,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_empty_input": 0.0,
+            "cli_json_flag": -0.0667,
+            "config_missing_optional_region": 0.0,
+            "config_timeout_key": 0.0,
+            "dependency_format_user_signature": 0.0667,
+            "dependency_parse_result_shape": 0.0667,
+            "python_email_whitespace": -0.2,
+            "python_price_comma": -0.1333
+          }
+        },
+        "heldout": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 5,
+          "mean_a": 0.4133,
+          "mean_b": 0.4533,
+          "diff": -0.04,
+          "ci95": [
+            -0.12,
+            0.0
+          ],
+          "base_tasks_better": 0,
+          "base_tasks_worse": 1,
+          "base_tasks_tied": 4,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_missing_file_error": 0.0,
+            "config_nested_auth_token": 0.0,
+            "config_request_timeout_type": 0.0,
+            "dependency_format_order_signature": 0.0,
+            "python_slug_punctuation": -0.2
+          }
+        },
+        "adversarial": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 6,
+          "mean_a": 0.4222,
+          "mean_b": 0.2889,
+          "diff": 0.1333,
+          "ci95": [
+            0.0333,
+            0.2444
+          ],
+          "base_tasks_better": 3,
+          "base_tasks_worse": 0,
+          "base_tasks_tied": 3,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_invalid_input_nonzero": 0.0,
+            "cli_json_error_valid": 0.0,
+            "config_missing_required_api_key": 0.2667,
+            "dependency_no_global_adapter_break": 0.0,
+            "python_email_preserve_plus_tag": 0.2,
+            "python_sku_preserve_comma": 0.3333
+          }
+        }
+      }
+    },
+    {
+      "primary": false,
+      "overall": {
+        "a": "symptom_patch",
+        "b": "no_skill",
+        "metric": "success",
+        "n_base_tasks": 19,
+        "mean_a": 0.4421,
+        "mean_b": 0.5123,
+        "diff": -0.0702,
+        "ci95": [
+          -0.1789,
+          0.0246
+        ],
+        "base_tasks_better": 5,
+        "base_tasks_worse": 5,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.2,
+          "config_nested_auth_token": 0.0,
+          "config_request_timeout_type": 0.0667,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": -0.0667,
+          "dependency_format_user_signature": 0.1333,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": 0.0667,
+          "python_email_preserve_plus_tag": 0.1333,
+          "python_email_whitespace": -0.3333,
+          "python_price_comma": -0.6,
+          "python_sku_preserve_comma": -0.6667,
+          "python_slug_punctuation": -0.2667
+        }
+      },
+      "first_attempt": {
+        "a": "symptom_patch",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "n_base_tasks": 19,
+        "mean_a": 0.2175,
+        "mean_b": 0.2842,
+        "diff": -0.0667,
+        "ci95": [
+          -0.1754,
+          0.0281
+        ],
+        "base_tasks_better": 4,
+        "base_tasks_worse": 6,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.2667,
+          "config_missing_required_api_key": 0.2,
+          "config_nested_auth_token": -0.0667,
+          "config_request_timeout_type": 0.0667,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": -0.4,
+          "dependency_format_user_signature": -0.2,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": 0.0,
+          "python_email_preserve_plus_tag": 0.1333,
+          "python_email_whitespace": 0.0,
+          "python_price_comma": -0.6,
+          "python_sku_preserve_comma": -0.6,
+          "python_slug_punctuation": -0.0667
+        }
+      },
+      "score_only": {
+        "a": "symptom_patch",
+        "b": "no_skill",
+        "metric": "score_passed",
+        "n_base_tasks": 19,
+        "mean_a": 0.4456,
+        "mean_b": 0.5368,
+        "diff": -0.0912,
+        "ci95": [
+          -0.2,
+          0.0035
+        ],
+        "base_tasks_better": 4,
+        "base_tasks_worse": 6,
+        "base_tasks_tied": 9,
+        "unpaired_base_tasks_dropped": [],
+        "per_base_task_diff": {
+          "cli_empty_input": 0.0,
+          "cli_invalid_input_nonzero": 0.0,
+          "cli_json_error_valid": 0.0,
+          "cli_json_flag": 0.0,
+          "cli_missing_file_error": 0.0,
+          "config_missing_optional_region": 0.0,
+          "config_missing_required_api_key": 0.2,
+          "config_nested_auth_token": 0.0,
+          "config_request_timeout_type": 0.0667,
+          "config_timeout_key": 0.0,
+          "dependency_format_order_signature": -0.0667,
+          "dependency_format_user_signature": 0.1333,
+          "dependency_no_global_adapter_break": 0.0,
+          "dependency_parse_result_shape": 0.0667,
+          "python_email_preserve_plus_tag": -0.2,
+          "python_email_whitespace": -0.4,
+          "python_price_comma": -0.6,
+          "python_sku_preserve_comma": -0.6667,
+          "python_slug_punctuation": -0.2667
+        }
+      },
+      "by_split": {
+        "train": {
+          "a": "symptom_patch",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 8,
+          "mean_a": 0.625,
+          "mean_b": 0.7167,
+          "diff": -0.0917,
+          "ci95": [
+            -0.2667,
+            0.0417
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 2,
+          "base_tasks_tied": 4,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_empty_input": 0.0,
+            "cli_json_flag": 0.0,
+            "config_missing_optional_region": 0.0,
+            "config_timeout_key": 0.0,
+            "dependency_format_user_signature": 0.1333,
+            "dependency_parse_result_shape": 0.0667,
+            "python_email_whitespace": -0.3333,
+            "python_price_comma": -0.6
+          }
+        },
+        "heldout": {
+          "a": "symptom_patch",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 5,
+          "mean_a": 0.4,
+          "mean_b": 0.4533,
+          "diff": -0.0533,
+          "ci95": [
+            -0.16,
+            0.0267
+          ],
+          "base_tasks_better": 1,
+          "base_tasks_worse": 2,
+          "base_tasks_tied": 2,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_missing_file_error": 0.0,
+            "config_nested_auth_token": 0.0,
+            "config_request_timeout_type": 0.0667,
+            "dependency_format_order_signature": -0.0667,
+            "python_slug_punctuation": -0.2667
+          }
+        },
+        "adversarial": {
+          "a": "symptom_patch",
+          "b": "no_skill",
+          "metric": "success",
+          "n_base_tasks": 6,
+          "mean_a": 0.2333,
+          "mean_b": 0.2889,
+          "diff": -0.0556,
+          "ci95": [
+            -0.3111,
+            0.1222
+          ],
+          "base_tasks_better": 2,
+          "base_tasks_worse": 1,
+          "base_tasks_tied": 3,
+          "unpaired_base_tasks_dropped": [],
+          "per_base_task_diff": {
+            "cli_invalid_input_nonzero": 0.0,
+            "cli_json_error_valid": 0.0,
+            "config_missing_required_api_key": 0.2,
+            "dependency_no_global_adapter_break": 0.0,
+            "python_email_preserve_plus_tag": 0.1333,
+            "python_sku_preserve_comma": -0.6667
+          }
+        }
+      }
+    }
+  ],
+  "per_base_task": {
+    "dependency_format_user_signature": {
+      "no_skill": 0.733,
+      "handwritten_skills": 0.4,
+      "placebo": 0.8,
+      "symptom_patch": 0.867
+    },
+    "python_price_comma": {
+      "no_skill": 0.933,
+      "handwritten_skills": 0.933,
+      "placebo": 0.8,
+      "symptom_patch": 0.333
+    },
+    "cli_empty_input": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "placebo": 0.0,
+      "symptom_patch": 0.0
+    },
+    "dependency_no_global_adapter_break": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "placebo": 1.0,
+      "symptom_patch": 1.0
+    },
+    "config_missing_required_api_key": {
+      "no_skill": 0.067,
+      "handwritten_skills": 0.4,
+      "placebo": 0.333,
+      "symptom_patch": 0.267
+    },
+    "python_email_preserve_plus_tag": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.267,
+      "placebo": 0.2,
+      "symptom_patch": 0.133
+    },
+    "python_price_currency_spacing": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "placebo": 1.0,
+      "symptom_patch": 1.0
+    },
+    "config_timeout_key": {
+      "no_skill": 1.0,
+      "handwritten_skills": 0.867,
+      "placebo": 1.0,
+      "symptom_patch": 1.0
+    },
+    "cli_json_flag": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "placebo": 0.933,
+      "symptom_patch": 1.0
+    },
+    "dependency_format_order_signature": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "placebo": 1.0,
+      "symptom_patch": 0.933
+    },
+    "cli_json_error_valid": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "placebo": 0.0,
+      "symptom_patch": 0.0
+    },
+    "dependency_parse_result_shape": {
+      "no_skill": 0.733,
+      "handwritten_skills": 0.667,
+      "placebo": 0.8,
+      "symptom_patch": 0.8
+    },
+    "python_email_whitespace": {
+      "no_skill": 0.333,
+      "handwritten_skills": 0.4,
+      "placebo": 0.133,
+      "symptom_patch": 0.0
+    },
+    "cli_missing_file_error": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "placebo": 0.0,
+      "symptom_patch": 0.0
+    },
+    "python_slug_punctuation": {
+      "no_skill": 0.333,
+      "handwritten_skills": 0.867,
+      "placebo": 0.133,
+      "symptom_patch": 0.067
+    },
+    "config_missing_optional_region": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "placebo": 1.0,
+      "symptom_patch": 1.0
+    },
+    "config_request_timeout_type": {
+      "no_skill": 0.867,
+      "handwritten_skills": 0.733,
+      "placebo": 0.867,
+      "symptom_patch": 0.933
+    },
+    "cli_invalid_input_nonzero": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "placebo": 0.0,
+      "symptom_patch": 0.0
+    },
+    "python_sku_preserve_comma": {
+      "no_skill": 0.667,
+      "handwritten_skills": 0.933,
+      "placebo": 1.0,
+      "symptom_patch": 0.0
+    },
+    "config_nested_auth_token": {
+      "no_skill": 0.067,
+      "handwritten_skills": 0.4,
+      "placebo": 0.067,
+      "symptom_patch": 0.067
+    }
+  },
+  "settings": {
+    "models": [
+      "qwen2.5:7b"
+    ],
+    "temperatures": [
+      0.7
+    ],
+    "max_steps": [
+      3
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  }
+}
