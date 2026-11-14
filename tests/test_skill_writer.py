@@ -117,3 +117,39 @@ def test_overlong_skill_is_cut_at_a_line_break():
     assert len(out) <= MAX_SKILL_CHARS
     assert kept[:-1] == original[: len(kept) - 1]  # whole lines only
     assert kept[-1] == original[len(kept) - 1].rstrip()
+
+
+def test_strong_skill_condition_uses_the_strong_dir(tmp_path, monkeypatch):
+    weak, strong = tmp_path / "weak", tmp_path / "strong"
+    for folder, tag in [(weak, "weak"), (strong, "strong")]:
+        folder.mkdir()
+        for fam in FAMILIES:
+            (folder / f"seed1_{fam}.md").write_text(f"# Skill: {tag} {fam}\n")
+    seen = []
+
+    class Recorder:
+        name, model, available = "stub", "stub", True
+        last_usage = {}
+
+        def generate_text(self, prompt, seed=None):
+            seen.append(prompt)
+            return "no edits"
+
+    monkeypatch.setattr(agent_mod, "make_client", lambda provider: Recorder())
+    out = tmp_path / "r.jsonl"
+    run_matched(out, conditions=["strong_skill"], seeds=[1], concurrency=1,
+                task_ids=["config_timeout_key_v1"], skills_dir=weak, strong_skills_dir=strong)
+    (rec,) = load_records(out)
+    shutil.rmtree(rec["run_dir"], ignore_errors=True)
+    assert seen and all("# Skill: strong config_env_failure" in p for p in seen)
+    assert not any("# Skill: weak" in p for p in seen)
+    with pytest.raises(ValueError):
+        run_matched(tmp_path / "r2.jsonl", conditions=["strong_skill"], seeds=[1], task_ids=["config_timeout_key_v1"])
+
+
+@needs_source
+def test_writer_model_is_recorded(tmp_path):
+    client = EchoClient()
+    client.model = "big-writer"
+    manifest = write_model_skills(SOURCE, [1], tmp_path, client=client)
+    assert all(m["writer_model"] == "big-writer" for m in manifest)

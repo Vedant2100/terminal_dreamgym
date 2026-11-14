@@ -11,3 +11,5 @@ logs/
 runs/smoke_matched.jsonl
 skills/model_written_smoke/
 runs/smoke_model_skills.jsonl
+skills/strong_written_smoke/
+runs/smoke_strong_writer.jsonl
