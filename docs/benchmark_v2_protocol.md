@@ -1,7 +1,8 @@
 # Benchmark v2: protocol
 
 Written and committed before any model run on benchmark v2 (2026-11-13), and
-before calibration. Changes are listed under Deviations at the bottom.
+before calibration. The sections "Calibration outcome" and "Result" were added
+after the runs; changes to the plan are listed under Deviations at the bottom.
 
 ## Why a new benchmark
 
@@ -112,6 +113,24 @@ Strict successes out of 5 per task: 0 → 70 tasks, 1 → 11, 2 → 14, 3 → 11
 6 hard. `data/tasks_v2.json` now lists the kept tasks only; the 140 candidates
 that calibration ran on are in `data/tasks_v2_candidates.json`.
 
+## Result
+
+Job 312042: 1,040 runs, no infrastructure errors; every run re-scored from its
+saved sandbox with no mismatch. Co-primary, 97.5% repo-cluster intervals:
+`handwritten_skills − no_skill` −0.035 [−0.129, +0.053], no detectable
+difference; `strong_skill − no_skill` −0.100 [−0.187, −0.018], harm by the rule
+above. Secondary: `placebo − no_skill` −0.065 [−0.157, +0.033] and
+`strong_skill − placebo` −0.035 [−0.162, +0.073], so the harm cannot be separated
+from an effect of extra prompt text. No task was removed after calibration. Full
+report: `reports/v2_eval.md`.
+
 ## Deviations
 
-None yet.
+- After the run, the independent re-scoring script
+  (`scripts/reverify_matched.py`) was changed in three ways so it could check v2:
+  it takes the tasks file as an argument (it read only `data/tasks.json`); it runs
+  pytest without writing `.pyc` files, so a stale compiled file cannot be tested in
+  place of an edited source; and it counts a pytest timeout as a failure. The
+  scorer already did the last: one run's edit makes its tests hang, and that run
+  was scored as a failure in the results. The scoring and the analysis are
+  unchanged; the script agreed with all 1,040 records.

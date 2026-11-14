@@ -1,0 +1,29 @@
+{
+  "seed": 1,
+  "held_out_family": "all",
+  "writer_model": "qwen3-coder:30b",
+  "source_seed": 1,
+  "source_task_ids": [
+    "cli_missing_file_error_v5",
+    "python_email_whitespace_v2",
+    "python_email_preserve_plus_tag_v1",
+    "cli_invalid_input_nonzero_v2",
+    "cli_empty_input_v3",
+    "python_slug_punctuation_v4"
+  ],
+  "source_families": [
+    "cli_edge_case",
+    "python_test_failure"
+  ],
+  "chars": 1384,
+  "raw_reply_chars": 1384,
+  "leaked_identifiers": [
+    "match",
+    "parse"
+  ],
+  "usage": {
+    "prompt_tokens": 3032,
+    "completion_tokens": 271,
+    "finish_reason": "stop"
+  }
+}

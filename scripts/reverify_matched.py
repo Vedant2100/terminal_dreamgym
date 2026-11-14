@@ -1,15 +1,19 @@
-"""Usage: python scripts/reverify_matched.py [runs/matched_eval.jsonl]  (run from the repo root)
+"""Usage: python scripts/reverify_matched.py [runs/matched_eval.jsonl] [data/tasks.json]  (run from the repo root)
 
 Independently re-score every run from its saved sandbox: rerun the target
 command and the whole suite, recompute strict success, compare with the record."""
-import json, shlex, subprocess, sys, re
+import json, os, shlex, subprocess, sys, re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-tasks = {t["id"]: t for t in json.load(open("data/tasks.json"))}
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+tasks = {t["id"]: t for t in json.load(open(sys.argv[2] if len(sys.argv) > 2 else "data/tasks.json"))}
 recs = [json.loads(l) for l in open(sys.argv[1] if len(sys.argv) > 1 else "runs/matched_eval.jsonl")]
 def run(cmd, cwd):
     args = shlex.split(cmd); args = [sys.executable, "-m", "pytest", *args[1:], "-p", "no:cacheprovider"]
-    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=60)
+    try:
+        return subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=60)
+    except subprocess.TimeoutExpired:  # a hanging edit counts as failing, as in the scorer
+        return subprocess.CompletedProcess(args, 1, "", "timeout")
 def outcomes(cwd):
     r = run("pytest -q -rA", cwd); o = {}
     for line in r.stdout.splitlines():
