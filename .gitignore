@@ -9,3 +9,5 @@ runs/sandboxes/
 runs/practice_worlds/*/__pycache__/
 logs/
 runs/smoke_matched.jsonl
+skills/model_written_smoke/
+runs/smoke_model_skills.jsonl
