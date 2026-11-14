@@ -103,6 +103,15 @@ entirely different ones.
 - Strong skills are written once (`skills/strong_written_v2/`) and never
   rewritten.
 
+## Calibration outcome
+
+Job 311913, 700 runs, no infrastructure errors, no task solved before any edit.
+Strict successes out of 5 per task: 0 → 70 tasks, 1 → 11, 2 → 14, 3 → 11,
+4 → 16, 5 → 18. 52 tasks kept (`benchmark_v2/kept_tasks.txt`), from all 16 repos:
+25 logic, 14 error handling, 6 contract, 6 trap, 1 config; 23 easy, 23 medium,
+6 hard. `data/tasks_v2.json` now lists the kept tasks only; the 140 candidates
+that calibration ran on are in `data/tasks_v2_candidates.json`.
+
 ## Deviations
 
 None yet.
