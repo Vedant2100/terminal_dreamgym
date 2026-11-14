@@ -1,0 +1,140 @@
+[
+  {
+    "id": "percentile_floor_rank",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_stats.py::test_percentile_nearest_rank",
+    "note": "Nearest rank must round up (ceil); int() truncates and picks a lower value.",
+    "edits": [
+      {
+        "file": "stats.py",
+        "old": "rank = math.ceil(pct / 100 * len(ordered))",
+        "new": "rank = int(pct / 100 * len(ordered))"
+      }
+    ]
+  },
+  {
+    "id": "window_end_inclusive",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_stats.py::test_window_end_is_exclusive",
+    "note": "in_window includes the end time, contradicting its docstring.",
+    "edits": [
+      {
+        "file": "filters.py",
+        "old": "if start <= r.time < end]",
+        "new": "if start <= r.time <= end]"
+      }
+    ]
+  },
+  {
+    "id": "percentile_range_unchecked",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_stats.py::test_percentile_rejects_zero",
+    "note": "Range check on pct removed; pct=0 gives rank 0 and ordered[-1] silently returns the max.",
+    "edits": [
+      {
+        "file": "stats.py",
+        "old": "    if not 0 < pct <= 100:\n        raise ValueError(\"pct must be in (0, 100]\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "dash_size_rejected",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_parse.py::test_dash_size_is_zero",
+    "note": "The size group no longer accepts '-', so such lines do not match and parse_line returns None. Fix the regex.",
+    "edits": [
+      {
+        "file": "parse.py",
+        "old": "(?P<size>\\d+|-)",
+        "new": "(?P<size>\\d+)"
+      }
+    ]
+  },
+  {
+    "id": "tie_order_by_insertion",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_stats.py::test_top_paths_ties_alphabetical",
+    "note": "count_by sorts by count only (reverse), so ties keep first-seen order instead of alphabetical.",
+    "edits": [
+      {
+        "file": "stats.py",
+        "old": "return sorted(counts.items(), key=lambda item: (-item[1], item[0]))",
+        "new": "return sorted(counts.items(), key=lambda item: item[1], reverse=True)"
+      }
+    ]
+  },
+  {
+    "id": "query_string_kept",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_stats.py::test_top_paths_ignore_query_string",
+    "note": "parse_line keeps the query string in Record.path (documented as without it), so top_paths counts each URL separately. Fix in parse.py, not stats.py.",
+    "edits": [
+      {
+        "file": "parse.py",
+        "old": "path=match[\"path\"].split(\"?\", 1)[0],",
+        "new": "path=match[\"path\"],"
+      }
+    ]
+  },
+  {
+    "id": "error_rate_reuses_errors",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_stats.py::test_error_rate_counts_server_errors_only",
+    "note": "error_rate reuses filters.errors(), which also counts 4xx. Tempting fix: change errors() to >= 500, which breaks test_errors_include_client_errors. Correct fix: count only 5xx in error_rate.",
+    "edits": [
+      {
+        "file": "stats.py",
+        "old": "    return sum(1 for r in records if r.status >= 500) / len(records)",
+        "new": "    return len(errors(records)) / len(records)"
+      },
+      {
+        "file": "stats.py",
+        "old": "from filters import status_class",
+        "new": "from filters import errors, status_class"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "filters.py",
+        "old": "return [r for r in records if r.status >= 400]",
+        "new": "return [r for r in records if r.status >= 500]"
+      }
+    ]
+  },
+  {
+    "id": "timezone_replaced_not_converted",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_stats.py::test_window_compares_in_utc",
+    "note": "parse_line relabels the local time as UTC (.replace(tzinfo=utc)) instead of converting (.astimezone), so +0200 lines are two hours late and fall outside the window. Fails in filters test; fix in parse.py.",
+    "edits": [
+      {
+        "file": "parse.py",
+        "old": ".astimezone(timezone.utc),",
+        "new": ".replace(tzinfo=timezone.utc),"
+      }
+    ]
+  },
+  {
+    "id": "duration_left_in_seconds",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_stats.py::test_latency_summary_in_ms",
+    "note": "parse_line stores the raw seconds in Record.duration_ms; latency_summary reports milliseconds. Fix the unit conversion in parse.py, not in stats.py.",
+    "edits": [
+      {
+        "file": "parse.py",
+        "old": "duration_ms=round(float(match[\"duration\"]) * 1000),",
+        "new": "duration_ms=float(match[\"duration\"]),"
+      }
+    ]
+  }
+]

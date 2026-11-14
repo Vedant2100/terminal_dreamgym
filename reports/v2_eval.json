@@ -1,0 +1,1774 @@
+{
+  "infra_error_records": 0,
+  "n_tasks": 52,
+  "n_repos": 16,
+  "category_counts": {
+    "logic": 25,
+    "trap": 6,
+    "error_handling": 14,
+    "contract": 6,
+    "config": 1
+  },
+  "per_condition": {
+    "no_skill": {
+      "runs": 260,
+      "success": 0.4885,
+      "score_passed": 0.5654,
+      "first_attempt_success": 0.3462,
+      "score_passed_but_regressed": 20,
+      "unparseable_reply_rate": 0.0108,
+      "solved_before_any_edit": 0,
+      "by_seed": {
+        "1": 0.5192,
+        "2": 0.5385,
+        "3": 0.5385,
+        "4": 0.4038,
+        "5": 0.4423
+      }
+    },
+    "handwritten_skills": {
+      "runs": 260,
+      "success": 0.4538,
+      "score_passed": 0.5731,
+      "first_attempt_success": 0.3231,
+      "score_passed_but_regressed": 31,
+      "unparseable_reply_rate": 0.022,
+      "solved_before_any_edit": 0,
+      "by_seed": {
+        "1": 0.4423,
+        "2": 0.4038,
+        "3": 0.5385,
+        "4": 0.5,
+        "5": 0.3846
+      }
+    },
+    "strong_skill": {
+      "runs": 260,
+      "success": 0.3885,
+      "score_passed": 0.4808,
+      "first_attempt_success": 0.2923,
+      "score_passed_but_regressed": 24,
+      "unparseable_reply_rate": 0.0155,
+      "solved_before_any_edit": 0,
+      "by_seed": {
+        "1": 0.3462,
+        "2": 0.5192,
+        "3": 0.3846,
+        "4": 0.3269,
+        "5": 0.3654
+      }
+    },
+    "placebo": {
+      "runs": 260,
+      "success": 0.4231,
+      "score_passed": 0.4808,
+      "first_attempt_success": 0.3192,
+      "score_passed_but_regressed": 15,
+      "unparseable_reply_rate": 0.0226,
+      "solved_before_any_edit": 0,
+      "by_seed": {
+        "1": 0.4615,
+        "2": 0.4423,
+        "3": 0.4808,
+        "4": 0.3654,
+        "5": 0.3654
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "role": "co-primary",
+      "overall": {
+        "a": "handwritten_skills",
+        "b": "no_skill",
+        "metric": "success",
+        "level": 0.975,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.4538,
+        "mean_b": 0.4885,
+        "diff": -0.0346,
+        "ci_repo_cluster": [
+          -0.1286,
+          0.0528
+        ],
+        "ci_task": [
+          -0.1308,
+          0.0615
+        ],
+        "tasks_better": 13,
+        "tasks_worse": 17,
+        "tasks_tied": 22
+      },
+      "first_attempt": {
+        "a": "handwritten_skills",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3231,
+        "mean_b": 0.3462,
+        "diff": -0.0231,
+        "ci_repo_cluster": [
+          -0.0766,
+          0.0333
+        ],
+        "ci_task": [
+          -0.1,
+          0.0538
+        ],
+        "tasks_better": 12,
+        "tasks_worse": 18,
+        "tasks_tied": 22
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 1.0,
+          "mean_b": 0.6,
+          "diff": 0.4,
+          "ci_repo_cluster": [
+            0.4,
+            0.4
+          ],
+          "ci_task": [
+            0.4,
+            0.4
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 0,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.2333,
+          "mean_b": 0.3667,
+          "diff": -0.1333,
+          "ci_repo_cluster": [
+            -0.2,
+            -0.0667
+          ],
+          "ci_task": [
+            -0.2667,
+            0.0333
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 4,
+          "tasks_tied": 1
+        },
+        "error_handling": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.3571,
+          "mean_b": 0.5429,
+          "diff": -0.1857,
+          "ci_repo_cluster": [
+            -0.4,
+            -0.0222
+          ],
+          "ci_task": [
+            -0.3571,
+            -0.0143
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 6,
+          "tasks_tied": 7
+        },
+        "logic": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.592,
+          "mean_b": 0.536,
+          "diff": 0.056,
+          "ci_repo_cluster": [
+            -0.0783,
+            0.163
+          ],
+          "ci_task": [
+            -0.064,
+            0.176
+          ],
+          "tasks_better": 7,
+          "tasks_worse": 5,
+          "tasks_tied": 13
+        },
+        "trap": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2333,
+          "mean_b": 0.2667,
+          "diff": -0.0333,
+          "ci_repo_cluster": [
+            -0.2333,
+            0.1667
+          ],
+          "ci_task": [
+            -0.2333,
+            0.1667
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 2,
+          "tasks_tied": 1
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.5304,
+          "mean_b": 0.6,
+          "diff": -0.0696,
+          "ci_repo_cluster": [
+            -0.2235,
+            0.048
+          ],
+          "ci_task": [
+            -0.2348,
+            0.0957
+          ],
+          "tasks_better": 6,
+          "tasks_worse": 8,
+          "tasks_tied": 9
+        },
+        "hard": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.5667,
+          "mean_b": 0.4,
+          "diff": 0.1667,
+          "ci_repo_cluster": [
+            0.0333,
+            0.3333
+          ],
+          "ci_task": [
+            0.0333,
+            0.3333
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 0,
+          "tasks_tied": 3
+        },
+        "medium": {
+          "a": "handwritten_skills",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3478,
+          "mean_b": 0.4,
+          "diff": -0.0522,
+          "ci_repo_cluster": [
+            -0.1364,
+            0.0526
+          ],
+          "ci_task": [
+            -0.1391,
+            0.0348
+          ],
+          "tasks_better": 4,
+          "tasks_worse": 9,
+          "tasks_tied": 10
+        }
+      }
+    },
+    {
+      "role": "co-primary",
+      "overall": {
+        "a": "strong_skill",
+        "b": "no_skill",
+        "metric": "success",
+        "level": 0.975,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3885,
+        "mean_b": 0.4885,
+        "diff": -0.1,
+        "ci_repo_cluster": [
+          -0.1872,
+          -0.0182
+        ],
+        "ci_task": [
+          -0.1885,
+          -0.0077
+        ],
+        "tasks_better": 14,
+        "tasks_worse": 26,
+        "tasks_tied": 12
+      },
+      "first_attempt": {
+        "a": "strong_skill",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.2923,
+        "mean_b": 0.3462,
+        "diff": -0.0538,
+        "ci_repo_cluster": [
+          -0.1135,
+          0.0045
+        ],
+        "ci_task": [
+          -0.1231,
+          0.0192
+        ],
+        "tasks_better": 13,
+        "tasks_worse": 21,
+        "tasks_tied": 18
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 0.8,
+          "mean_b": 0.6,
+          "diff": 0.2,
+          "ci_repo_cluster": [
+            0.2,
+            0.2
+          ],
+          "ci_task": [
+            0.2,
+            0.2
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 0,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.3333,
+          "mean_b": 0.3667,
+          "diff": -0.0333,
+          "ci_repo_cluster": [
+            -0.2,
+            0.1
+          ],
+          "ci_task": [
+            -0.1667,
+            0.1
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 3,
+          "tasks_tied": 1
+        },
+        "error_handling": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.3714,
+          "mean_b": 0.5429,
+          "diff": -0.1714,
+          "ci_repo_cluster": [
+            -0.3385,
+            -0.0154
+          ],
+          "ci_task": [
+            -0.3286,
+            -0.0143
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 7,
+          "tasks_tied": 4
+        },
+        "logic": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.44,
+          "mean_b": 0.536,
+          "diff": -0.096,
+          "ci_repo_cluster": [
+            -0.2273,
+            0.0286
+          ],
+          "ci_task": [
+            -0.216,
+            0.04
+          ],
+          "tasks_better": 7,
+          "tasks_worse": 13,
+          "tasks_tied": 5
+        },
+        "trap": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2,
+          "mean_b": 0.2667,
+          "diff": -0.0667,
+          "ci_repo_cluster": [
+            -0.1667,
+            0.0667
+          ],
+          "ci_task": [
+            -0.1667,
+            0.0667
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 3,
+          "tasks_tied": 2
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.4261,
+          "mean_b": 0.6,
+          "diff": -0.1739,
+          "ci_repo_cluster": [
+            -0.29,
+            -0.072
+          ],
+          "ci_task": [
+            -0.313,
+            -0.0174
+          ],
+          "tasks_better": 4,
+          "tasks_worse": 14,
+          "tasks_tied": 5
+        },
+        "hard": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2667,
+          "mean_b": 0.4,
+          "diff": -0.1333,
+          "ci_repo_cluster": [
+            -0.3333,
+            0.0667
+          ],
+          "ci_task": [
+            -0.3333,
+            0.0667
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 4,
+          "tasks_tied": 0
+        },
+        "medium": {
+          "a": "strong_skill",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3826,
+          "mean_b": 0.4,
+          "diff": -0.0174,
+          "ci_repo_cluster": [
+            -0.1059,
+            0.048
+          ],
+          "ci_task": [
+            -0.1043,
+            0.0609
+          ],
+          "tasks_better": 8,
+          "tasks_worse": 8,
+          "tasks_tied": 7
+        }
+      }
+    },
+    {
+      "role": "secondary",
+      "overall": {
+        "a": "strong_skill",
+        "b": "handwritten_skills",
+        "metric": "success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3885,
+        "mean_b": 0.4538,
+        "diff": -0.0654,
+        "ci_repo_cluster": [
+          -0.1696,
+          0.0232
+        ],
+        "ci_task": [
+          -0.1423,
+          0.0077
+        ],
+        "tasks_better": 16,
+        "tasks_worse": 20,
+        "tasks_tied": 16
+      },
+      "first_attempt": {
+        "a": "strong_skill",
+        "b": "handwritten_skills",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.2923,
+        "mean_b": 0.3231,
+        "diff": -0.0308,
+        "ci_repo_cluster": [
+          -0.1102,
+          0.0392
+        ],
+        "ci_task": [
+          -0.1038,
+          0.0423
+        ],
+        "tasks_better": 12,
+        "tasks_worse": 18,
+        "tasks_tied": 22
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 0.8,
+          "mean_b": 1.0,
+          "diff": -0.2,
+          "ci_repo_cluster": [
+            -0.2,
+            -0.2
+          ],
+          "ci_task": [
+            -0.2,
+            -0.2
+          ],
+          "tasks_better": 0,
+          "tasks_worse": 1,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.3333,
+          "mean_b": 0.2333,
+          "diff": 0.1,
+          "ci_repo_cluster": [
+            -0.08,
+            0.24
+          ],
+          "ci_task": [
+            -0.0667,
+            0.2667
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 1,
+          "tasks_tied": 3
+        },
+        "error_handling": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.3714,
+          "mean_b": 0.3571,
+          "diff": 0.0143,
+          "ci_repo_cluster": [
+            -0.1286,
+            0.15
+          ],
+          "ci_task": [
+            -0.1286,
+            0.1286
+          ],
+          "tasks_better": 7,
+          "tasks_worse": 3,
+          "tasks_tied": 4
+        },
+        "logic": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.44,
+          "mean_b": 0.592,
+          "diff": -0.152,
+          "ci_repo_cluster": [
+            -0.2846,
+            -0.04
+          ],
+          "ci_task": [
+            -0.264,
+            -0.048
+          ],
+          "tasks_better": 5,
+          "tasks_worse": 12,
+          "tasks_tied": 8
+        },
+        "trap": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2,
+          "mean_b": 0.2333,
+          "diff": -0.0333,
+          "ci_repo_cluster": [
+            -0.2333,
+            0.1667
+          ],
+          "ci_task": [
+            -0.2333,
+            0.1667
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 3,
+          "tasks_tied": 1
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.4261,
+          "mean_b": 0.5304,
+          "diff": -0.1043,
+          "ci_repo_cluster": [
+            -0.2154,
+            0.0091
+          ],
+          "ci_task": [
+            -0.2087,
+            0.0
+          ],
+          "tasks_better": 4,
+          "tasks_worse": 8,
+          "tasks_tied": 11
+        },
+        "hard": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2667,
+          "mean_b": 0.5667,
+          "diff": -0.3,
+          "ci_repo_cluster": [
+            -0.4667,
+            -0.1333
+          ],
+          "ci_task": [
+            -0.4667,
+            -0.1333
+          ],
+          "tasks_better": 0,
+          "tasks_worse": 5,
+          "tasks_tied": 1
+        },
+        "medium": {
+          "a": "strong_skill",
+          "b": "handwritten_skills",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3826,
+          "mean_b": 0.3478,
+          "diff": 0.0348,
+          "ci_repo_cluster": [
+            -0.1222,
+            0.1548
+          ],
+          "ci_task": [
+            -0.0783,
+            0.1478
+          ],
+          "tasks_better": 12,
+          "tasks_worse": 7,
+          "tasks_tied": 4
+        }
+      }
+    },
+    {
+      "role": "secondary",
+      "overall": {
+        "a": "handwritten_skills",
+        "b": "placebo",
+        "metric": "success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.4538,
+        "mean_b": 0.4231,
+        "diff": 0.0308,
+        "ci_repo_cluster": [
+          -0.1053,
+          0.168
+        ],
+        "ci_task": [
+          -0.0615,
+          0.1308
+        ],
+        "tasks_better": 18,
+        "tasks_worse": 16,
+        "tasks_tied": 18
+      },
+      "first_attempt": {
+        "a": "handwritten_skills",
+        "b": "placebo",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3231,
+        "mean_b": 0.3192,
+        "diff": 0.0038,
+        "ci_repo_cluster": [
+          -0.1077,
+          0.1224
+        ],
+        "ci_task": [
+          -0.0846,
+          0.0923
+        ],
+        "tasks_better": 13,
+        "tasks_worse": 13,
+        "tasks_tied": 26
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 1.0,
+          "mean_b": 0.0,
+          "diff": 1.0,
+          "ci_repo_cluster": [
+            1.0,
+            1.0
+          ],
+          "ci_task": [
+            1.0,
+            1.0
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 0,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.2333,
+          "mean_b": 0.2333,
+          "diff": 0.0,
+          "ci_repo_cluster": [
+            -0.16,
+            0.12
+          ],
+          "ci_task": [
+            -0.1333,
+            0.1333
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 2,
+          "tasks_tied": 2
+        },
+        "error_handling": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.3571,
+          "mean_b": 0.4714,
+          "diff": -0.1143,
+          "ci_repo_cluster": [
+            -0.3167,
+            0.0308
+          ],
+          "ci_task": [
+            -0.3,
+            0.0429
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 4,
+          "tasks_tied": 7
+        },
+        "logic": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.592,
+          "mean_b": 0.488,
+          "diff": 0.104,
+          "ci_repo_cluster": [
+            -0.087,
+            0.2667
+          ],
+          "ci_task": [
+            -0.048,
+            0.248
+          ],
+          "tasks_better": 10,
+          "tasks_worse": 7,
+          "tasks_tied": 8
+        },
+        "trap": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2333,
+          "mean_b": 0.3,
+          "diff": -0.0667,
+          "ci_repo_cluster": [
+            -0.2333,
+            0.1
+          ],
+          "ci_task": [
+            -0.2333,
+            0.1
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 3,
+          "tasks_tied": 1
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.5304,
+          "mean_b": 0.513,
+          "diff": 0.0174,
+          "ci_repo_cluster": [
+            -0.2444,
+            0.2385
+          ],
+          "ci_task": [
+            -0.1652,
+            0.2087
+          ],
+          "tasks_better": 9,
+          "tasks_worse": 8,
+          "tasks_tied": 6
+        },
+        "hard": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.5667,
+          "mean_b": 0.4333,
+          "diff": 0.1333,
+          "ci_repo_cluster": [
+            -0.0667,
+            0.3333
+          ],
+          "ci_task": [
+            -0.0667,
+            0.3333
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 1,
+          "tasks_tied": 2
+        },
+        "medium": {
+          "a": "handwritten_skills",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3478,
+          "mean_b": 0.3304,
+          "diff": 0.0174,
+          "ci_repo_cluster": [
+            -0.0818,
+            0.1524
+          ],
+          "ci_task": [
+            -0.0783,
+            0.1391
+          ],
+          "tasks_better": 6,
+          "tasks_worse": 7,
+          "tasks_tied": 10
+        }
+      }
+    },
+    {
+      "role": "secondary",
+      "overall": {
+        "a": "strong_skill",
+        "b": "placebo",
+        "metric": "success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3885,
+        "mean_b": 0.4231,
+        "diff": -0.0346,
+        "ci_repo_cluster": [
+          -0.1619,
+          0.0733
+        ],
+        "ci_task": [
+          -0.1231,
+          0.0538
+        ],
+        "tasks_better": 18,
+        "tasks_worse": 18,
+        "tasks_tied": 16
+      },
+      "first_attempt": {
+        "a": "strong_skill",
+        "b": "placebo",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.2923,
+        "mean_b": 0.3192,
+        "diff": -0.0269,
+        "ci_repo_cluster": [
+          -0.1149,
+          0.0509
+        ],
+        "ci_task": [
+          -0.1038,
+          0.05
+        ],
+        "tasks_better": 15,
+        "tasks_worse": 18,
+        "tasks_tied": 19
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 0.8,
+          "mean_b": 0.0,
+          "diff": 0.8,
+          "ci_repo_cluster": [
+            0.8,
+            0.8
+          ],
+          "ci_task": [
+            0.8,
+            0.8
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 0,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.3333,
+          "mean_b": 0.2333,
+          "diff": 0.1,
+          "ci_repo_cluster": [
+            -0.08,
+            0.25
+          ],
+          "ci_task": [
+            -0.0667,
+            0.3
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 1,
+          "tasks_tied": 3
+        },
+        "error_handling": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.3714,
+          "mean_b": 0.4714,
+          "diff": -0.1,
+          "ci_repo_cluster": [
+            -0.2923,
+            0.0857
+          ],
+          "ci_task": [
+            -0.2857,
+            0.0714
+          ],
+          "tasks_better": 6,
+          "tasks_worse": 6,
+          "tasks_tied": 2
+        },
+        "logic": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.44,
+          "mean_b": 0.488,
+          "diff": -0.048,
+          "ci_repo_cluster": [
+            -0.2,
+            0.0741
+          ],
+          "ci_task": [
+            -0.176,
+            0.072
+          ],
+          "tasks_better": 8,
+          "tasks_worse": 9,
+          "tasks_tied": 8
+        },
+        "trap": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2,
+          "mean_b": 0.3,
+          "diff": -0.1,
+          "ci_repo_cluster": [
+            -0.3333,
+            0.0667
+          ],
+          "ci_task": [
+            -0.3333,
+            0.0667
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 2,
+          "tasks_tied": 3
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.4261,
+          "mean_b": 0.513,
+          "diff": -0.087,
+          "ci_repo_cluster": [
+            -0.2783,
+            0.0667
+          ],
+          "ci_task": [
+            -0.2348,
+            0.0522
+          ],
+          "tasks_better": 8,
+          "tasks_worse": 11,
+          "tasks_tied": 4
+        },
+        "hard": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.2667,
+          "mean_b": 0.4333,
+          "diff": -0.1667,
+          "ci_repo_cluster": [
+            -0.3667,
+            0.0
+          ],
+          "ci_task": [
+            -0.3667,
+            0.0
+          ],
+          "tasks_better": 0,
+          "tasks_worse": 2,
+          "tasks_tied": 4
+        },
+        "medium": {
+          "a": "strong_skill",
+          "b": "placebo",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3826,
+          "mean_b": 0.3304,
+          "diff": 0.0522,
+          "ci_repo_cluster": [
+            -0.1158,
+            0.1833
+          ],
+          "ci_task": [
+            -0.0783,
+            0.1913
+          ],
+          "tasks_better": 10,
+          "tasks_worse": 5,
+          "tasks_tied": 8
+        }
+      }
+    },
+    {
+      "role": "secondary",
+      "overall": {
+        "a": "placebo",
+        "b": "no_skill",
+        "metric": "success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.4231,
+        "mean_b": 0.4885,
+        "diff": -0.0654,
+        "ci_repo_cluster": [
+          -0.1571,
+          0.0327
+        ],
+        "ci_task": [
+          -0.1538,
+          0.0231
+        ],
+        "tasks_better": 11,
+        "tasks_worse": 21,
+        "tasks_tied": 20
+      },
+      "first_attempt": {
+        "a": "placebo",
+        "b": "no_skill",
+        "metric": "first_attempt_success",
+        "level": 0.95,
+        "n_tasks": 52,
+        "n_repos": 16,
+        "mean_a": 0.3192,
+        "mean_b": 0.3462,
+        "diff": -0.0269,
+        "ci_repo_cluster": [
+          -0.1138,
+          0.0615
+        ],
+        "ci_task": [
+          -0.1077,
+          0.0615
+        ],
+        "tasks_better": 10,
+        "tasks_worse": 15,
+        "tasks_tied": 27
+      },
+      "by_expected_failure_mode": {
+        "config": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 1,
+          "n_repos": 1,
+          "mean_a": 0.0,
+          "mean_b": 0.6,
+          "diff": -0.6,
+          "ci_repo_cluster": [
+            -0.6,
+            -0.6
+          ],
+          "ci_task": [
+            -0.6,
+            -0.6
+          ],
+          "tasks_better": 0,
+          "tasks_worse": 1,
+          "tasks_tied": 0
+        },
+        "contract": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 5,
+          "mean_a": 0.2333,
+          "mean_b": 0.3667,
+          "diff": -0.1333,
+          "ci_repo_cluster": [
+            -0.2,
+            -0.04
+          ],
+          "ci_task": [
+            -0.3333,
+            0.0333
+          ],
+          "tasks_better": 1,
+          "tasks_worse": 3,
+          "tasks_tied": 2
+        },
+        "error_handling": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 14,
+          "n_repos": 12,
+          "mean_a": 0.4714,
+          "mean_b": 0.5429,
+          "diff": -0.0714,
+          "ci_repo_cluster": [
+            -0.2769,
+            0.1231
+          ],
+          "ci_task": [
+            -0.2429,
+            0.1286
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 6,
+          "tasks_tied": 6
+        },
+        "logic": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 25,
+          "n_repos": 11,
+          "mean_a": 0.488,
+          "mean_b": 0.536,
+          "diff": -0.048,
+          "ci_repo_cluster": [
+            -0.1818,
+            0.0727
+          ],
+          "ci_task": [
+            -0.184,
+            0.08
+          ],
+          "tasks_better": 6,
+          "tasks_worse": 9,
+          "tasks_tied": 10
+        },
+        "trap": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.3,
+          "mean_b": 0.2667,
+          "diff": 0.0333,
+          "ci_repo_cluster": [
+            -0.1333,
+            0.2
+          ],
+          "ci_task": [
+            -0.1333,
+            0.2
+          ],
+          "tasks_better": 2,
+          "tasks_worse": 2,
+          "tasks_tied": 2
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.513,
+          "mean_b": 0.6,
+          "diff": -0.087,
+          "ci_repo_cluster": [
+            -0.2417,
+            0.0947
+          ],
+          "ci_task": [
+            -0.2609,
+            0.0783
+          ],
+          "tasks_better": 5,
+          "tasks_worse": 10,
+          "tasks_tied": 8
+        },
+        "hard": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 6,
+          "n_repos": 6,
+          "mean_a": 0.4333,
+          "mean_b": 0.4,
+          "diff": 0.0333,
+          "ci_repo_cluster": [
+            -0.3,
+            0.3333
+          ],
+          "ci_task": [
+            -0.3,
+            0.3333
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 3,
+          "tasks_tied": 0
+        },
+        "medium": {
+          "a": "placebo",
+          "b": "no_skill",
+          "metric": "success",
+          "level": 0.95,
+          "n_tasks": 23,
+          "n_repos": 14,
+          "mean_a": 0.3304,
+          "mean_b": 0.4,
+          "diff": -0.0696,
+          "ci_repo_cluster": [
+            -0.1524,
+            0.0222
+          ],
+          "ci_task": [
+            -0.1652,
+            0.0174
+          ],
+          "tasks_better": 3,
+          "tasks_worse": 8,
+          "tasks_tied": 12
+        }
+      }
+    }
+  ],
+  "per_task": {
+    "dep_graph__deps_not_lowercased": {
+      "no_skill": 0.6,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.8,
+      "placebo": 0.4
+    },
+    "rate_limiter__retry_after_multiplied": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.2,
+      "placebo": 0.0
+    },
+    "settings__ini_missing_section_crashes": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.2,
+      "placebo": 0.2
+    },
+    "log_parser__percentile_floor_rank": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.8,
+      "strong_skill": 0.4,
+      "placebo": 0.4
+    },
+    "scheduling__business_days_ignore_holidays": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.4,
+      "placebo": 0.4
+    },
+    "user_registry__deactivated_user_can_act": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.0,
+      "placebo": 0.2
+    },
+    "markdown_table__int_without_separators": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.4,
+      "placebo": 0.0
+    },
+    "ledger__round_half_even": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.0,
+      "placebo": 0.4
+    },
+    "log_parser__dash_size_rejected": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 0.2
+    },
+    "units__degree_alias_key_case": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.0,
+      "placebo": 0.0
+    },
+    "ttl_cache__memo_none_treated_as_missing": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.6,
+      "placebo": 0.6
+    },
+    "csv_report__empty_text_stopiteration": {
+      "no_skill": 0.6,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.4,
+      "placebo": 1.0
+    },
+    "inventory__reserve_zero_from_empty_site": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.0,
+      "placebo": 0.6
+    },
+    "url_router__build_skips_param_check": {
+      "no_skill": 1.0,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 1.0
+    },
+    "dep_graph__lineno_zero_based": {
+      "no_skill": 0.4,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.2,
+      "placebo": 0.4
+    },
+    "log_parser__error_rate_reuses_errors": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.8,
+      "placebo": 0.8
+    },
+    "log_parser__tie_order_by_insertion": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 0.2
+    },
+    "units__dimension_check_removed": {
+      "no_skill": 0.4,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.2,
+      "placebo": 0.2
+    },
+    "cart__zero_quantity_allowed": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 1.0
+    },
+    "inventory__unknown_site_created": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.0,
+      "placebo": 0.0
+    },
+    "log_parser__window_end_inclusive": {
+      "no_skill": 0.2,
+      "handwritten_skills": 1.0,
+      "strong_skill": 1.0,
+      "placebo": 0.6
+    },
+    "user_registry__username_in_password_case_sensitive": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.8,
+      "strong_skill": 0.8,
+      "placebo": 1.0
+    },
+    "user_registry__min_length_off_by_one": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.0,
+      "placebo": 0.8
+    },
+    "semver__resolve_returns_none": {
+      "no_skill": 0.4,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.0,
+      "placebo": 0.4
+    },
+    "markdown_table__newline_dropped": {
+      "no_skill": 0.8,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.6,
+      "placebo": 0.6
+    },
+    "dep_graph__ready_list_not_heapified": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.6,
+      "strong_skill": 0.2,
+      "placebo": 0.8
+    },
+    "todo_cli__blank_title_checked_before_strip": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 0.0
+    },
+    "rate_limiter__clock_allows_backwards": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 1.0,
+      "placebo": 0.8
+    },
+    "rate_limiter__refill_timestamp_not_updated": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.0,
+      "placebo": 0.0
+    },
+    "log_parser__query_string_kept": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.8,
+      "placebo": 0.2
+    },
+    "csv_report__render_key_not_normalised": {
+      "no_skill": 0.4,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.2,
+      "placebo": 0.2
+    },
+    "scheduling__conflicts_not_sorted": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.8,
+      "strong_skill": 1.0,
+      "placebo": 0.8
+    },
+    "semver__build_in_sort_key": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.6,
+      "placebo": 1.0
+    },
+    "todo_cli__remove_by_position": {
+      "no_skill": 0.4,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.6,
+      "placebo": 1.0
+    },
+    "rate_limiter__per_minute_not_converted": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.0,
+      "placebo": 0.0
+    },
+    "scheduling__holiday_shift_drops_holidays": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.0,
+      "placebo": 0.0
+    },
+    "user_registry__hash_argument_order": {
+      "no_skill": 0.4,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.2,
+      "placebo": 0.4
+    },
+    "log_parser__percentile_range_unchecked": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.2,
+      "placebo": 0.0
+    },
+    "units__to_swaps_units": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.4,
+      "placebo": 0.2
+    },
+    "units__kelvin_gets_degree_sign": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.4,
+      "placebo": 0.6
+    },
+    "log_parser__duration_left_in_seconds": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.4,
+      "placebo": 0.4
+    },
+    "csv_report__average_divides_by_zero": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.8,
+      "placebo": 1.0
+    },
+    "markdown_table__decimals_not_passed": {
+      "no_skill": 0.6,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.8,
+      "placebo": 0.0
+    },
+    "dep_graph__missing_name_unchecked": {
+      "no_skill": 0.8,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.4,
+      "placebo": 0.2
+    },
+    "inventory__release_checks_on_hand": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.4,
+      "strong_skill": 0.6,
+      "placebo": 0.4
+    },
+    "ttl_cache__read_not_counted_as_use": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.2,
+      "placebo": 0.2
+    },
+    "scheduling__empty_slot_between_back_to_back": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.2,
+      "placebo": 0.0
+    },
+    "todo_cli__next_id_from_count": {
+      "no_skill": 1.0,
+      "handwritten_skills": 1.0,
+      "strong_skill": 0.8,
+      "placebo": 0.8
+    },
+    "todo_cli__pending_sort_key": {
+      "no_skill": 1.0,
+      "handwritten_skills": 0.8,
+      "strong_skill": 0.8,
+      "placebo": 0.4
+    },
+    "units__malformed_not_checked": {
+      "no_skill": 0.6,
+      "handwritten_skills": 0.0,
+      "strong_skill": 0.0,
+      "placebo": 0.4
+    },
+    "ledger__thousands_separator": {
+      "no_skill": 0.0,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.2,
+      "placebo": 0.6
+    },
+    "ledger__empty_amount_check": {
+      "no_skill": 0.2,
+      "handwritten_skills": 0.2,
+      "strong_skill": 0.4,
+      "placebo": 0.2
+    }
+  },
+  "settings": {
+    "models": [
+      "qwen2.5:7b"
+    ],
+    "temperatures": [
+      0.7
+    ],
+    "max_steps": [
+      3
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

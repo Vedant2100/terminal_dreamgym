@@ -1,0 +1,135 @@
+[
+  {
+    "id": "deps_not_lowercased",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_manifest.py::test_names_are_lowercased",
+    "note": "Dependency names are stripped but not lower-cased (package names still are). Fix in manifest.parse.",
+    "edits": [
+      {
+        "file": "manifest.py",
+        "old": "deps = [d.strip().lower() for d in rest.split(\",\") if d.strip()]",
+        "new": "deps = [d.strip() for d in rest.split(\",\") if d.strip()]"
+      }
+    ]
+  },
+  {
+    "id": "missing_name_unchecked",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_manifest.py::test_missing_package_name_is_error",
+    "note": "The empty-name check was removed, so '-> b' declares a package called ''. Restore the ParseError in manifest.parse.",
+    "edits": [
+      {
+        "file": "manifest.py",
+        "old": "        if not name:\n            raise ParseError(lineno, \"missing package name\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "lineno_zero_based",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_manifest.py::test_self_dependency_reports_line_number",
+    "note": "enumerate starts at 0, so line numbers are 0-based; ParseError documents 1-based. Fix start=1 in manifest.parse.",
+    "edits": [
+      {
+        "file": "manifest.py",
+        "old": "enumerate(text.splitlines(), start=1)",
+        "new": "enumerate(text.splitlines())"
+      }
+    ]
+  },
+  {
+    "id": "ready_list_not_heapified",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_install.py::test_ties_broken_alphabetically",
+    "note": "The initial ready list is in declaration order and never heapified, so heappop returns 'zip' before 'lib'. Restore heapq.heapify(ready) in install.install_order.",
+    "edits": [
+      {
+        "file": "install.py",
+        "old": "    heapq.heapify(ready)\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "cycle_path_includes_prefix",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_graph.py::test_find_cycle_not_through_first_node",
+    "note": "find_cycle returns the whole DFS stack instead of slicing from the repeated node, giving ['a','b','c','b']. Tempting fix: drop the first element (stack[1:]), which passes the target but breaks test_find_cycle_from_start and test_cycle_raises_with_path. Correct fix: stack[stack.index(dep):].",
+    "edits": [
+      {
+        "file": "graph.py",
+        "old": "return stack[stack.index(dep):] + [dep]",
+        "new": "return stack + [dep]"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "graph.py",
+        "old": "return stack + [dep]",
+        "new": "return stack[1:] + [dep]"
+      }
+    ]
+  },
+  {
+    "id": "cycle_error_given_string",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_install.py::test_cycle_raises_with_path",
+    "note": "install_order pre-joins the path and passes a string to CycleError, which expects a list (it joins it itself and stores it as .cycle). Fix the raise in install.py, not CycleError.",
+    "edits": [
+      {
+        "file": "install.py",
+        "old": "raise CycleError(cycle)",
+        "new": "raise CycleError(\" -> \".join(cycle))"
+      }
+    ]
+  },
+  {
+    "id": "duplicate_dependency_not_merged",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_install.py::test_repeated_dependency_counted_once",
+    "note": "manifest.parse appends dependencies without de-duplicating, so app lists lib twice; install_order counts 3 pending deps but lib only decrements once, and app never becomes ready. Failure in install; fix in manifest.parse (each dependency listed once, as documented).",
+    "edits": [
+      {
+        "file": "manifest.py",
+        "old": "        for dep in deps:\n            if dep not in entry:\n                entry.append(dep)",
+        "new": "        entry.extend(deps)"
+      }
+    ]
+  },
+  {
+    "id": "redeclaration_overwrites",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_install.py::test_redeclared_package_keeps_all_dependencies",
+    "note": "manifest.parse starts a fresh list each time a package is declared, so the later 'app -> aux' line drops lib (and core) from app's closure. Failure in install; fix in manifest.parse (setdefault).",
+    "edits": [
+      {
+        "file": "manifest.py",
+        "old": "entry = graph.setdefault(name, [])",
+        "new": "entry = graph[name] = []"
+      }
+    ]
+  },
+  {
+    "id": "finished_nodes_stay_grey",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_install.py::test_ties_broken_alphabetically",
+    "note": "find_cycle never marks finished nodes black, so a diamond (app -> db -> lib, app -> web -> lib) looks like a back edge and stack.index raises ValueError. Failure in install_order; fix in graph.DepGraph.find_cycle.",
+    "edits": [
+      {
+        "file": "graph.py",
+        "old": "            stack.pop()\n            color[node] = black\n",
+        "new": "            stack.pop()\n"
+      }
+    ]
+  }
+]

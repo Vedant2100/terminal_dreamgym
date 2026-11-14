@@ -1,0 +1,135 @@
+[
+  {
+    "id": "refill_uncapped",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_limiters.py::test_refill_capped_at_capacity",
+    "note": "_refill no longer caps tokens at capacity, so a long idle period builds an unlimited burst.",
+    "edits": [
+      {
+        "file": "token_bucket.py",
+        "old": "self.tokens = min(self.capacity, self.tokens + (now - self.updated) * self.rate)",
+        "new": "self.tokens = self.tokens + (now - self.updated) * self.rate"
+      }
+    ]
+  },
+  {
+    "id": "retry_after_multiplied",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_limiters.py::test_retry_after_seconds",
+    "note": "retry_after multiplies the token deficit by the rate instead of dividing (tokens / (tokens per second) = seconds).",
+    "edits": [
+      {
+        "file": "token_bucket.py",
+        "old": "(cost - self.tokens) / self.rate)",
+        "new": "(cost - self.tokens) * self.rate)"
+      }
+    ]
+  },
+  {
+    "id": "clock_allows_backwards",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_limiters.py::test_clock_cannot_go_backwards",
+    "note": "FakeClock.advance no longer rejects negative steps.",
+    "edits": [
+      {
+        "file": "clock.py",
+        "old": "        if seconds < 0:\n            raise ValueError(\"time cannot go backwards\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "refill_timestamp_not_updated",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_limiters.py::test_refill_not_double_counted",
+    "note": "_refill does not move self.updated forward, so the same elapsed time is credited again on every call.",
+    "edits": [
+      {
+        "file": "token_bucket.py",
+        "old": "        self.updated = now\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "window_boundary_strict",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_limiters.py::test_slot_frees_exactly_after_window",
+    "note": "Eviction uses < instead of <=, so a hit still counts at exactly t + window, contradicting the comment.",
+    "edits": [
+      {
+        "file": "sliding_window.py",
+        "old": "while self.hits and self.hits[0] <= now - self.window:",
+        "new": "while self.hits and self.hits[0] < now - self.window:"
+      }
+    ]
+  },
+  {
+    "id": "per_minute_not_converted",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_keyed.py::test_keyed_rate_is_per_minute",
+    "note": "token_buckets passes per_minute straight through as a per-second rate. Tempting fix: divide by 60 in TokenBucket._refill, which breaks test_refill_not_double_counted (TokenBucket rates are per second). Correct fix: per_minute / 60 in keyed.token_buckets.",
+    "edits": [
+      {
+        "file": "keyed.py",
+        "old": "TokenBucket(capacity, per_minute / 60, clock)",
+        "new": "TokenBucket(capacity, per_minute, clock)"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "token_bucket.py",
+        "old": "(now - self.updated) * self.rate)",
+        "new": "(now - self.updated) * self.rate / 60)"
+      }
+    ]
+  },
+  {
+    "id": "keyed_drops_cost",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_keyed.py::test_keyed_cost",
+    "note": "KeyedLimiter.acquire does not forward cost to the per-key limiter, so every request costs 1.",
+    "edits": [
+      {
+        "file": "keyed.py",
+        "old": "return self.limiters[key].acquire(cost)",
+        "new": "return self.limiters[key].acquire()"
+      }
+    ]
+  },
+  {
+    "id": "factory_argument_order",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_keyed.py::test_keyed_bucket_allows_burst_of_capacity",
+    "note": "token_buckets builds TokenBucket(rate, capacity, clock), so capacity becomes 1 token; the burst is refused after one request. Fix the argument order in keyed.py, not TokenBucket.",
+    "edits": [
+      {
+        "file": "keyed.py",
+        "old": "TokenBucket(capacity, per_minute / 60, clock)",
+        "new": "TokenBucket(per_minute / 60, capacity, clock)"
+      }
+    ]
+  },
+  {
+    "id": "last_seen_only_on_create",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_keyed.py::test_prune_keeps_active_keys",
+    "note": "last_seen is recorded only when a key's limiter is created, so prune() drops keys that are still in use. Fix: update last_seen on every acquire.",
+    "edits": [
+      {
+        "file": "keyed.py",
+        "old": "            self.limiters[key] = self.factory(self.clock)\n        self.last_seen[key] = self.clock()",
+        "new": "            self.limiters[key] = self.factory(self.clock)\n            self.last_seen[key] = self.clock()"
+      }
+    ]
+  }
+]

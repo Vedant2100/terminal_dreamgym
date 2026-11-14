@@ -1,0 +1,135 @@
+[
+  {
+    "id": "plural_alias_missing",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_quantity.py::test_parse_alias_any_case",
+    "note": "The ALIASES table lacks 'kilometers', so '3 Kilometers' is an unknown unit. Add the alias in units.py.",
+    "edits": [
+      {
+        "file": "units.py",
+        "old": "\"kilometres\": \"km\", \"kilometers\": \"km\",",
+        "new": "\"kilometres\": \"km\","
+      }
+    ]
+  },
+  {
+    "id": "kelvin_gets_degree_sign",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_quantity.py::test_format_kelvin_has_no_degree_sign",
+    "note": "format_quantity adds a degree sign to every temperature unit, including K. The docstring says only C and F.",
+    "edits": [
+      {
+        "file": "quantity.py",
+        "old": "    unit = \"°\" + q.unit if q.unit in (\"C\", \"F\") else q.unit",
+        "new": "    unit = \"°\" + q.unit if dimension(q.unit) == \"temperature\" else q.unit"
+      }
+    ]
+  },
+  {
+    "id": "malformed_not_checked",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_quantity.py::test_parse_malformed_raises_value_error",
+    "note": "parse_quantity no longer checks for a failed regex match, so malformed text raises AttributeError on None instead of ValueError.",
+    "edits": [
+      {
+        "file": "quantity.py",
+        "old": "    if not match:\n        raise ValueError(f\"not a quantity: {text!r}\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "regex_drops_sign",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_quantity.py::test_parse_negative_temperature",
+    "note": "The quantity regex no longer accepts a leading sign, so '-40 °F' does not match and raises ValueError. Restore [-+]? in _QUANTITY.",
+    "edits": [
+      {
+        "file": "quantity.py",
+        "old": "r\"^\\s*([-+]?\\d+(?:\\.\\d+)?)",
+        "new": "r\"^\\s*(\\d+(?:\\.\\d+)?)"
+      }
+    ]
+  },
+  {
+    "id": "degree_alias_key_case",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_quantity.py::test_parse_negative_temperature",
+    "note": "The alias key for Fahrenheit is written '°F', but canonical() looks aliases up in lower case ('°f'), so '°F' becomes an unknown unit. The failure is in parse_quantity; the fix is the ALIASES key in units.py.",
+    "edits": [
+      {
+        "file": "units.py",
+        "old": "\"°f\": \"F\"",
+        "new": "\"°F\": \"F\""
+      }
+    ]
+  },
+  {
+    "id": "dimension_check_removed",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_convert.py::test_incompatible_units_raise_value_error",
+    "note": "convert() no longer compares the dimensions of src and dst, so m->kg fails with KeyError on the length table. Tempting fix: turn any KeyError from the table lookup into ValueError, which breaks test_unknown_unit_raises_key_error. Correct fix: restore the dimension(dst) != dim check.",
+    "edits": [
+      {
+        "file": "convert.py",
+        "old": "    if dimension(dst) != dim:\n        raise ValueError(f\"cannot convert {src} ({dim}) to {dst}\")\n",
+        "new": ""
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "convert.py",
+        "old": "    return value * table[src] / table[dst]",
+        "new": "    try:\n        return value * table[src] / table[dst]\n    except KeyError:\n        raise ValueError(f\"cannot convert {src} to {dst}\") from None"
+      }
+    ]
+  },
+  {
+    "id": "negative_zero_shown",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_quantity.py::test_format_never_negative_zero",
+    "note": "The '-0.00' normalisation was removed from format_quantity, so tiny negative values print as '-0.00 m'.",
+    "edits": [
+      {
+        "file": "quantity.py",
+        "old": "    if float(text) == 0:\n        text = f\"{0:.{precision}f}\"  # never show '-0.00'\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "temperature_inverse_wrong",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_quantity.py::test_to_fahrenheit",
+    "note": "convert() undoes the temperature mapping as (kelvin - offset) / scale instead of kelvin / scale - offset. Only conversions into Fahrenheit (scale != 1) are affected, so the failure shows in Quantity.to; the fix is in convert.py.",
+    "edits": [
+      {
+        "file": "convert.py",
+        "old": "        return kelvin / scale - offset",
+        "new": "        return (kelvin - offset) / scale"
+      }
+    ]
+  },
+  {
+    "id": "to_swaps_units",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_quantity.py::test_to_fahrenheit",
+    "note": "Quantity.to calls convert(value, unit, self.unit): source and target swapped relative to convert(value, src, dst). Fix the call in quantity.py.",
+    "edits": [
+      {
+        "file": "quantity.py",
+        "old": "convert(self.value, self.unit, unit)",
+        "new": "convert(self.value, unit, self.unit)"
+      }
+    ]
+  }
+]

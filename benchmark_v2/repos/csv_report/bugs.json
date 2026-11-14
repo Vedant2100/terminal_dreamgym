@@ -1,0 +1,121 @@
+[
+  {
+    "id": "header_not_lowercased",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_records.py::test_parse_header_case_and_spaces",
+    "note": "Header names are stripped but no longer lower-cased, so 'Region' does not match the schema. Fix in records.parse.",
+    "edits": [
+      {
+        "file": "records.py",
+        "old": "    header = [name.strip().lower() for name in header]",
+        "new": "    header = [name.strip() for name in header]"
+      }
+    ]
+  },
+  {
+    "id": "missing_column_not_checked",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_records.py::test_missing_column_raises",
+    "note": "The missing-column check was dropped; parse silently returns records without 'price'. Restore the ParseError.",
+    "edits": [
+      {
+        "file": "records.py",
+        "old": "    if missing:\n        raise ParseError(f\"line 1: missing columns: {', '.join(missing)}\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "blank_lines_shift_line_numbers",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_records.py::test_bad_row_after_blank_line_keeps_line_number",
+    "note": "Blank rows are filtered out before enumerate(), so line numbers after a blank line are too small. Tempting fix: enumerate from 3, which breaks test_bad_number_reports_line. Correct fix: enumerate all rows and skip blank ones inside the loop.",
+    "edits": [
+      {
+        "file": "records.py",
+        "old": "    for line_no, row in enumerate(reader, start=2):\n        if not any(cell.strip() for cell in row):\n            continue\n",
+        "new": "    rows = [row for row in reader if any(cell.strip() for cell in row)]\n    for line_no, row in enumerate(rows, start=2):\n"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "records.py",
+        "old": "enumerate(rows, start=2)",
+        "new": "enumerate(rows, 3)"
+      }
+    ]
+  },
+  {
+    "id": "empty_text_stopiteration",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_report.py::test_render_empty_input",
+    "note": "parse calls next(reader) without a default and the empty-input guard is gone, so empty text raises StopIteration from records.py. Fix: next(reader, None) and return [].",
+    "edits": [
+      {
+        "file": "records.py",
+        "old": "    header = next(reader, None)\n    if header is None:\n        return []\n",
+        "new": "    header = next(reader)\n"
+      }
+    ]
+  },
+  {
+    "id": "average_divides_by_zero",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_report.py::test_average_price_zero_units",
+    "note": "average_price divides by units without the zero guard its docstring promises.",
+    "edits": [
+      {
+        "file": "aggregate.py",
+        "old": "(t[\"revenue\"] / t[\"units\"] if t[\"units\"] else 0.0)",
+        "new": "t[\"revenue\"] / t[\"units\"]"
+      }
+    ]
+  },
+  {
+    "id": "top_groups_tie_order",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_report.py::test_top_groups_ties_alphabetical",
+    "note": "top_groups sorts by value with reverse=True, so ties keep insertion order instead of going alphabetically. Fix: key (-value, name).",
+    "edits": [
+      {
+        "file": "aggregate.py",
+        "old": "    ranked = sorted(totals.items(), key=lambda item: (-item[1][by], item[0]))",
+        "new": "    ranked = sorted(totals.items(), key=lambda item: item[1][by], reverse=True)"
+      }
+    ]
+  },
+  {
+    "id": "naive_comma_split",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_report.py::test_render_quoted_field_with_comma",
+    "note": "records.parse splits lines on ',' instead of using the csv module, so a quoted field containing a comma shifts the columns and units fails to parse. The failure shows in render; the fix is in records.py.",
+    "edits": [
+      {
+        "file": "records.py",
+        "old": "    reader = csv.reader(io.StringIO(text))",
+        "new": "    reader = (line.split(\",\") for line in text.splitlines())"
+      }
+    ]
+  },
+  {
+    "id": "render_key_not_normalised",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_report.py::test_render_key_is_case_insensitive",
+    "note": "render no longer lower-cases key, but parse lower-cases column names, so group_totals raises KeyError('Product') in aggregate.py. Fix in report.render: normalise key.",
+    "edits": [
+      {
+        "file": "report.py",
+        "old": "    key = key.strip().lower()\n",
+        "new": ""
+      }
+    ]
+  }
+]

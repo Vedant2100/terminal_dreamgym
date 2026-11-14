@@ -1,0 +1,135 @@
+[
+  {
+    "id": "percent_rounds_nearest",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_coupons.py::test_percent_discount_rounds_down",
+    "note": "Percent discount rounds to nearest instead of down (docstring says rounded down). Fix in Coupon.discount: use floor division.",
+    "edits": [
+      {
+        "file": "coupons.py",
+        "old": "off = amount * self.value // 100",
+        "new": "off = round(amount * self.value / 100)"
+      }
+    ]
+  },
+  {
+    "id": "add_overwrites_line",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cart.py::test_add_same_sku_merges_quantity",
+    "note": "Cart.add replaces an existing line instead of increasing its quantity. Restore the merge branch in items.py.",
+    "edits": [
+      {
+        "file": "items.py",
+        "old": "        if sku in self.items:\n            self.items[sku].quantity += quantity\n        else:\n            self.items[sku] = LineItem(sku, unit_cents, quantity)",
+        "new": "        self.items[sku] = LineItem(sku, unit_cents, quantity)"
+      }
+    ]
+  },
+  {
+    "id": "zero_quantity_allowed",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_cart.py::test_add_rejects_zero_quantity",
+    "note": "Quantity check uses < 0, so quantity 0 is accepted. Fix in Cart.add: <= 0.",
+    "edits": [
+      {
+        "file": "items.py",
+        "old": "if quantity <= 0:",
+        "new": "if quantity < 0:"
+      }
+    ]
+  },
+  {
+    "id": "best_coupon_by_face_value",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_checkout.py::test_best_exclusive_coupon_wins",
+    "note": "select_coupons picks the exclusive coupon with the largest raw value (20 vs 1500) instead of the largest discount. Fix the max key in checkout.py.",
+    "edits": [
+      {
+        "file": "checkout.py",
+        "old": "key=lambda c: c.discount(subtotal))",
+        "new": "key=lambda c: c.value)"
+      }
+    ]
+  },
+  {
+    "id": "percent_limit_kind_typo",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_coupons.py::test_parse_rejects_percent_over_100",
+    "note": "The >100% validation in Coupon.__post_init__ compares kind with 'percentage', so it never fires. Fix the string to 'percent' in coupons.py.",
+    "edits": [
+      {
+        "file": "coupons.py",
+        "old": "if self.kind == \"percent\" and self.value > 100:",
+        "new": "if self.kind == \"percentage\" and self.value > 100:"
+      }
+    ]
+  },
+  {
+    "id": "settings_precedence",
+    "category": "config",
+    "difficulty": "medium",
+    "target_test": "test_checkout.py::test_settings_override_single_default",
+    "note": "Defaults are merged after the caller's settings, so DEFAULTS win. Fix the merge order in checkout(): {**DEFAULTS, **settings}.",
+    "edits": [
+      {
+        "file": "checkout.py",
+        "old": "config = {**DEFAULTS, **(settings or {})}",
+        "new": "config = {**(settings or {}), **DEFAULTS}"
+      }
+    ]
+  },
+  {
+    "id": "stackable_applied_first",
+    "category": "trap",
+    "difficulty": "hard",
+    "target_test": "test_checkout.py::test_stackable_coupon_applies_after_exclusive",
+    "note": "select_coupons puts stackable coupons before the exclusive one, so 500 is taken off first and 10% applies to 9500 (discount 1450). Tempting fix: make apply_coupons compute each discount on the full subtotal, which gives 1500 here but lets discounts exceed the subtotal (test_discount_never_exceeds_subtotal). Correct fix: order in select_coupons.",
+    "edits": [
+      {
+        "file": "checkout.py",
+        "old": "    chosen = []\n    if exclusive:\n        chosen.append(max(exclusive, key=lambda c: c.discount(subtotal)))\n    chosen.extend(c for c in eligible if c.stackable)",
+        "new": "    chosen = [c for c in eligible if c.stackable]\n    if exclusive:\n        chosen.append(max(exclusive, key=lambda c: c.discount(subtotal)))"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "checkout.py",
+        "old": "remaining -= coupon.discount(remaining)",
+        "new": "remaining -= coupon.discount(subtotal)"
+      }
+    ]
+  },
+  {
+    "id": "min_spend_not_converted",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_checkout.py::test_parsed_minimum_spend_is_in_dollars",
+    "note": "parse_coupon stores min= as raw dollars (30) while Coupon.min_spend is in cents, so the coupon applies to a $25 cart. Failure shows in checkout; fix belongs in coupons.parse_coupon (use _dollars_to_cents).",
+    "edits": [
+      {
+        "file": "coupons.py",
+        "old": "min_spend = _dollars_to_cents(opt[4:])",
+        "new": "min_spend = int(opt[4:])"
+      }
+    ]
+  },
+  {
+    "id": "remove_exact_quantity_keeps_line",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_checkout.py::test_emptied_cart_has_no_shipping",
+    "note": "Cart.remove uses > instead of >=, so removing every unit leaves a zero-quantity line; is_empty() is then False and checkout charges shipping. Failure in checkout; fix in items.Cart.remove.",
+    "edits": [
+      {
+        "file": "items.py",
+        "old": "if quantity is None or quantity >= item.quantity:",
+        "new": "if quantity is None or quantity > item.quantity:"
+      }
+    ]
+  }
+]

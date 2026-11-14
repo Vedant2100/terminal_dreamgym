@@ -1,0 +1,131 @@
+[
+  {
+    "id": "pending_sort_key",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cli.py::test_list_pending_by_priority",
+    "note": "pending() sorts by id first, so priority is ignored. Fix the sort key in store.py.",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "key=lambda t: (t.priority, t.id))",
+        "new": "key=lambda t: (t.id, t.priority))"
+      }
+    ]
+  },
+  {
+    "id": "not_found_on_stdout",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_cli.py::test_done_unknown_id",
+    "note": "Unknown-id error printed to stdout instead of stderr.",
+    "edits": [
+      {
+        "file": "cli.py",
+        "old": "print(f\"error: no todo with id {exc.args[0]}\", file=sys.stderr)",
+        "new": "print(f\"error: no todo with id {exc.args[0]}\")"
+      }
+    ]
+  },
+  {
+    "id": "priority_not_validated",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_store.py::test_add_rejects_bad_priority",
+    "note": "Priority range check removed from TodoStore.add.",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "        if priority not in (1, 2, 3):\n            raise ValueError(\"priority must be 1, 2 or 3\")\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "blank_title_checked_before_strip",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_cli.py::test_add_blank_title_is_invalid",
+    "note": "store.add checks the raw title for emptiness and strips only when building the Todo, so '  ' is accepted; cli returns 0. Fix in store.py: strip before checking.",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "        title = title.strip()\n        if not title:",
+        "new": "        if not title:"
+      },
+      {
+        "file": "store.py",
+        "old": "todo = Todo(self.next_id, title, priority=priority)",
+        "new": "todo = Todo(self.next_id, title.strip(), priority=priority)"
+      }
+    ]
+  },
+  {
+    "id": "done_printed_before_marking",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_cli.py::test_done_prints_checked_line",
+    "note": "cli prints the todo before mark_done, so the box is '[ ]'. Tempting fix: invert the box condition in render.format_todo, which breaks test_list_all_shows_done_marks (and others). Correct fix: print after marking in cli.py.",
+    "edits": [
+      {
+        "file": "cli.py",
+        "old": "                store.mark_done(args.id)\n                print(format_todo(todo))",
+        "new": "                print(format_todo(todo))\n                store.mark_done(args.id)"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "render.py",
+        "old": "box = \"[x]\" if todo.done else \"[ ]\"",
+        "new": "box = \"[x]\" if not todo.done else \"[ ]\""
+      }
+    ]
+  },
+  {
+    "id": "mark_done_replaces_object",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_cli.py::test_done_prints_checked_line",
+    "note": "store.mark_done now swaps in a copy (dataclasses.replace) instead of mutating, so the Todo cli already holds stays done=False and prints '[ ]'. Fix: mutate in place in store.py (or have cli print the returned todo).",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "        todo = self.get(todo_id)\n        todo.done = True\n        return todo",
+        "new": "        todo = self.get(todo_id)\n        index = self.todos.index(todo)\n        self.todos[index] = replace(todo, done=True)\n        return self.todos[index]"
+      },
+      {
+        "file": "store.py",
+        "old": "from dataclasses import asdict, dataclass",
+        "new": "from dataclasses import asdict, dataclass, replace"
+      }
+    ]
+  },
+  {
+    "id": "remove_by_position",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_cli.py::test_remove_after_earlier_removal",
+    "note": "store.remove pops index id-1, which only matches while no earlier todo has been removed; the IndexError surfaces through the cli. Fix: remove the found todo object in store.py.",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "        self.todos.remove(todo)\n",
+        "new": "        self.todos.pop(todo_id - 1)\n"
+      }
+    ]
+  },
+  {
+    "id": "next_id_from_count",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_store.py::test_ids_not_reused_after_reload",
+    "note": "from_json derives next_id from the number of todos, reusing ids after a removal. Fix: use the saved next_id.",
+    "edits": [
+      {
+        "file": "store.py",
+        "old": "store.next_id = data[\"next_id\"]",
+        "new": "store.next_id = len(store.todos) + 1"
+      }
+    ]
+  }
+]

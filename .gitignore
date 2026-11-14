@@ -13,3 +13,6 @@ skills/model_written_smoke/
 runs/smoke_model_skills.jsonl
 skills/strong_written_smoke/
 runs/smoke_strong_writer.jsonl
+task_templates_v2/
+runs/smoke_v2*.jsonl
+skills/strong_written_v2_smoke/

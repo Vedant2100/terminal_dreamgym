@@ -1,0 +1,135 @@
+[
+  {
+    "id": "expiry_strictly_after_ttl",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cache.py::test_entry_expires_exactly_at_ttl",
+    "note": "_expired uses > so an entry is still live at exactly t=ttl; the class docstring says it is gone at t=10. Fix in TTLCache._expired: >=.",
+    "edits": [
+      {
+        "file": "cache.py",
+        "old": "self.clock() >= expires_at",
+        "new": "self.clock() > expires_at"
+      }
+    ]
+  },
+  {
+    "id": "read_not_counted_as_use",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_cache.py::test_least_recently_read_is_evicted",
+    "note": "get() no longer moves the key to the end, so reads do not refresh recency. Restore move_to_end in TTLCache.get.",
+    "edits": [
+      {
+        "file": "cache.py",
+        "old": "        self._data.move_to_end(key)\n        self.hits += 1",
+        "new": "        self.hits += 1"
+      }
+    ]
+  },
+  {
+    "id": "hit_rate_division_by_zero",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_cache.py::test_stats_hits_and_misses",
+    "note": "stats() divides by zero before any lookup. Restore the `if total else 0.0` guard.",
+    "edits": [
+      {
+        "file": "cache.py",
+        "old": "rate = self.hits / total if total else 0.0",
+        "new": "rate = self.hits / total"
+      }
+    ]
+  },
+  {
+    "id": "overwrite_keeps_old_position",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_cache.py::test_overwriting_a_key_counts_as_use",
+    "note": "set() on an existing key keeps its old LRU position (OrderedDict assignment does not reorder), so the freshly written key is evicted. Restore move_to_end in TTLCache.set.",
+    "edits": [
+      {
+        "file": "cache.py",
+        "old": "        if key in self._data:\n            self._data.move_to_end(key)\n        self._data[key] = (value, expires_at)",
+        "new": "        self._data[key] = (value, expires_at)"
+      }
+    ]
+  },
+  {
+    "id": "expired_read_not_a_miss",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_cache.py::test_expired_read_counts_as_miss",
+    "note": "get() split the missing and expired branches and only the missing branch counts a miss. Count a miss for expired reads too (cache.py).",
+    "edits": [
+      {
+        "file": "cache.py",
+        "old": "        if entry is None or self._expired(entry[1]):\n            if entry is not None:\n                del self._data[key]\n            self.misses += 1\n            return default",
+        "new": "        if entry is None:\n            self.misses += 1\n            return default\n        if self._expired(entry[1]):\n            del self._data[key]\n            return default"
+      }
+    ]
+  },
+  {
+    "id": "memo_none_treated_as_missing",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_memo.py::test_memoize_caches_none_results",
+    "note": "memoize uses get()'s None default as the not-found signal, so cached None results are recomputed. Use the _NOT_FOUND sentinel in memo.py.",
+    "edits": [
+      {
+        "file": "memo.py",
+        "old": "            result = cache.get(key, _NOT_FOUND)\n            if result is _NOT_FOUND:",
+        "new": "            result = cache.get(key)\n            if result is None:"
+      }
+    ]
+  },
+  {
+    "id": "memo_lookup_via_contains",
+    "category": "trap",
+    "difficulty": "hard",
+    "target_test": "test_memo.py::test_memoize_records_hits_and_misses",
+    "note": "memoize checks `key in cache` before get(), and __contains__ does not count misses, so the first call records no miss. Tempting fix: make TTLCache.__contains__ count misses, which breaks test_contains_does_not_touch_stats_or_order. Correct fix: do a single cache.get with a sentinel in memo.py.",
+    "edits": [
+      {
+        "file": "memo.py",
+        "old": "            result = cache.get(key, _NOT_FOUND)\n            if result is _NOT_FOUND:\n                result = func(*args, **kwargs)\n                cache.set(key, result, ttl)\n            return result",
+        "new": "            if key in cache:\n                return cache.get(key)\n            result = func(*args, **kwargs)\n            cache.set(key, result, ttl)\n            return result"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "cache.py",
+        "old": "        entry = self._data.get(key)\n        return entry is not None and not self._expired(entry[1])",
+        "new": "        entry = self._data.get(key)\n        found = entry is not None and not self._expired(entry[1])\n        if not found:\n            self.misses += 1\n        return found"
+      }
+    ]
+  },
+  {
+    "id": "memo_ttl_default_none",
+    "category": "contract",
+    "difficulty": "hard",
+    "target_test": "test_memo.py::test_memoize_uses_cache_default_ttl",
+    "note": "memoize defaults ttl to None, which TTLCache.set reads as 'never expire', overriding the cache's default_ttl. The cache's contract is the DEFAULT_TTL sentinel; fix the default in memo.memoize.",
+    "edits": [
+      {
+        "file": "memo.py",
+        "old": "def memoize(cache: TTLCache, ttl=DEFAULT_TTL):",
+        "new": "def memoize(cache: TTLCache, ttl=None):"
+      }
+    ]
+  },
+  {
+    "id": "clock_advance_sets_time",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_cache.py::test_entry_expires_exactly_at_ttl",
+    "note": "ManualClock.advance assigns instead of adding, so two advances (9.5 then 0.5) leave the clock at 0.5. The failure looks like an expiry bug in cache.py; the fix is in clock.py.",
+    "edits": [
+      {
+        "file": "clock.py",
+        "old": "self.now += seconds",
+        "new": "self.now = seconds"
+      }
+    ]
+  }
+]

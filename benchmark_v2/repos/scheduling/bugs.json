@@ -1,0 +1,135 @@
+[
+  {
+    "id": "zero_length_event_allowed",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_events.py::test_zero_length_event_raises",
+    "note": "Event validation uses end < start, so an event whose end equals its start is accepted. Fix in Event.__post_init__: end <= start.",
+    "edits": [
+      {
+        "file": "events.py",
+        "old": "        if self.end <= self.start:",
+        "new": "        if self.end < self.start:"
+      }
+    ]
+  },
+  {
+    "id": "duration_uses_seconds_field",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_events.py::test_duration_spans_days",
+    "note": "duration_minutes uses timedelta.seconds, which drops whole days. Fix: total_seconds().",
+    "edits": [
+      {
+        "file": "events.py",
+        "old": "        return int((self.end - self.start).total_seconds() // 60)",
+        "new": "        return (self.end - self.start).seconds // 60"
+      }
+    ]
+  },
+  {
+    "id": "conflicts_not_sorted",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_events.py::test_find_conflicts_unsorted_input",
+    "note": "find_conflicts no longer sorts by start, but its early break relies on start order. Fix: sort by start.",
+    "edits": [
+      {
+        "file": "events.py",
+        "old": "    ordered = sorted(events, key=lambda e: e.start)\n    conflicts = []",
+        "new": "    ordered = list(events)\n    conflicts = []"
+      }
+    ]
+  },
+  {
+    "id": "empty_slot_between_back_to_back",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_events.py::test_free_slots_back_to_back",
+    "note": "free_slots opens a gap when event.start >= cursor, producing zero-length slots for back-to-back events. Tempting fix: make the min_minutes filter strict (>), which drops exactly-min_minutes gaps and breaks test_free_slots_min_length_is_inclusive. Correct fix: event.start > cursor.",
+    "edits": [
+      {
+        "file": "events.py",
+        "old": "        if event.start > cursor:",
+        "new": "        if event.start >= cursor:"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "events.py",
+        "old": "if e - s >= timedelta(minutes=min_minutes)]",
+        "new": "if e - s > timedelta(minutes=min_minutes)]"
+      }
+    ]
+  },
+  {
+    "id": "weekday_offset_reversed",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_recurrence.py::test_weekly_first_occurrence_is_next_matching_day",
+    "note": "The offset to the first matching weekday is computed as (first_day.weekday() - wd) % 7 instead of (wd - first_day.weekday()) % 7.",
+    "edits": [
+      {
+        "file": "recurrence.py",
+        "old": "timedelta(days=(wd - first_day.weekday()) % 7)",
+        "new": "timedelta(days=(first_day.weekday() - wd) % 7)"
+      }
+    ]
+  },
+  {
+    "id": "until_exclusive",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_recurrence.py::test_weekly_includes_until_and_honours_skip",
+    "note": "weekly loops while day < until, so an occurrence on `until` is lost; the docstring says inclusive.",
+    "edits": [
+      {
+        "file": "recurrence.py",
+        "old": "    while day <= until:",
+        "new": "    while day < until:"
+      }
+    ]
+  },
+  {
+    "id": "business_days_ignore_holidays",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_recurrence.py::test_weekly_moves_holiday_to_next_business_day",
+    "note": "add_business_days calls is_business_day(day) without the holidays, so a holiday Thursday moves to the (also holiday) Friday. The failure shows in recurrence; the fix is in business.add_business_days.",
+    "edits": [
+      {
+        "file": "business.py",
+        "old": "        if is_business_day(day, holidays):\n            remaining -= 1",
+        "new": "        if is_business_day(day):\n            remaining -= 1"
+      }
+    ]
+  },
+  {
+    "id": "holiday_shift_drops_holidays",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_recurrence.py::test_weekly_moves_holiday_to_next_business_day",
+    "note": "recurrence.weekly calls add_business_days(day, 1) without passing holidays, so the shifted occurrence can land on another holiday. Fix the call in recurrence.py.",
+    "edits": [
+      {
+        "file": "recurrence.py",
+        "old": "add_business_days(day, 1, holidays) if day in holidays",
+        "new": "add_business_days(day, 1) if day in holidays"
+      }
+    ]
+  },
+  {
+    "id": "touching_events_overlap",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_recurrence.py::test_weekly_drops_busy_but_keeps_back_to_back",
+    "note": "Event.overlaps uses other.start <= self.end, so an event starting exactly when the occurrence ends counts as a clash and the first occurrence is dropped. The failure shows in recurrence; the fix is in events.Event.overlaps.",
+    "edits": [
+      {
+        "file": "events.py",
+        "old": "        return self.start < other.end and other.start < self.end",
+        "new": "        return self.start < other.end and other.start <= self.end"
+      }
+    ]
+  }
+]

@@ -9,11 +9,13 @@ self-improving agent: diagnose a failure, generate practice repos, write a
 
 ## Status (2026-11-13)
 
-Three preregistered experiments on Qwen2.5-7B, all scored by strict success (the
+Deprioritised on 2026-11-13 after the results below; no further runs are planned.
+
+Four preregistered experiments on Qwen2.5-7B, all scored by strict success (the
 target test passes and nothing that passed before breaks), found no detectable
 gain from skill text. Each experiment was repeated over several seeds; a seed is
 one independent repetition of the whole run, with its own sampled skills and
-agent replies.
+agent replies. The first three used the original benchmark:
 
 - **Handwritten skills** (four fixed texts) over no skill text: +0.060, 95% CI
   −0.028 to +0.151, in the [matched evaluation](#matched-evaluation-method-and-results)
@@ -26,6 +28,15 @@ agent replies.
 - **[Skills from a larger writer](#skills-from-a-larger-writer)**: `qwen3-coder:30b`
   writes the skill from the same records of Qwen2.5-7B's attempts, and Qwen2.5-7B
   still solves the tasks. Over no skill text: +0.023, CI −0.072 to +0.118 (5 seeds).
+
+A fourth experiment reran the comparison on **[benchmark v2](#benchmark-v2)**: 52
+tasks in 16 new repos, selected by a preregistered calibration run. It has two
+primary comparisons, so each uses a 97.5% interval. Handwritten skills over no
+skill text: −0.035, CI −0.129 to +0.053, no detectable difference. 30B-written
+skills, learnt from failures on the original repos: −0.100, CI −0.187 to −0.018, a
+small harm. A placebo (background text about as long as a skill, with no
+debugging advice) also scored lower than no skill text (−0.065, not significant), so the harm
+may come from extra prompt text rather than the skills' content.
 
 A July demo had reported a large gain from the handwritten skills; it gave them
 three times as many model attempts as the baseline (see
@@ -308,6 +319,89 @@ A stronger writer did not make the learn-from-failures loop work. With both a 7B
 and a 30B writer, the skills were generic, and neither set changed how often
 Qwen2.5-7B solved tasks.
 
+## Benchmark v2
+
+Protocol: [`docs/benchmark_v2_protocol.md`](docs/benchmark_v2_protocol.md),
+committed before any model run on the new tasks. Results:
+[`reports/v2_eval.md`](reports/v2_eval.md), raw records in `runs/v2_eval.jsonl`
+(calibration in `runs/v2_calibration.jsonl`), the five 30B skills in
+`skills/strong_written_v2/`.
+
+The first three experiments ran on a benchmark with three problems. Its held-out
+tasks shared repos with the training tasks, the check that no passing test breaks
+was empty for most tasks, and nearly half the base tasks were solved by every
+condition or by none. Benchmark v2 replaces it.
+
+**Tasks.** 16 new small Python repos (`benchmark_v2/repos/`), none related to the
+original four, each correct and with 8–16 passing tests. Each repo lists 7–9 bugs,
+140 in all; a task is the repo with one bug injected. A validator
+(`terminal_dreamgym/benchmark_v2.py`) checks that each bug makes exactly one test
+fail and leaves at least 3 others passing, so every task is solvable (the reference
+fix is the original code) and every task can catch a fix that breaks other code.
+Each bug has a category (logic, error handling, contract between modules, config,
+or trap) and an authored difficulty. A trap bug comes with a tempting wrong fix that
+the validator confirms passes the target test and breaks another. Claude agents
+wrote the repos and bugs before any model run. The commands are under
+[Running it](#running-it).
+
+**Calibration.** Qwen2.5-7B with no skill text ran every candidate task 5 times
+(seeds 101–105, not reused later). The preregistered rule kept a task if it was
+solved in 1–4 of the 5 runs: 52 of 140 tasks, from all 16 repos (70 were never
+solved, 18 always). The kept tasks are 25 logic, 14 error handling, 6 contract,
+6 trap and 1 config bug.
+
+**Run.** `no_skill`, `handwritten_skills` (the four fixed texts), `strong_skill`
+(written by `qwen3-coder:30b` from Qwen2.5-7B's failed attempts on the *original*
+benchmark, one skill per seed, used on every v2 task) and `placebo`, on the 52 kept
+tasks, seeds 1–5, all in one job: 1,040 runs, no infrastructure errors, every run
+re-scored from its saved sandbox with no mismatch. Intervals resample repos, since
+tasks in one repo share code; the two comparisons with no skill text are
+co-primary and use 97.5% intervals.
+
+| Condition | Strict success | First attempt | Passed but broke another test |
+| --- | ---: | ---: | ---: |
+| no_skill | 0.488 | 0.346 | 20 |
+| handwritten_skills | 0.454 | 0.323 | 31 |
+| strong_skill | 0.389 | 0.292 | 24 |
+| placebo | 0.423 | 0.319 | 15 |
+
+| A − B | Strict success, CI over repos | Tasks better / worse / tied |
+| --- | --- | --- |
+| handwritten_skills − no_skill (co-primary, 97.5%) | −0.035 [−0.129, +0.053] | 13 / 17 / 22 |
+| strong_skill − no_skill (co-primary, 97.5%) | −0.100 [−0.187, −0.018] | 14 / 26 / 12 |
+| strong_skill − placebo (95%) | −0.035 [−0.162, +0.073] | 18 / 18 / 16 |
+| placebo − no_skill (95%) | −0.065 [−0.157, +0.033] | 11 / 21 / 20 |
+
+What the results show:
+
+- The handwritten skills made no detectable difference, as on the original
+  benchmark.
+- The 30B-written skills lowered strict success by 0.100. The upper bound of the
+  97.5% interval is below zero, so by the preregistered rule this is harm. The
+  effect is in the same direction on all five seeds, each with a different skill
+  (−0.019 to −0.173).
+- The harm cannot be pinned on the skills' content. The placebo, a length-matched
+  text with no debugging advice, also scored below no skill text (−0.065), and the
+  30B skills did not differ detectably from it (−0.035). On these tasks, extra
+  text in the prompt may hurt by itself; this run cannot separate the two.
+- No condition scored above no skill text. The no-skill rate itself fell from
+  0.523 on these tasks in calibration to 0.488 here, as expected when tasks are
+  selected on a noisy rate; every condition runs on the same tasks, so the
+  comparisons are not affected.
+
+The five 30B skills are generic debugging checklists (read after the results were
+in). Their specific advice echoes the original benchmark's tasks, such as a CLI
+`--json` flag, email normalisation and config keys: 4 of 5 talk about JSON output,
+3 about stderr and exit codes, one about `+` tags in email addresses and one
+recommends `.get()` for config keys. 3 tell the solver to run tests after each
+edit, which it cannot do.
+
+On repos it had not seen, neither handwritten skills nor skills written by a
+stronger model from a weaker model's failures helped Qwen2.5-7B. v2 removes the
+validity problems listed above, but its intervals are about as wide as the original
+benchmark's (roughly ±0.09): it still cannot detect an effect much smaller than
+0.1.
+
 ## The hackathon pipeline
 
 ```text
@@ -393,6 +487,18 @@ runs/matched_eval.jsonl --seeds 1,2,3` starts Ollama in the FrontierMemory Appta
 image on one GPU and runs the same command. A full run took 71 minutes on an RTX
 2080 Ti.
 
+Benchmark v2:
+
+```bash
+python -m terminal_dreamgym.cli build-v2                     # validate every bug, write task_templates_v2/ and data/tasks_v2.json
+sbatch scripts/v2.sbatch calibrate runs/v2_calibration.jsonl 101,102,103,104,105
+python -m terminal_dreamgym.cli v2-select --results runs/v2_calibration.jsonl --out benchmark_v2/kept_tasks.txt
+python -m terminal_dreamgym.cli build-v2 --keep benchmark_v2/kept_tasks.txt
+sbatch scripts/v2.sbatch evaluate runs/v2_eval.jsonl 1,2,3,4,5  # writes the 30B skills, then runs the four conditions
+python -m terminal_dreamgym.cli v2-report --results runs/v2_eval.jsonl --tasks-file data/tasks_v2.json --name v2_eval
+python scripts/reverify_matched.py runs/v2_eval.jsonl data/tasks_v2.json
+```
+
 The original pipeline:
 
 ```bash
@@ -413,16 +519,19 @@ matched evaluation uses 0.7).
 ## Layout
 
 ```text
-terminal_dreamgym/   agent, sandbox, pipeline steps, matched_eval.py, cli.py
+terminal_dreamgym/   agent, sandbox, pipeline steps, matched_eval.py, benchmark_v2.py, v2_analysis.py, cli.py
 task_templates/      20 task repos (*_v1..v5), generated by demo_assets.py from the 4 base repos
-data/                tasks.json (100 tasks), splits.json
-docs/                matched_eval_protocol.md, model_skills_protocol.md, strong_writer_protocol.md
-reports/             matched_eval, model_skills_eval, strong_writer_eval (.md and .json); live_model_run_qwen.md (July, superseded)
-runs/                matched_eval.jsonl, model_skills_eval.jsonl, strong_writer_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
-scripts/             matched_eval.sbatch, model_skills.sbatch, strong_writer.sbatch, reverify_matched.py
+benchmark_v2/        repos/ (16 correct repos, each with bugs.json), AUTHORING.md, kept_tasks.txt
+task_templates_v2/   built from benchmark_v2 by `cli build-v2`; ignored by git
+data/                tasks.json (100 tasks), splits.json, tasks_v2.json (52 kept), tasks_v2_candidates.json (140)
+docs/                matched_eval_protocol.md, model_skills_protocol.md, strong_writer_protocol.md, benchmark_v2_protocol.md
+reports/             matched_eval, model_skills_eval, strong_writer_eval, v2_eval (.md and .json); live_model_run_qwen.md (July, superseded)
+runs/                matched_eval.jsonl, model_skills_eval.jsonl, strong_writer_eval.jsonl, v2_calibration.jsonl, v2_eval.jsonl, aborted/, baseline.json (July); sandboxes/ is ignored
+scripts/             matched_eval.sbatch, model_skills.sbatch, strong_writer.sbatch, v2.sbatch, reverify_matched.py
 skills/model_written/ the 20 skills written by Qwen2.5-7B, their prompts and metadata
 skills/strong_written/ the 20 skills written by qwen3-coder:30b, same layout
-tests/               provider-free unit tests, including task solvability
+skills/strong_written_v2/ the 5 skills (one per seed) used on benchmark v2
+tests/               provider-free unit tests, including task solvability and v2 bug validation
 ```
 
 `init_demo_assets()` deletes and rebuilds `task_templates/*_vN` and `data/`. To change
@@ -434,15 +543,19 @@ The question this project was built for is whether an agent can improve itself b
 practising its failures. In the simplest version tested here, a skill the model
 writes from its own failures, the answer for Qwen2.5-7B is no detectable gain, and
 the skills it wrote did not reflect its actual failures. Skills written from the
-same failures by a 30B model gave no detectable gain either. Adding RL on top of
-this loop is not justified by this evidence. Options, roughly in order of cost:
+same failures by a 30B model gave no detectable gain either. On benchmark v2, with
+new repos, handwritten skills gave no detectable gain and 30B skills learnt on other
+repos lowered success slightly. Adding RL on top of this loop is not
+justified by this evidence.
 
-1. Make the benchmark able to show a difference: add tasks in new repos for
-   held-out evaluation, add pass-to-pass tests that pass at baseline, and replace
-   tasks that every condition solves or none does. Independent terminal tasks
-   such as [Endless Terminals](https://github.com/kanishkg/endless-terminals)
-   would avoid sharing repos with the training tasks.
-2. Only if some skill text beats no skill text on held-out repos, test
-   accumulating skills over successive task batches, with forgetting measured.
-3. Otherwise, deprioritise this workstream: on this evidence, prompt-level
-   skills do not move a 7B model's repair success.
+This workstream was deprioritised on 2026-11-13; no further runs are planned. If it
+is resumed, two experiments would be most informative:
+
+1. Separate the effect of extra prompt text from the effect of skill content (for
+   example, several placebo lengths), since on v2 the placebo also scored lower
+   than no skill text.
+2. Test skills written from failures on the *same* v2 repos (held-out bugs, same
+   code), which is the setting where specific advice could help. Independent
+   terminal tasks such as
+   [Endless Terminals](https://github.com/kanishkg/endless-terminals) are another
+   source of new tasks.

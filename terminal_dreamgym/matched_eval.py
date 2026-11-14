@@ -96,7 +96,10 @@ def run_matched(
     task_ids: list[str] | None = None,
     skills_dir: Path | None = None,
     strong_skills_dir: Path | None = None,
+    tasks_file: Path | None = None,
+    skill_scope: str | None = None,
 ) -> int:
+    """skill_scope="all": use one model-written skill per seed (seed{s}_all.md) for every task."""
     from terminal_dreamgym.gemini_agent import LLMTerminalAgent
 
     conditions = conditions or CONDITIONS[:4]
@@ -105,7 +108,7 @@ def run_matched(
     if "strong_skill" in conditions and strong_skills_dir is None:
         raise ValueError("strong_skill needs strong_skills_dir (see skill_writer.py)")
     seeds = seeds or [1, 2, 3]
-    tasks = load_tasks()
+    tasks = load_tasks(tasks_file)
     if task_ids:
         wanted = set(task_ids)
         tasks = [t for t in tasks if t.id in wanted]
@@ -130,7 +133,7 @@ def run_matched(
                 from terminal_dreamgym.skill_writer import load_model_skill
 
                 folder = skills_dir if condition == "model_skill" else strong_skills_dir
-                texts = [load_model_skill(folder, seed, task.family)]
+                texts = [load_model_skill(folder, seed, skill_scope or task.family)]
             agent = LLMTerminalAgent(strategy=condition, provider=mode, skill_texts=texts)
             return _record(condition, seed, task, agent.run_task(task, seed=seed))
         except Exception as exc:  # never lose the rest of the run to one job

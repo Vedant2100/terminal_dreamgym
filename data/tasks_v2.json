@@ -1,0 +1,834 @@
+[
+  {
+    "id": "cart__zero_quantity_allowed",
+    "family": "cart",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/cart__zero_quantity_allowed",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cart.py::test_add_rejects_zero_quantity",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "csv_report__empty_text_stopiteration",
+    "family": "csv_report",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/csv_report__empty_text_stopiteration",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_report.py::test_render_empty_input",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "csv_report__average_divides_by_zero",
+    "family": "csv_report",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/csv_report__average_divides_by_zero",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_report.py::test_average_price_zero_units",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "csv_report__render_key_not_normalised",
+    "family": "csv_report",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/csv_report__render_key_not_normalised",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_report.py::test_render_key_is_case_insensitive",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "dep_graph__deps_not_lowercased",
+    "family": "dep_graph",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/dep_graph__deps_not_lowercased",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_manifest.py::test_names_are_lowercased",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "dep_graph__missing_name_unchecked",
+    "family": "dep_graph",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/dep_graph__missing_name_unchecked",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_manifest.py::test_missing_package_name_is_error",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "dep_graph__lineno_zero_based",
+    "family": "dep_graph",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/dep_graph__lineno_zero_based",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_manifest.py::test_self_dependency_reports_line_number",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "dep_graph__ready_list_not_heapified",
+    "family": "dep_graph",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/dep_graph__ready_list_not_heapified",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_install.py::test_ties_broken_alphabetically",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "inventory__release_checks_on_hand",
+    "family": "inventory",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/inventory__release_checks_on_hand",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stock.py::test_release_more_than_reserved_raises",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "inventory__reserve_zero_from_empty_site",
+    "family": "inventory",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/inventory__reserve_zero_from_empty_site",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_orders.py::test_allocate_skips_empty_warehouse",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "inventory__unknown_site_created",
+    "family": "inventory",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/inventory__unknown_site_created",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_orders.py::test_unknown_warehouse_raises",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "ledger__round_half_even",
+    "family": "ledger",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/ledger__round_half_even",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_money.py::test_to_cents_rounds_half_up",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "ledger__thousands_separator",
+    "family": "ledger",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/ledger__thousands_separator",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_money.py::test_to_cents_thousands_and_symbol",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "ledger__empty_amount_check",
+    "family": "ledger",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/ledger__empty_amount_check",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_money.py::test_to_cents_empty_raises",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "log_parser__percentile_floor_rank",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__percentile_floor_rank",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_percentile_nearest_rank",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "log_parser__window_end_inclusive",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__window_end_inclusive",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_window_end_is_exclusive",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "log_parser__percentile_range_unchecked",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__percentile_range_unchecked",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_percentile_rejects_zero",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "log_parser__dash_size_rejected",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__dash_size_rejected",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_parse.py::test_dash_size_is_zero",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "log_parser__tie_order_by_insertion",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__tie_order_by_insertion",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_top_paths_ties_alphabetical",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "log_parser__query_string_kept",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__query_string_kept",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_top_paths_ignore_query_string",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "log_parser__error_rate_reuses_errors",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__error_rate_reuses_errors",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_error_rate_counts_server_errors_only",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "log_parser__duration_left_in_seconds",
+    "family": "log_parser",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/log_parser__duration_left_in_seconds",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_stats.py::test_latency_summary_in_ms",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "markdown_table__newline_dropped",
+    "family": "markdown_table",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/markdown_table__newline_dropped",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cells.py::test_newline_becomes_space",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "markdown_table__int_without_separators",
+    "family": "markdown_table",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/markdown_table__int_without_separators",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cells.py::test_int_has_thousands_separators",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "markdown_table__decimals_not_passed",
+    "family": "markdown_table",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/markdown_table__decimals_not_passed",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_table.py::test_decimals_option",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "config",
+    "split": "heldout",
+    "tags": [
+      "config"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rate_limiter__retry_after_multiplied",
+    "family": "rate_limiter",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/rate_limiter__retry_after_multiplied",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_limiters.py::test_retry_after_seconds",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rate_limiter__clock_allows_backwards",
+    "family": "rate_limiter",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/rate_limiter__clock_allows_backwards",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_limiters.py::test_clock_cannot_go_backwards",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rate_limiter__refill_timestamp_not_updated",
+    "family": "rate_limiter",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/rate_limiter__refill_timestamp_not_updated",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_limiters.py::test_refill_not_double_counted",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rate_limiter__per_minute_not_converted",
+    "family": "rate_limiter",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/rate_limiter__per_minute_not_converted",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_keyed.py::test_keyed_rate_is_per_minute",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "scheduling__conflicts_not_sorted",
+    "family": "scheduling",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/scheduling__conflicts_not_sorted",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_events.py::test_find_conflicts_unsorted_input",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "scheduling__empty_slot_between_back_to_back",
+    "family": "scheduling",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/scheduling__empty_slot_between_back_to_back",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_events.py::test_free_slots_back_to_back",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "scheduling__business_days_ignore_holidays",
+    "family": "scheduling",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/scheduling__business_days_ignore_holidays",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_recurrence.py::test_weekly_moves_holiday_to_next_business_day",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "scheduling__holiday_shift_drops_holidays",
+    "family": "scheduling",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/scheduling__holiday_shift_drops_holidays",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_recurrence.py::test_weekly_moves_holiday_to_next_business_day",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "semver__build_in_sort_key",
+    "family": "semver",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/semver__build_in_sort_key",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_version.py::test_build_metadata_ignored_in_equality",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "semver__resolve_returns_none",
+    "family": "semver",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/semver__resolve_returns_none",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_constraints.py::test_resolve_unsatisfiable_raises",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "settings__ini_missing_section_crashes",
+    "family": "settings",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/settings__ini_missing_section_crashes",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_settings.py::test_ini_without_app_section_uses_defaults",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "todo_cli__pending_sort_key",
+    "family": "todo_cli",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/todo_cli__pending_sort_key",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cli.py::test_list_pending_by_priority",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "todo_cli__blank_title_checked_before_strip",
+    "family": "todo_cli",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/todo_cli__blank_title_checked_before_strip",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cli.py::test_add_blank_title_is_invalid",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "todo_cli__remove_by_position",
+    "family": "todo_cli",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/todo_cli__remove_by_position",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cli.py::test_remove_after_earlier_removal",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "todo_cli__next_id_from_count",
+    "family": "todo_cli",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/todo_cli__next_id_from_count",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_store.py::test_ids_not_reused_after_reload",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ttl_cache__read_not_counted_as_use",
+    "family": "ttl_cache",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/ttl_cache__read_not_counted_as_use",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_cache.py::test_least_recently_read_is_evicted",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "ttl_cache__memo_none_treated_as_missing",
+    "family": "ttl_cache",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/ttl_cache__memo_none_treated_as_missing",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_memo.py::test_memoize_caches_none_results",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "units__kelvin_gets_degree_sign",
+    "family": "units",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/units__kelvin_gets_degree_sign",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_quantity.py::test_format_kelvin_has_no_degree_sign",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "units__malformed_not_checked",
+    "family": "units",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/units__malformed_not_checked",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_quantity.py::test_parse_malformed_raises_value_error",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "units__degree_alias_key_case",
+    "family": "units",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/units__degree_alias_key_case",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_quantity.py::test_parse_negative_temperature",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "units__dimension_check_removed",
+    "family": "units",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/units__dimension_check_removed",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_convert.py::test_incompatible_units_raise_value_error",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "units__to_swaps_units",
+    "family": "units",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/units__to_swaps_units",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_quantity.py::test_to_fahrenheit",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "url_router__build_skips_param_check",
+    "family": "url_router",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/url_router__build_skips_param_check",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_router.py::test_url_for_missing_param",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "error_handling",
+    "split": "heldout",
+    "tags": [
+      "error_handling"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "user_registry__username_in_password_case_sensitive",
+    "family": "user_registry",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/user_registry__username_in_password_case_sensitive",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_validation.py::test_password_cannot_contain_username",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "user_registry__min_length_off_by_one",
+    "family": "user_registry",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/user_registry__min_length_off_by_one",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_validation.py::test_password_of_minimum_length_ok",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "logic",
+    "split": "heldout",
+    "tags": [
+      "logic"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "user_registry__deactivated_user_can_act",
+    "family": "user_registry",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/user_registry__deactivated_user_can_act",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_registry.py::test_deactivated_user_loses_access",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "trap",
+    "split": "adversarial",
+    "tags": [
+      "trap"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "user_registry__hash_argument_order",
+    "family": "user_registry",
+    "instruction": "Fix the failing tests in this repo. Make the smallest safe change.",
+    "template_dir": "task_templates_v2/user_registry__hash_argument_order",
+    "scorer": "pytest",
+    "score_command": "pytest -q test_registry.py::test_register_and_authenticate",
+    "success_condition": "all_tests_pass",
+    "max_steps": 8,
+    "expected_failure_mode": "contract",
+    "split": "heldout",
+    "tags": [
+      "contract"
+    ],
+    "difficulty": "medium"
+  }
+]

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "regex_not_anchored",
+    "category": "error_handling",
+    "difficulty": "easy",
+    "target_test": "test_version.py::test_parse_invalid_raises",
+    "note": "The version regex lost its trailing '$', so '1.2.3.4' is accepted as 1.2.3. Restore the anchor in version._VERSION.",
+    "edits": [
+      {
+        "file": "version.py",
+        "old": "(?:\\+([0-9A-Za-z.-]+))?$\")",
+        "new": "(?:\\+([0-9A-Za-z.-]+))?\")"
+      }
+    ]
+  },
+  {
+    "id": "release_key_sorts_first",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_version.py::test_prerelease_sorts_before_release",
+    "note": "_pre_key returns () for a release, which sorts before any pre-release key; the comment says releases sort after. Fix: return (1,).",
+    "edits": [
+      {
+        "file": "version.py",
+        "old": "    if not pre:\n        return (1,)",
+        "new": "    if not pre:\n        return ()"
+      }
+    ]
+  },
+  {
+    "id": "build_in_sort_key",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_version.py::test_build_metadata_ignored_in_equality",
+    "note": "Version._key includes build metadata, so builds of the same version compare unequal. Remove self.build from the key.",
+    "edits": [
+      {
+        "file": "version.py",
+        "old": "        return (self.major, self.minor, self.patch, _pre_key(self.pre))",
+        "new": "        return (self.major, self.minor, self.patch, _pre_key(self.pre), self.build)"
+      }
+    ]
+  },
+  {
+    "id": "partial_version_not_padded",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_constraints.py::test_caret_partial_version",
+    "note": "constraints._partial only pads one-part versions, so '^1.2' reaches parse('1.2') and raises ValueError. Tempting fix: make the patch number optional in version._VERSION, which breaks test_parse_invalid_raises ('1.2' must be invalid). Correct fix: pad to three parts in _partial.",
+    "edits": [
+      {
+        "file": "constraints.py",
+        "old": "    parts += [\"0\"] * (3 - len(parts))",
+        "new": "    if len(parts) == 1:\n        parts += [\"0\", \"0\"]"
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "version.py",
+        "old": "^v?(\\d+)\\.(\\d+)\\.(\\d+)",
+        "new": "^v?(\\d+)\\.(\\d+)(?:\\.(\\d+))?"
+      },
+      {
+        "file": "version.py",
+        "old": "int(patch)",
+        "new": "int(patch or 0)"
+      }
+    ]
+  },
+  {
+    "id": "caret_ignores_zero_major",
+    "category": "logic",
+    "difficulty": "medium",
+    "target_test": "test_constraints.py::test_caret_zero_major",
+    "note": "_caret always bumps the major version, so ^0.2.3 allows 0.3.0. Restore the 0.x and 0.0.x cases from the comment.",
+    "edits": [
+      {
+        "file": "constraints.py",
+        "old": "    if v.major > 0:\n        upper = Version(v.major + 1, 0, 0)\n    elif v.minor > 0:\n        upper = Version(0, v.minor + 1, 0)\n    else:\n        upper = Version(0, 0, v.patch + 1)\n",
+        "new": "    upper = Version(v.major + 1, 0, 0)\n"
+      }
+    ]
+  },
+  {
+    "id": "bump_minor_keeps_patch",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_constraints.py::test_tilde_allows_patch_updates_only",
+    "note": "version.bump('minor') keeps the patch number, so the tilde upper bound for ~1.4.2 becomes 1.5.2 and 1.5.0 matches. The failure is in a constraints test; the fix is in version.bump.",
+    "edits": [
+      {
+        "file": "version.py",
+        "old": "        return Version(version.major, version.minor + 1, 0)",
+        "new": "        return Version(version.major, version.minor + 1, version.patch)"
+      }
+    ]
+  },
+  {
+    "id": "prerelease_identifiers_as_strings",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_constraints.py::test_best_match_prerelease_ordering",
+    "note": "_pre_key compares pre-release identifiers as plain strings, so 'beta.2' > 'beta.11'. The failure shows in best_match; the fix is in version._pre_key (numeric identifiers compare numerically).",
+    "edits": [
+      {
+        "file": "version.py",
+        "old": "    return (0, tuple((0, int(p), \"\") if p.isdigit() else (1, 0, p) for p in pre))",
+        "new": "    return (0, tuple(pre))"
+      }
+    ]
+  },
+  {
+    "id": "best_match_drops_include_pre",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_constraints.py::test_best_match_prerelease_ordering",
+    "note": "best_match does not pass include_pre on to satisfies(), so pre-releases are always excluded. Fix the call in best_match.",
+    "edits": [
+      {
+        "file": "constraints.py",
+        "old": "if satisfies(text, constraint, include_pre)]",
+        "new": "if satisfies(text, constraint)]"
+      }
+    ]
+  },
+  {
+    "id": "resolve_returns_none",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_constraints.py::test_resolve_unsatisfiable_raises",
+    "note": "resolve stores None when nothing matches instead of raising LookupError as documented.",
+    "edits": [
+      {
+        "file": "constraints.py",
+        "old": "        if best is None:\n            raise LookupError(f\"no version of {name} satisfies {constraint!r}\")\n",
+        "new": ""
+      }
+    ]
+  }
+]

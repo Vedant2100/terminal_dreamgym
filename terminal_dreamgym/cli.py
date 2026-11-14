@@ -103,6 +103,8 @@ def matched_eval_cmd(
     tasks: str = typer.Option(None, "--tasks", help="Comma-separated task ids (default: all 100)"),
     skills_dir: Path = typer.Option(None, "--skills-dir", help="Model-written skills, for the model_skill condition"),
     strong_skills_dir: Path = typer.Option(None, "--strong-skills-dir", help="Skills from a larger writer, for strong_skill"),
+    tasks_file: Path = typer.Option(None, "--tasks-file", help="Task list (default data/tasks.json; v2: data/tasks_v2.json)"),
+    skill_scope: str = typer.Option(None, "--skill-scope", help="'all': one model-written skill per seed for every task"),
 ) -> None:
     """Run the matched-condition evaluation (docs/matched_eval_protocol.md). Resumable."""
     from terminal_dreamgym.matched_eval import current_settings, run_matched
@@ -117,8 +119,70 @@ def matched_eval_cmd(
         task_ids=[t.strip() for t in tasks.split(",")] if tasks else None,
         skills_dir=skills_dir,
         strong_skills_dir=strong_skills_dir,
+        tasks_file=tasks_file,
+        skill_scope=skill_scope,
     )
     console.print(f"[green]Ran {n} task runs; results in[/green] {out}")
+
+
+@app.command("build-v2")
+def build_v2_cmd(
+    check: bool = typer.Option(True, "--check/--no-check", help="Validate every repo and bug first"),
+    keep: Path = typer.Option(None, "--keep", help="File of task ids to keep (one per line); default all"),
+) -> None:
+    """Validate benchmark v2 repos and write task_templates_v2/ and data/tasks_v2.json."""
+    from terminal_dreamgym.benchmark_v2 import build, repo_dirs, validate_repo
+
+    if check:
+        problems = [p for repo in repo_dirs() for p in validate_repo(repo)]
+        for p in problems:
+            console.print(f"[red]{p}[/red]")
+        if problems:
+            raise typer.Exit(1)
+    ids = [l.strip() for l in keep.read_text().splitlines() if l.strip()] if keep else None
+    tasks = build(ids)
+    console.print(f"[green]Wrote {len(tasks)} tasks from {len(repo_dirs())} repos[/green]")
+
+
+@app.command("v2-select")
+def v2_select_cmd(
+    results: Path = typer.Option(RUNS_DIR / "v2_calibration.jsonl", "--results"),
+    out: Path = typer.Option(Path("benchmark_v2/kept_tasks.txt"), "--out"),
+) -> None:
+    """Apply the preregistered calibration keep rule (1-4 of 5 no_skill successes)."""
+    from collections import Counter
+
+    from terminal_dreamgym.matched_eval import load_records
+    from terminal_dreamgym.v2_analysis import calibration_keep
+
+    kept, counts = calibration_keep(load_records(results))
+    out.write_text("".join(t + "\n" for t in kept), encoding="utf-8")
+    console.print(f"Successes out of 5 -> tasks: {dict(sorted(Counter(counts.values()).items()))}")
+    console.print(f"[green]Kept {len(kept)} of {len(counts)} tasks[/green] -> {out}")
+
+
+@app.command("v2-report")
+def v2_report_cmd(
+    results: Path = typer.Option(RUNS_DIR / "v2_eval.jsonl", "--results"),
+    tasks_file: Path = typer.Option(Path("data/tasks_v2.json"), "--tasks-file"),
+    name: str = typer.Option("v2_eval", "--name"),
+) -> None:
+    """Preregistered benchmark v2 analysis into reports/<name>.{md,json}."""
+    import json
+
+    from terminal_dreamgym.matched_eval import load_records
+    from terminal_dreamgym.v2_analysis import analyze_v2, render_v2_markdown
+
+    result = analyze_v2(
+        load_records(results), tasks_file,
+        co_primary=[("handwritten_skills", "no_skill"), ("strong_skill", "no_skill")],
+        secondary=[("strong_skill", "handwritten_skills"), ("handwritten_skills", "placebo"),
+                   ("strong_skill", "placebo"), ("placebo", "no_skill")],
+    )
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    (REPORTS_DIR / f"{name}.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    (REPORTS_DIR / f"{name}.md").write_text(render_v2_markdown(result), encoding="utf-8")
+    console.print(render_v2_markdown(result))
 
 
 @app.command("write-skills")
@@ -128,11 +192,13 @@ def write_skills_cmd(
     seeds: str = typer.Option("1,2,3,4,5", "--seeds"),
     mode: str = typer.Option(DEFAULT_MODE, "--mode"),
     writer_model: str = typer.Option(None, "--writer-model", help="Write with this OpenAI-compatible model instead"),
+    families: str = typer.Option(None, "--families", help="Comma-separated held-out families, or 'all'"),
 ) -> None:
     """Have the model write leave-one-family-out skills from its own no-skill traces."""
     from terminal_dreamgym.skill_writer import write_model_skills
 
-    manifest = write_model_skills(source, [int(x) for x in seeds.split(",")], out_dir, mode=mode, writer_model=writer_model)
+    manifest = write_model_skills(source, [int(x) for x in seeds.split(",")], out_dir, mode=mode, writer_model=writer_model,
+        families=families.split(",") if families else None)
     for m in manifest:
         console.print(f"seed {m['seed']} {m['held_out_family']}: {m['chars']} chars, leaks={m['leaked_identifiers']}")
 

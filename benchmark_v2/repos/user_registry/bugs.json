@@ -1,0 +1,135 @@
+[
+  {
+    "id": "reserved_check_raw_name",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_validation.py::test_reserved_username_rejected_in_any_case",
+    "note": "Reserved-name check uses the raw name instead of the normalised key, so 'Admin' slips through. Fix in check_username: test `key`.",
+    "edits": [
+      {
+        "file": "validation.py",
+        "old": "if key in RESERVED:",
+        "new": "if name in RESERVED:"
+      }
+    ]
+  },
+  {
+    "id": "username_in_password_case_sensitive",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_validation.py::test_password_cannot_contain_username",
+    "note": "Username-in-password check is case-sensitive; docstring says any case. Fix in check_password: compare lower-cased.",
+    "edits": [
+      {
+        "file": "validation.py",
+        "old": "if normalize_username(username) in password.lower():",
+        "new": "if username in password:"
+      }
+    ]
+  },
+  {
+    "id": "min_length_off_by_one",
+    "category": "logic",
+    "difficulty": "easy",
+    "target_test": "test_validation.py::test_password_of_minimum_length_ok",
+    "note": "Length check uses <= so an 8-character password is rejected. Fix the comparison in check_password (changing MIN_PASSWORD to 7 is equivalent but misleading).",
+    "edits": [
+      {
+        "file": "validation.py",
+        "old": "if len(password) < MIN_PASSWORD:",
+        "new": "if len(password) <= MIN_PASSWORD:"
+      }
+    ]
+  },
+  {
+    "id": "deactivated_user_can_act",
+    "category": "trap",
+    "difficulty": "medium",
+    "target_test": "test_registry.py::test_deactivated_user_loses_access",
+    "note": "Registry.can lost its active check. Tempting fix: clear the user's roles in deactivate(), which passes the target but breaks test_reactivated_user_regains_access (docstring says deactivated users keep their roles). Correct fix: check user.active in can().",
+    "edits": [
+      {
+        "file": "registry.py",
+        "old": "        user = self.get(username)\n        if not user.active:\n            return False\n        return any(",
+        "new": "        user = self.get(username)\n        return any("
+      }
+    ],
+    "tempting_fix": [
+      {
+        "file": "registry.py",
+        "old": "        self.get(username).active = False",
+        "new": "        user = self.get(username)\n        user.active = False\n        user.roles.clear()"
+      }
+    ]
+  },
+  {
+    "id": "user_stored_before_role_check",
+    "category": "error_handling",
+    "difficulty": "medium",
+    "target_test": "test_registry.py::test_unknown_role_rejected_and_not_stored",
+    "note": "register stores the user before validating roles, so the error is raised but a half-registered user remains. Fix: validate roles before storing (registry.py).",
+    "edits": [
+      {
+        "file": "registry.py",
+        "old": "        for role in roles:\n            if role not in ROLES:\n                raise ValidationError(f\"unknown role: {role}\")\n        user = User(username.strip(), hash_password(password, self.salt), set(roles))\n        self._users[key] = user\n        return user",
+        "new": "        user = User(username.strip(), hash_password(password, self.salt), set(roles))\n        self._users[key] = user\n        for role in roles:\n            if role not in ROLES:\n                raise ValidationError(f\"unknown role: {role}\")\n        return user"
+      }
+    ]
+  },
+  {
+    "id": "hash_argument_order",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_registry.py::test_register_and_authenticate",
+    "note": "authenticate calls hash_password(salt, password) while register uses hash_password(password, salt), so hashes never match. Fix the call in authenticate.",
+    "edits": [
+      {
+        "file": "registry.py",
+        "old": "return user.password_hash == hash_password(password, self.salt)",
+        "new": "return user.password_hash == hash_password(self.salt, password)"
+      }
+    ]
+  },
+  {
+    "id": "roles_kept_as_tuple",
+    "category": "contract",
+    "difficulty": "medium",
+    "target_test": "test_registry.py::test_grant_role_adds_permissions",
+    "note": "register stores the roles argument as given (a tuple) instead of a set, so grant() fails with AttributeError on .add. Fix in register: set(roles).",
+    "edits": [
+      {
+        "file": "registry.py",
+        "old": "hash_password(password, self.salt), set(roles))",
+        "new": "hash_password(password, self.salt), roles)"
+      }
+    ]
+  },
+  {
+    "id": "normalize_keeps_spaces",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_registry.py::test_lookup_ignores_case_and_spaces",
+    "note": "normalize_username no longer strips, so '  Carol ' fails the username regex during register. Failure surfaces in the registry test; fix in validation.normalize_username.",
+    "edits": [
+      {
+        "file": "validation.py",
+        "old": "return name.strip().lower()",
+        "new": "return name.lower()"
+      }
+    ]
+  },
+  {
+    "id": "inheritance_skips_root_role",
+    "category": "logic",
+    "difficulty": "hard",
+    "target_test": "test_registry.py::test_admin_inherits_all_permissions",
+    "note": "permissions_for stops before adding the grants of the root role (viewer), so nobody has 'read'. Failure in the registry test; fix the loop in roles.permissions_for.",
+    "edits": [
+      {
+        "file": "roles.py",
+        "old": "    while role is not None:\n        entry = ROLES[role]\n        perms |= entry[\"grants\"]\n        role = entry[\"parent\"]",
+        "new": "    entry = ROLES[role]\n    while entry[\"parent\"] is not None:\n        perms |= entry[\"grants\"]\n        entry = ROLES[entry[\"parent\"]]"
+      }
+    ]
+  }
+]
