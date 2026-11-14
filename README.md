@@ -9,6 +9,8 @@ self-improving agent: diagnose a failure, generate practice repos, write a
 
 ## Status (2026-11-13)
 
+Deprioritised on 2026-11-13 after the results below; no further runs are planned.
+
 Four preregistered experiments on Qwen2.5-7B, all scored by strict success (the
 target test passes and nothing that passed before breaks), found no detectable
 gain from skill text. Each experiment was repeated over several seeds; a seed is
@@ -544,15 +546,15 @@ the skills it wrote did not reflect its actual failures. Skills written from the
 same failures by a 30B model gave no detectable gain either. On benchmark v2, with
 new repos, handwritten skills gave no detectable gain and 30B skills learnt on other
 repos lowered success slightly. Adding RL on top of this loop is not
-justified by this evidence. Options, roughly in order of cost:
+justified by this evidence.
 
-1. Deprioritise this workstream: on this evidence, prompt-level skills do not
-   improve a 7B model's repair success, on the repos they were written from or on
-   new ones.
-2. If it continues, separate the effect of extra prompt text from the effect of
-   skill content (for example, several placebo lengths), since on v2 the placebo
-   also scored lower than no skill text.
-3. Test skills written from failures on the *same* v2 repos (held-out bugs, same
+This workstream was deprioritised on 2026-11-13; no further runs are planned. If it
+is resumed, two experiments would be most informative:
+
+1. Separate the effect of extra prompt text from the effect of skill content (for
+   example, several placebo lengths), since on v2 the placebo also scored lower
+   than no skill text.
+2. Test skills written from failures on the *same* v2 repos (held-out bugs, same
    code), which is the setting where specific advice could help. Independent
    terminal tasks such as
    [Endless Terminals](https://github.com/kanishkg/endless-terminals) are another
